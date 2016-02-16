@@ -40,3 +40,23 @@ Ocena:
 Ocena ko&#324;cowa zale&#380;e&#263; b&#281;dzie od sumy ocen cz&#261;stkowych z dwóch projektów (2*(10+20+30) = 120 pkt).
 
 
+
+Materiały
+---------
+
+* Developing Data Products
+https://www.coursera.org/learn/data-products
+głównie Shiny+rCharts+Slidify+R packages
+
+
+* Wrażenia z ww. kursu
+http://www.r-bloggers.com/lessons-learned-from-developing-a-data-product/
+
+* Developing Data Products in R
+https://leanpub.com/ddp
+Jak wyżej, tylko w innej kolejności
+
+* Bardzo przyjemny dłuższy blog o www narzędziach
+https://www.codementor.io/r/tutorial/building-a-web-based-sentiment-classifier-using-r-shiny
+
+
