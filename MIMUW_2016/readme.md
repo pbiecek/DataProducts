@@ -7,8 +7,6 @@ Tworzenie ‘data-based products’ z programem R
 Plan spotka&#324; MIM UW:
 -------------------------
 
-
-
 * 25 II - 
 * 3 III - 
 * 10 III - 
@@ -26,19 +24,26 @@ Plan spotka&#324; MIM UW:
 * 16 VI - 
 
 
+Kaizen
+------
+
+Projekty będziemy wytwarzać zgodnie z filozofią Kaizen (Kaizen is a Japanese philosophy that focuses on continual improvement).
+
+
 Projekty:
 ---------
 
-Projekty mogą być realizowane w grupach od 2 do 4 osób. Te same osoby nie mogą razem uczestniczyć w obu projektach.
-Projekty będą przedstawiane na zajęciach (terminy wypisane powyżej). Należy je zgłosić przez GitHuba przed prezentacją. Projekty, które nie będą zaprezentowane nie zostaną ocenione.
-
-1. Projekt 
+Projekty mogą być realizowane w grupach od 2 do 4 osób. 
+Każda grupa wybiera jeden temat i nad nim pracuje przez semestr.
 
 
 Ocena:
 ------
-Ocena ko&#324;cowa zale&#380;e&#263; b&#281;dzie od sumy ocen cz&#261;stkowych z dwóch projektów (2*(10+20+30) = 120 pkt).
 
+Aplikacja będzie dyskutowana przez cały czas trwania przedmiotu. 
+Nie będzie cząstkowych ocen.
+Na podstawie aktywności i na podstawie końcowego rozwiązania na koniec semestru uzgodniona będzie ocena.
+Ocena może różnic się dla różnych członków zespołu w zależności od tego kto za co będzie odpowiedzialny.
 
 
 Materiały
@@ -47,7 +52,6 @@ Materiały
 * Developing Data Products
 https://www.coursera.org/learn/data-products
 głównie Shiny+rCharts+Slidify+R packages
-
 
 * Wrażenia z ww. kursu
 http://www.r-bloggers.com/lessons-learned-from-developing-a-data-product/
