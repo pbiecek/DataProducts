@@ -7,31 +7,42 @@ Tworzenie ‘data-based products’ z programem R
 Plan spotka&#324; MIM UW:
 -------------------------
 
-* 25 II - 
-* 3 III - 
-* 10 III - 
-* 17 III - 
-* 31 III - 
-* 7 IV - 
-* 14 IV - 
+* 25 II - podstawowa eksploracja, dplyr
+* 3 III - ggplot2
+* 10 III - shiny
+* 17 III - knitr
 
-* 21 IV - 
-* 28 IV - 
-* 5 V - 
-* 12 V - 
-* 19 V - 
-* 2 VI - 
-* 16 VI - 
+* 31 III - NFZ
+* 7 IV - IBE      [rCharts]
+* 14 IV - USOS
+
+* 21 IV - NFZ
+* 28 IV - IBE     [tworzenie pakietów]
+* 5 V - USOS
+
+* 12 V - NFZ
+* 19 V - IBE      [openCPU]
+* 2 VI - USOS
+
+* 16 VI - końcowe prezentacje
 
 
 Kaizen
 ------
 
-Projekty będziemy wytwarzać zgodnie z filozofią Kaizen (Kaizen is a Japanese philosophy that focuses on continual improvement).
+Projekty będziemy wytwarzać zgodnie z filozofią Kaizen (z wikipedii: Kaizen is a Japanese philosophy that focuses on continual improvement).
 
 
-Projekty:
----------
+Github
+------
+
+Wszystkie pomysły na zadania, zadania, zmiany umieszczamy na gihubie. 
+Do zarządzania projektem używamy waffle.
+Zadania powinny mieć oznaczonych opiekunów (przy końcowej ocenie biorę pod uwagę kto się jakimi zadaniami opiekował).
+
+
+Projekty
+--------
 
 Projekty mogą być realizowane w grupach od 2 do 4 osób. 
 Każda grupa wybiera jeden temat i nad nim pracuje przez semestr.
@@ -41,6 +52,7 @@ Ocena:
 ------
 
 Aplikacja będzie dyskutowana przez cały czas trwania przedmiotu. 
+Dla każdego projektu przewidzianych jest 3 cząstkowe iteracje plus końcowa ostateczna prezentacja.
 Nie będzie cząstkowych ocen.
 Na podstawie aktywności i na podstawie końcowego rozwiązania na koniec semestru uzgodniona będzie ocena.
 Ocena może różnic się dla różnych członków zespołu w zależności od tego kto za co będzie odpowiedzialny.
