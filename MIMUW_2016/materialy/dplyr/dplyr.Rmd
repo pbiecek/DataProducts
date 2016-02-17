@@ -1,0 +1,324 @@
+---
+title: "Pakiety dplyr i tidyr"
+author: "Przemysław Biecek"
+output:
+  slidy_presentation:
+    highlight: default
+    font_adjustment: 0
+---
+
+# Pakiet dplyr
+
+Aby ułatwić pracę na danych, dplyt tworzy abstrakcję źródła danych (tbl_df) i na niej wykonuje operacje.
+
+```{r, warning=FALSE, message=FALSE}
+library(PogromcyDanych)
+library(dplyr)
+
+auta2012 <- tbl_df(auta2012)
+auta2012
+```
+
+# Filtry
+
+Funkcja `filter()` pozwala na wybór tylko wierszy spełniających określony warunek
+
+```{r, warning=FALSE}
+tmp <- filter(auta2012,
+        Marka == "Porsche")
+head(tmp)
+```
+
+Możemy określać jednocześnie więcej warunków.
+
+```{r, warning=FALSE}
+tylkoPorscheZDuzymSilnikiem <- filter(auta2012,
+         Marka == "Porsche",
+         KM > 300)
+head(tylkoPorscheZDuzymSilnikiem)
+```
+
+
+# Nowe kolumny
+
+Funkcja `mutate()` pozwala na stworzenie nowej zmiennej (jednej bądź wielu)
+
+
+```{r, warning=FALSE}
+autaZWiekiem <- mutate(auta2012,
+                       Wiek.auta = 2013 - Rok.produkcji)
+
+autaZCenaBrutto <- mutate(auta2012, 
+                          Cena.brutto = Cena.w.PLN * ifelse(Brutto.netto == "brutto", 1, 1.23))
+```
+
+Sprawdźmy czy auto ma klimatyzacje
+Aby sprawdzić czy w kolumnie `Wyposazenie.dodatkowe` występuje określony element użyjemy funkcji `grepl()`
+
+```{r, warning=FALSE}
+autaZWyposazeniem <- mutate(auta2012,
+         Autoalarm = grepl(pattern = "autoalarm", Wyposazenie.dodatkowe),
+         Centralny.zamek = grepl(pattern = "centralny zamek", Wyposazenie.dodatkowe),
+         Klimatyzacja = grepl(pattern = "klimatyzacja", Wyposazenie.dodatkowe))
+```
+
+
+# Wybór zmiennych
+
+Funkcja `select()` pozwala na wybór jednej lub wielu zmiennych z ramki danych
+
+```{r, warning=FALSE}
+dplyr:::select(autaZWiekiem, Wiek.auta, Rok.produkcji)
+```
+
+# Sortowanie
+
+Funkcją `arrange()` możęmy wykonać sortowanie po jednej lub większej liczbie zmiennych.
+
+```{r, warning=FALSE}
+tylkoPorscheZDuzymSilnikiem <- filter(auta2012,
+         Marka == "Porsche",
+         KM > 300)
+
+posortowanePorsche <-
+  arrange(tylkoPorscheZDuzymSilnikiem, 
+        Cena.w.PLN)
+```
+
+
+
+# Potoki
+
+Przygotujmy zbiór danych do pracy z potokami
+
+Rozważmy taki ciąg instrukcji
+
+```{r, warning=FALSE, message=FALSE}
+# tylko volkswagen
+tylkoVolkswagen <- filter(auta2012, 
+                          Marka == "Volkswagen")
+# posortowane
+posortowaneVolkswagen <- arrange(tylkoVolkswagen, 
+                                 Cena.w.PLN)
+# tylko Golf VI
+tylkoGolfIV <- filter(posortowaneVolkswagen, 
+                      Model == "Golf", Wersja == "IV")
+# tylko z małym przebiegiem
+tylkoMalyPrzebieg <- filter(tylkoGolfIV, 
+                            Przebieg.w.km < 50000)
+```
+
+Przetwarzanie ,,na wielką cebulkę''.
+Powyższe instruckje można zamienić na jedno wywołanie.
+
+```{r, warning=FALSE}
+tylkoMalyPrzebieg <- 
+  filter(
+    filter(
+      arrange(
+        filter(
+          auta2012, 
+          Marka == "Volkswagen"), 
+        Cena.w.PLN), 
+      Model == "Golf", Wersja == "IV"), 
+    Przebieg.w.km < 50000)
+```
+
+
+Mało czytelny, choć częśto spotykany zapis.
+
+Rozwiązaniem problemu cebulki jest stosowanie specjalnego operatora do przetwarzania potokowego `%>%`. Ten operator pochodzi z pakietu `magrittr`  (cytując z jego dokumentacji: *to be pronounced with a sophisticated french accent*)  i jest dostępny po włączeniu pakietu `dplyr`.
+
+Jak działa ten operator?
+
+Przekazuje lewą stronę operatora jako pierwszy argument prawej strony tego operatora.
+
+Instrukcja ` a %>% f(b) ` jest równoważna instrukcji` f(a, b)`.
+
+```{r, warning=FALSE}
+tylkoMalyPrzebieg <- 
+  auta2012 %>%                                  # weź dane o autach
+  filter(Marka == "Volkswagen") %>%             # pozostaw tylko Volkswageny
+  arrange(Cena.w.PLN) %>%                       # posortuj malejąco po cenie
+  filter(Model == "Golf", Wersja == "IV") %>%   # pozostał tylko Golfy VI
+  filter(Przebieg.w.km < 50000)                 # pozostał tylko auta o małym przebiegu
+
+head(tylkoMalyPrzebieg)
+
+colnames(tylkoMalyPrzebieg)[4] <- "f"
+```
+
+Potoki można stosować nie tylko do funkcji `dplyr` ale też każdej innej.
+
+```{r, eval=FALSE}
+tylkoMalyPrzebieg %>% dim()
+tylkoMalyPrzebieg %>% head()
+```
+
+# Podsumowania
+
+Funkcją `summarise()` można wyznaczyć agregaty w danych
+
+```{r, warning=FALSE}
+auta2012 %>%
+  summarise(sredniaCena = mean(Cena.w.PLN),
+            sdCena = sqrt(var(Cena.w.PLN)),
+            medianaPrzebiegu = median(Przebieg.w.km, na.rm=TRUE))
+```
+
+
+Tworząc agregaty wygodnie jest korzystać z funkcji `n()`, której wynikiem jest liczba wierszy w zbiorze danych / grupie.
+
+```{r, warning=FALSE}
+auta2012 %>%
+  summarise(liczba.aut.z.klimatyzacja = sum(grepl("klimatyzacja", Wyposazenie.dodatkowe)),
+            procent.aut.z.klimatyzacja = 100*mean(grepl("klimatyzacja", Wyposazenie.dodatkowe)),
+            procent.aut.z.automatem = 100*mean(Skrzynia.biegow == "automatyczna"),
+            liczba.aut = n())
+```
+
+# Grupowanie
+
+Funkcja `group_by()` pozwala na operacje na agregatach w grupach opisanych przez zmienną jakościową.
+
+```{r, warning=FALSE}
+auta2012 %>%
+  filter(Marka == "Volkswagen", Rok.produkcji == 2007) %>%
+  group_by(Rodzaj.paliwa) %>%
+  summarise(medianaCeny = median(Cena.w.PLN, na.rm=TRUE),
+            medianaPrzebieg = median(Przebieg.w.km, na.rm=TRUE),
+            liczba = n())
+```
+
+Agregaty są zwykłą ramką danych, można wykonywać na nich kolejne operacje, np sortowanie.
+
+```{r, warning=FALSE}
+auta2012 %>%
+  filter(Marka == "Volkswagen", Rok.produkcji == 2007) %>%
+  group_by(Rodzaj.paliwa) %>%
+  summarise(medianaCeny = median(Cena.w.PLN, na.rm=TRUE),
+            medianaPrzebieg = median(Przebieg.w.km, na.rm=TRUE),
+            liczba = n()) %>%
+  arrange(liczba)
+```
+
+---
+
+# Grupowanie po dwóch zmiennych
+
+Grupować można po kilku zmiennych, w tym przypadku agregaty liczone są w każdym podzbiorze zmiennych.
+
+```{r, warning=FALSE}
+auta2012 %>%
+  filter(Rok.produkcji == 2007, Marka == "Volkswagen") %>%
+  group_by(Model, Rodzaj.paliwa) %>%
+  summarise(medianaCeny = median(Cena.w.PLN, na.rm=TRUE),
+            medianaPrzebieg = median(Przebieg.w.km, na.rm=TRUE),
+            liczba = n()) 
+```
+
+# Pakiety tidyr
+
+Będziemy pracować na danych z Eurostatu
+
+```{r, warning=FALSE, message=FALSE}
+tsdtr210 <- getEurostatRCV("tsdtr210")
+head(tsdtr210)
+```
+
+Pobrane dane są w postaci wąskiej. Kolumna `geo` określa kraj, kolumna `time` określa rok, kolumna `vehicle` rodzaj transportu, a kolumna `value` popularność danego rodzaju transportu w określonym kraju, w określonym roku.
+
+Aby przejść z postaci wąskiej do postaci szerokie, można użyć funkcji `spread()`.
+
+```{r, warning=FALSE, message=FALSE}
+library(tidyr)
+szeroka <- spread(tsdtr210, time, value)
+szeroka %>% filter(geo == "PL")
+```
+
+
+Dane z Eurostatu miały więcej wymiarów i każdy z nich może być użyty do stworzenia nowych kolumn.
+```{r, warning=FALSE, message=FALSE}
+szeroka2 <- spread(tsdtr210, geo, value)
+# wyświetlmy wiersze dla roku 2010
+szeroka2 %>% filter(time == "2010")
+```
+
+# Funkcja gather()
+
+Z postaci szerokiej do wąskiej można przejść funkcją `gather()`
+
+```{r, warning=FALSE, message=FALSE}
+szeroka %>% 
+  gather(rok, wartosc, -geo, -vehicle) %>%
+  tail()
+```
+
+Aby wyświetlić przykładowe 6 wierszy użyto tutaj funkcji `tail()` (wyświetla ostatnie sześć wierszy) ponieważ w pierwszych sześciu werszach są wartości `NA`,
+
+# Funkcja unite()
+
+Zdarza się, że wartości z kilku kolumn chcemy skleić ze sobą w jedną kolumnę.
+Można to zrobić funkcją `unite()`.
+
+```{r, warning=FALSE, message=FALSE}
+unite(tsdtr210, panstwo_rok, geo, time, sep=":") %>%
+  head()
+```
+
+# Funkcja separate()
+
+Operację odwrotną do sklejania, a więc rozcinanie kolumn można wykonać funkcją `separate()`.
+
+Przedstawimy działanie tej funkcji na przykładzie sztucznego zbioru danych z dwoma kolumnami - datą i id.
+
+```{r, warning=FALSE, message=FALSE}
+df <- data.frame(daty = c("2004-01-01", "2012-04-15", "2006-10-29", "2010-03-03"),
+                 id = 1:4)
+df
+
+separate(df, daty, c("rok", "miesiac", "dzien"), "-")
+```
+
+# Materialy
+
+Cheatsheet z RStudio
+
+http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf
+
+Materiały z Pogromców Danych
+
+http://pogromcydanych.icm.edu.pl/materials/1_przetwarzanie/17_dplyr_filter.html
+http://pogromcydanych.icm.edu.pl/materials/1_przetwarzanie/18_dplyr_sort.html
+http://pogromcydanych.icm.edu.pl/materials/1_przetwarzanie/19_dplyr_potok.html
+http://pogromcydanych.icm.edu.pl/materials/1_przetwarzanie/20_dplyr_select.html
+http://pogromcydanych.icm.edu.pl/materials/1_przetwarzanie/21_dplyr_mutate.html
+http://pogromcydanych.icm.edu.pl/materials/1_przetwarzanie/22_dplyr_summarise.html
+http://pogromcydanych.icm.edu.pl/materials/1_przetwarzanie/23_dplyr_groupby.html
+http://pogromcydanych.icm.edu.pl/materials/1_przetwarzanie/24_tidyr.html
+
+# Challenge
+
+Poniższe operacje wykonaj na bazie zbioru danych `auta2012`
+
+1. Która Marka występuje najczęściej w zbiorze danych `auta2012`?
+2. Spośród aut marki Toyota, który model występuje najczęściej.
+3. Sprawdź ile jest aut z silnikiem diesla wyprodukowanych w 2007 roku?
+4. Jakiego koloru auta mają najmniejszy medianowy przebieg?
+5. Gdy ograniczyć się tylko do aut wyprodukowanych w 2007, która Marka występuje najczęściej w zbiorze danych `auta2012`?
+6. Spośród aut marki Toyota, który model najbardziej stracił na cenie pomiędzy rokiem produkcji 2007 a 2008.
+7. Spośród aut z silnikiem diesla wyprodukowanych w 2007 roku która marka jest najdroższa?
+8. Ile jest aut z klimatyzacją?
+9. Gdy ograniczyć się tylko do aut z silnikiem ponad 100 KM, która Marka występuje najczęściej w zbiorze danych `auta2012`?
+10. Spośród aut marki Toyota, który model ma największą różnicę cen gdy porównać silniki benzynowe a diesel?
+11. Spośród aut z silnikiem diesla wyprodukowanych w 2007 roku która marka jest najtańsza?
+12. W jakiej marce klimatyzacja jest najczęściej obecna?
+13. Gdy ograniczyć się tylko do aut o cenie ponad 50 000 PLN, która Marka występuje najczęściej w zbiorze danych `auta2012`?
+14. Spośród aut marki Toyota, który model ma największy medianowy przebieg?
+15. Spośród aut z silnikiem diesla wyprodukowanych w 2007 roku który model jest najdroższy?
+16. W jakim modelu klimatyzacja jest najczęściej obecna?
+17. Gdy ograniczyć się tylko do aut o przebiegu poniżej 50 000 km o silniku diesla, która Marka występuje najczęściej w zbiorze danych `auta2012`?
+18. Spośród aut marki Toyota wyprodukowanych w 2007 roku, który model jest średnio najdroższy?
+19. Spośród aut z silnikiem diesla wyprodukowanych w 2007 roku który model jest najtańszy?
+20. Jakiego koloru auta mają największy medianowy przebieg?
+
