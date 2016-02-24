@@ -40,9 +40,9 @@ Każdy projekt będzie czterokrotnie przedstawiany z dyskusją o kierunku dalszy
 GitHub
 ------
 
-Kod wszystkich aplikacji trzymamy na GitHubie (bardzo przyjemny klient: https://www.sourcetreeapp.com/).
+Kod wszystkich aplikacji trzymamy na [GitHubie](https://github.com/pbiecek/DataProducts/tree/master/MIMUW_2016) (bardzo przyjemny klient: https://www.sourcetreeapp.com/).
 Wszystkie pomysły na zadania, zadania, zmiany umieszczamy na gihubie jako issues. 
-Do zarządzania projektem używamy waffle.
+Do zarządzania projektem używamy [waffle](https://waffle.io/pbiecek/DataProducts).
 Zadania powinny mieć oznaczonych opiekunów (przy końcowej ocenie biorę pod uwagę kto się jakimi zadaniami opiekował).
 
 
@@ -64,6 +64,8 @@ Informacja o przypisanych tam osobach będzie wykorzystywana do oceny indywidual
 
 Zespoły
 -------
+
+Każdy zespół powinien mieć nazwę, najlepiej zbudowaną tylko z łacińskich liter i cyfr (będzie ona też nazwą katalogu).
 
 Członkowie zespołu mogą mieć wiele ról i brać udział w róznych zadaniach, ale w szczególności każdy zespół powiniene określić które osoby pełnią następujące role:
 
