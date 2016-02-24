@@ -8,13 +8,13 @@ Plan spotka&#324; MIM UW:
 -------------------------
 
 * 25 II - podstawowa eksploracja, dplyr
-* 3 III - ggplot2 (1)
-* 10 III - shiny
+* 3 III - knitr, rCharts
+* 10 III - ggplot2
 
-* 17 III - USOS
-* 31 III - IBE
+* 17 III - brak zajęć
+* 31 III - IBE + USOS
 
-* 7 IV - knitr, rCharts
+* 7 IV - shiny
 
 * 14 IV - USOS
 * 21 IV - IBE
@@ -54,8 +54,8 @@ Projekty mogą być realizowane w grupach 3 osobowych, w wyjątkowych sytuacjach
 Każda grupa wybiera jeden temat i nad nim pracuje przez semestr.
 Do wyboru są:
 
-* Budowa analitycznego narzędzia dla systemu USOS
-* Budowa analitycznego narzędzia dla wyników egzaminów w szkołach średnich
+* [Budowa analitycznego narzędzia dla systemu USOS](https://github.com/pbiecek/DataProducts/tree/master/MIMUW_2016/USOS)
+* [Budowa analitycznego narzędzia dla wyników egzaminów w szkołach średnich](https://github.com/pbiecek/DataProducts/tree/master/MIMUW_2016/WynikiEgzaminacyjne)
 
 Ocenie podlega zarówno wynik działania całej grupy (końcowy projekt) jak i indywidualny wkład w jego rozwój. 
 Praca nad projektem powinna być raportowana na wafflu. 
