@@ -1,7 +1,13 @@
 Tworzenie ‘data-based products’ z programem R
 ---------------------------------------------
 
-# Motto
+# Linki
+
+[Github](https://pbiecek.gitbooks.io/przewodnik/content/Programowanie/jak_korzystac_z_serwisu_github_i_waffle.html)
+[Waffle](https://pbiecek.gitbooks.io/przewodnik/content/Programowanie/jak_korzystac_z_serwisu_waffle.html)
+[dplyr](https://rawgithub.com/pbiecek/DataProducts/master/MIMUW_2016/materialy/dplyr/dplyr.html)
+
+
 
 
 Plan spotka&#324; MIM UW:
