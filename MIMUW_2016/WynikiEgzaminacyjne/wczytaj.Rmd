@@ -7,7 +7,7 @@ output: html_document
 
 Pakiet ZPD (Zespołu Pomiaru Dydaktycznego) umożliwia pobieranie bardzo szczegółowych danych o wynikach matur, sprawdzianie 6-klasisty i egzaminie gimnazjalnym.
 
-Poniżej pokażemy jak pobierać dane maturalne, więcej informacji o pakiecie i jego mozliwościach znaleźć mozna [tutaj](http://zpd.ibe.edu.pl/).
+Poniżej pokażemy jak pobierać dane maturalne, więcej informacji o pakiecie i jego możliwościach znaleźć można [tutaj](http://zpd.ibe.edu.pl/).
 
 Zaczniemy od wczytywania danych.
 
@@ -20,7 +20,7 @@ matura <- collect(matura)
 head(matura)
 ```
 
-Mamy wyniki punktowe dla każdego ucznia na każde pytanie. Policzmy sumę punktów uzysknanych na maturze i narysujmy rozkłąd tej liczby punktów.
+Mamy wyniki punktowe dla każdego ucznia na każde pytanie. Policzmy sumę punktów uzyskanych na maturze i narysujmy rozkład tej liczby punktów.
 
 ```{r, cache=TRUE, message=FALSE, warning=FALSE}
 suma <- rowSums(matura[,5:35], na.rm=TRUE)
@@ -34,3 +34,4 @@ Więcej informacji o tym jak pobierać wskaźniki przez pakiet ZPD znaleźć mo�
 *Żródło:*
 
 Szaleniec, H., Kondratek, B., Kulon, F., Pokropek, A., Skórska, P., Świst, K., Wołodźko, T. i Żółtak, M. (2015). "Porównywalne wyniki egzaminacyjne." Warszawa: Instytut Badań Edukacyjnych.
+
