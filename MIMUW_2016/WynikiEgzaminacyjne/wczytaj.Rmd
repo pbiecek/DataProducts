@@ -1,0 +1,36 @@
+---
+title: "Pobieranie Danych przez ZPD"
+author: "Przemyslaw Biecek"
+date: "2 March 2016"
+output: html_document
+---
+
+Pakiet ZPD (Zespołu Pomiaru Dydaktycznego) umożliwia pobieranie bardzo szczegółowych danych o wynikach matur, sprawdzianie 6-klasisty i egzaminie gimnazjalnym.
+
+Poniżej pokażemy jak pobierać dane maturalne, więcej informacji o pakiecie i jego mozliwościach znaleźć mozna [tutaj](http://zpd.ibe.edu.pl/).
+
+Zaczniemy od wczytywania danych.
+
+```{r, cache=FALSE, warning=FALSE, message=FALSE}
+library(ZPD)
+src <- polacz()
+matura <- pobierz_wyniki_egzaminu(src, rodzajEgzaminu = "matura", 
+                                  czescEgzaminu = "j. polski podstawowa", 2014, TRUE)
+matura <- collect(matura)
+head(matura)
+```
+
+Mamy wyniki punktowe dla każdego ucznia na każde pytanie. Policzmy sumę punktów uzysknanych na maturze i narysujmy rozkłąd tej liczby punktów.
+
+```{r, cache=TRUE, message=FALSE, warning=FALSE}
+suma <- rowSums(matura[,5:35], na.rm=TRUE)
+hist(suma, 100, 
+     col = "grey", border = "white", main="Liczba punktów j. polski 2014",
+     xlab="", ylab="")
+```
+
+Więcej informacji o tym jak pobierać wskaźniki przez pakiet ZPD znaleźć można [tutaj](https://github.com/zozlak/ZPD/wiki/Pobieranie-warto%C5%9Bci-wska%C5%BAnik%C3%B3w).
+
+*Żródło:*
+
+Szaleniec, H., Kondratek, B., Kulon, F., Pokropek, A., Skórska, P., Świst, K., Wołodźko, T. i Żółtak, M. (2015). "Porównywalne wyniki egzaminacyjne." Warszawa: Instytut Badań Edukacyjnych.
