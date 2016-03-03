@@ -4,7 +4,6 @@
 AgresywneTeletubisie
 
 ##Sklad zespolu
------
 
 Radomir Nowacki e-mail: rnowacki@student.uw.edu.pl
 
