@@ -1,5 +1,5 @@
 ###Nazwa Zespolu
------
+
 
 AgresywneTeletubisie
 
@@ -10,7 +10,7 @@ Radomir Nowacki e-mail: rnowacki@student.uw.edu.pl
 Matuesz Chołołowicz e-mail: mc359057@students.mimuw.edu.pl
 
 ###Odpowiedzialni za poszczególne części
------
+
 
 Kontakt na zewnątrz: Radomir
 
@@ -26,6 +26,6 @@ Opieka nad dokumentacją końcową: Mateusz
 
 
 ###Tytul realizowanego tematu
------
+
 
 Budowa analitycznego narzędzia dla wyników egzaminów w szkołach średnich
