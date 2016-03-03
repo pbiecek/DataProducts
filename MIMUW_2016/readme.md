@@ -5,16 +5,14 @@ Tworzenie ‘data-based products’ z programem R
 
 [Github](https://pbiecek.gitbooks.io/przewodnik/content/Programowanie/jak_korzystac_z_serwisu_github_i_waffle.html)
 [Waffle](https://pbiecek.gitbooks.io/przewodnik/content/Programowanie/jak_korzystac_z_serwisu_waffle.html)
-[dplyr](https://rawgithub.com/pbiecek/DataProducts/master/MIMUW_2016/materialy/dplyr/dplyr.html)
-
 
 
 
 Plan spotka&#324; MIM UW:
 -------------------------
 
-* 25 II - podstawowa eksploracja, dplyr
-* 3 III - knitr, rCharts
+* 25 II - podstawowa eksploracja, [dplyr](https://rawgithub.com/pbiecek/DataProducts/master/MIMUW_2016/materialy/dplyr/dplyr.html)
+* 3 III - [knitr](https://pbiecek.gitbooks.io/przewodnik/content/Programowanie/jak_tworzyc_raporty.html), [rCharts](https://pbiecek.gitbooks.io/przewodnik/content/Wizualizacja/jak_tworzyc_interaktywne_wykresy.html), [ZPD](https://rawgit.com/pbiecek/DataProducts/master/MIMUW_2016/WynikiEgzaminacyjne/wczytaj.html)
 * 10 III - ggplot2
 
 * 17 III - brak zajęć
