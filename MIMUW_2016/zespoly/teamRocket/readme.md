@@ -1,7 +1,7 @@
-Nazwa Zespolu
+Nazwa Zespołu
 ---
 
-*Team Rocket*
+__*Team Rocket*__
 
 Skład
 ---
