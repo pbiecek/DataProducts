@@ -1,17 +1,17 @@
-Nazwa zespołu: mimkatz
+## Nazwa zespołu: mimkatz
 
-Skład zespołu: Magdalena Waśniowska, Katarzyna Herba, Marcin Kania
+## Skład zespołu: Magdalena Waśniowska, Katarzyna Herba, Marcin Kania
 
-Tytuł realizowanego tematu: Przeżywalność studentów MIMu a kursy, kierunki i roczniki
+## Tytuł realizowanego tematu: Przeżywalność studentów MIMu a kursy, kierunki i roczniki
 
-Kontakt na zewnątrz: Marcin Kania
+## Kontakt na zewnątrz: Marcin Kania
 
-Specyfikacja wymagań:
+## Specyfikacja wymagań:
 
-Opieka nad kodem:
+## Opieka nad kodem:
 
-Opieka nad częścią analityczną:
+## Opieka nad częścią analityczną:
 
-Opieka nad częścią wizualną:
+## Opieka nad częścią wizualną:
 
-Opieka nad dokumentacją końcową:
+## Opieka nad dokumentacją końcową:
