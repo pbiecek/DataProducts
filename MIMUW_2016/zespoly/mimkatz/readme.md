@@ -1,5 +1,5 @@
 ## Nazwa zespołu:
-** mimkatz
+### mimkatz
 
 ## Skład zespołu: 
 * Magdalena Waśniowska
