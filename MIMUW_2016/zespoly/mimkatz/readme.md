@@ -1,22 +1,22 @@
-## Nazwa zespołu:
-# mimkatz
+### Nazwa zespołu:
+mimkatz
 
-## Skład zespołu: 
+### Skład zespołu: 
 * Magdalena Waśniowska
 * Katarzyna Herba
 * Marcin Kania
 
-## Tytuł realizowanego tematu:
+### Tytuł realizowanego tematu:
 
-## Kontakt na zewnątrz: 
+### Kontakt na zewnątrz: 
 Marcin Kania
 
-## Specyfikacja wymagań:
+### Specyfikacja wymagań:
 
-## Opieka nad kodem:
+### Opieka nad kodem:
 
-## Opieka nad częścią analityczną:
+### Opieka nad częścią analityczną:
 
-## Opieka nad częścią wizualną:
+### Opieka nad częścią wizualną:
 
-## Opieka nad dokumentacją końcową:
+### Opieka nad dokumentacją końcową:
