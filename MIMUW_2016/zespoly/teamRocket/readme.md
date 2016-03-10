@@ -15,14 +15,15 @@ Role
 ---
 
 * Kontakt na zewnątrz: Adrianna
-* Specyfikacja wymagań: 
+* Specyfikacja wymagań: Adrianna
 * Opieka nad kodem: Piotr
-* Opieka nad częścią analityczną: 
-* Opieka nad częścią wizualną: 
-* Opieka nad dokumentacją końcową: 
+* Opieka nad częścią analityczną: Mateusz 
+* Opieka nad częścią wizualną: Bartek
+* Opieka nad dokumentacją końcową: Mateusz
 
 
 Temat
 ---
 
-N/A
+Porównanie wyników matur ze szkół ponadgimnazjalnych w danym rejonie pod kątem rekrutacji na wybrane kierunki studiów.
+
