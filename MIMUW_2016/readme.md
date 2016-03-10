@@ -13,7 +13,7 @@ Plan spotka&#324; MIM UW:
 
 * 25 II - podstawowa eksploracja, [dplyr](https://rawgithub.com/pbiecek/DataProducts/master/MIMUW_2016/materialy/dplyr/dplyr.html)
 * 3 III - [knitr](https://pbiecek.gitbooks.io/przewodnik/content/Programowanie/jak_tworzyc_raporty.html), [rCharts](https://pbiecek.gitbooks.io/przewodnik/content/Wizualizacja/jak_tworzyc_interaktywne_wykresy.html), [ZPD](https://rawgit.com/pbiecek/DataProducts/master/MIMUW_2016/WynikiEgzaminacyjne/wczytaj.html)
-* 10 III - ggplot2
+* 10 III - [ggplot2](https://pbiecek.gitbooks.io/przewodnik/content/Analiza/jak_tworzyc_wykresy_ggplot2.html)
 
 * 17 III - brak zajęć
 * 31 III - IBE + USOS
