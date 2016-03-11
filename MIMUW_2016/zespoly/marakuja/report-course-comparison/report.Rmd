@@ -1,0 +1,29 @@
+---
+title: "Course comparison"
+author: "marakuja"
+date: "10 marca 2016"
+output: html_document
+---
+
+
+```{r,echo=FALSE,messages=FALSE,include=FALSE}
+library(dplyr)
+get_comparison_points <- function(group1, group2) {
+  data.frame(grade1=c("2", "5", "2", "3", "5!", "3.5"), grade2=c("2", "3", "4", "3", "2", "5!"))
+}
+
+group1 = c("WPI", "WPF")
+group2 = c("PMAT")
+
+library(ggplot2)
+library(ggrepel)
+points <- get_comparison_points(group1, group2)
+```
+
+Group 1: `r group1`
+
+Group 2: `r group2`
+
+```{r, echo=FALSE}
+ggplot(points, aes(x=grade1, y=grade2)) + geom_point()
+```
