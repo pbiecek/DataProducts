@@ -1,0 +1,42 @@
+---
+title: "Database"
+output: html_document
+---
+
+
+```{r,echo=FALSE,messages=FALSE,include=FALSE}
+library(dplyr)
+library(sqldf)
+
+path <- "oceny.csv"
+
+usos_dataset <- function(){
+  tbl_df(read.csv.sql(path,
+                      "select * from file where OCENA_WARTOSC between 2 and 6"))
+}
+
+filter_subjects <- function(dataset, group){
+  dataset %>%
+    filter(PRZ_KOD %in% group) %>%
+    group_by(OS_ID)
+}
+
+get_comparison_points <- function(dataset, group1, group2){
+  grades1 <- filter_subjects(dataset, group1) %>%
+    summarise(group1_mean = mean(OCENA_WARTOSC, na.rm=TRUE))
+  grades2 <- filter_subjects(dataset, group2) %>%
+    summarise(group2_mean = mean(OCENA_WARTOSC, na.rm=TRUE))
+  results <- merge(grades1, grades2)
+}
+
+group1 = c("1000-211aWPI", "1000-214bWWW")
+group2 = c("1000-211bPM")
+usos_dump <- usos_dataset()
+points <-get_comparison_points(usos_dump, group1, group2)
+
+```
+
+Średnie ocen z wybranych grup przedmiotów
+```{r,eval=TRUE,echo=FALSE}
+points
+```
