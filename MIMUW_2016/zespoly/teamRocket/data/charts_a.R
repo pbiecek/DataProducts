@@ -50,8 +50,9 @@ uksford_classify <- uksford_classify %>% rowwise() %>% mutate(uksford_wynik =
 
 
 mimuw_best_150 <- mimuw_classify %>% arrange(desc(mimuw_wynik)) %>% head(150)
+
 # Zestawienie podstawowej matury z polskiego do ogolnego wyniku na mimuw dla 150 najlepszych uczniow
-# ggplot(mimuw_best_150, aes(x=mimuw_wynik, y=p_pl)) + geom_point() + stat_smooth()
+ggplot(mimuw_best_150, aes(x=mimuw_wynik, y=p_pl)) + geom_point() + stat_smooth()
 
 # Zestawienie rozszerzonej matury z angielskiego do ogolnego wyniku na mimuw dla 150 najlepszyh uczniow
 # ggplot(mimuw_best_150, aes(x=mimuw_wynik, y=r_ang)) + geom_point()
@@ -59,8 +60,27 @@ mimuw_best_150 <- mimuw_classify %>% arrange(desc(mimuw_wynik)) %>% head(150)
 mimuw_best_avg <- mimuw_classify %>% group_by(id_szkoly) %>%
                   summarise(median_score = median(mimuw_wynik)) %>%
                   arrange(desc(median_score)) %>%
-                  head(5) %>% merge(mimuw_classify, by = "id_szkoly");
+                  head(5) %>% merge(mimuw_classify, by = "id_szkoly")
+
+# Zamiana id_szkoly z typu numeric na character
+mimuw_best_avg$id_szkoly <- as.character(mimuw_best_avg$id_szkoly)
 
 # Rozklad wynikow poszczegolnych matur dla 5 najlepszych szkol
-ggplot(mimuw_best_avg, aes(x = id_szkoly, y = mimuw_wynik, group=id_szkoly, color=id_szkoly, fill=id_szkoly)) +
-  geom_dotplot(binaxis = "y", stackdir = "center")
+# Problem, jak dla jednej szkoly mamy tylko jednego ucznia - wtedy wykres violin sie nie pokazuje
+# ggplot(mimuw_best_avg, aes(x = id_szkoly, y = mimuw_wynik, group=id_szkoly, color=id_szkoly)) +
+#  geom_violin() + geom_jitter(height = 0)
+
+# Zestawienie podstawowej matury z polskiego do ogolnego wyniku na mimuw dla uczniow w 5 najlepszych szkolach
+# + statystyka
+#ggplot(mimuw_best_avg, aes(x = mimuw_wynik, y = p_pl, color = id_szkoly)) +
+#  stat_density2d(h=c(10,10), color="grey") + geom_point(size = 1.3)
+
+
+
+# Zestawienie rozszerzonej matury z ang do rozszerzonej matury z mat dla uczniow w 5 najlepszych szkolach
+# TODO na jednym wykresie powinny byc czerwone kropki=uczniowie danej szkoly, szare=uczniowie innych szkol 
+#ggplot(na.omit(mimuw_best_avg), aes(x = r_ang, y = r_mat)) +
+#  stat_ellipse(color="red4")+
+#  geom_point(data = mimuw_best_avg[,-5],size = 1,color = "grey") +
+#  geom_point(size = 2, color = "red") + 
+#  facet_wrap(~id_szkoly)
