@@ -1,29 +1,49 @@
 ---
 title: "Course comparison"
 author: "marakuja"
-date: "10 marca 2016"
+date: "30 marca 2016"
 output: html_document
 ---
 
 
 ```{r,echo=FALSE,messages=FALSE,include=FALSE}
 library(dplyr)
-get_comparison_points <- function(group1, group2) {
-  data.frame(grade1=c("2", "5", "2", "3", "5!", "3.5"), grade2=c("2", "3", "4", "3", "2", "5!"))
+library(sqldf)
+library(ggplot2)
+
+path <- "oceny.csv"
+
+usos_dataset <- function(){
+  tbl_df(read.csv.sql(path,
+                      "select * from file where OCENA_WARTOSC between 2 and 6"))
 }
 
-group1 = c("WPI", "WPF")
-group2 = c("PMAT")
+filter_subjects <- function(dataset, group){
+  dataset %>%
+    filter(PRZ_KOD %in% group) %>%
+    group_by(OS_ID)
+}
 
-library(ggplot2)
-library(ggrepel)
-points <- get_comparison_points(group1, group2)
+get_comparison_points <- function(dataset, group1, group2){
+  grades1 <- filter_subjects(dataset, group1) %>%
+    summarise(group1_mean = mean(OCENA_WARTOSC, na.rm=TRUE))
+  grades2 <- filter_subjects(dataset, group2) %>%
+    summarise(group2_mean = mean(OCENA_WARTOSC, na.rm=TRUE))
+  results <- merge(grades1, grades2)
+}
+
+group1 = c("1000-211aWPI", "1000-214bWWW")
+group2 = c("1000-211bPM")
+usos_dump <- usos_dataset()
+points <-get_comparison_points(usos_dump, group1, group2)
+
 ```
 
 Group 1: `r group1`
 
 Group 2: `r group2`
 
-```{r, echo=FALSE}
-ggplot(points, aes(x=grade1, y=grade2)) + geom_point()
+
+```{r,eval=TRUE,echo=FALSE}
+ggplot(points, aes(x=group1_mean, y=group2_mean)) + stat_bin_2d(bins=6)
 ```
