@@ -13,11 +13,16 @@ Matura a studia: Czy wyniki z matury mają istotny wpływ na przeżywalność st
 Marcin Kania
 
 ### Specyfikacja wymagań:
+Katarzyna Herba
 
 ### Opieka nad kodem:
+Marcin Kania
 
 ### Opieka nad częścią analityczną:
+Magdalena Waśniowska
 
 ### Opieka nad częścią wizualną:
+Katarzyna Herba
 
 ### Opieka nad dokumentacją końcową:
+Marcin Kania
