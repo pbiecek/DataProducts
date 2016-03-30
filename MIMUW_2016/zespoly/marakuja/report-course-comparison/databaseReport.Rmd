@@ -7,6 +7,7 @@ output: html_document
 ```{r,echo=FALSE,messages=FALSE,include=FALSE}
 library(dplyr)
 library(sqldf)
+library(ggplot2)
 
 path <- "oceny.csv"
 
@@ -39,4 +40,5 @@ points <-get_comparison_points(usos_dump, group1, group2)
 Średnie ocen z wybranych grup przedmiotów
 ```{r,eval=TRUE,echo=FALSE}
 points
+ggplot(points, aes(x=group1_mean, y=group2_mean)) + stat_bin_2d(bins=6)
 ```
