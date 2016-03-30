@@ -21,4 +21,4 @@ Janusz Marcinkiewicz: <jm360338@students.mimuw.edu.pl>
 
 ## Temat
 
-ToBeAnnounced
+Określenie wyników wykładowcy lub ćwiczeniowca poprzez przedstawienie statystyk na temat: zdawalności, ilości warunków, ilości odpadnieć, rozkładu ocen i tendencji w poszczególnych latach.
