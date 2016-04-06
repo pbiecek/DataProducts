@@ -18,7 +18,7 @@ Plan spotka&#324; MIM UW:
 * 17 III - brak zajęć
 * 31 III - IBE + USOS
 
-* 7 IV - shiny
+* 7 IV - [shiny](https://pbiecek.gitbooks.io/przewodnik/content/Programowanie/jak_tworzyc_aplikajce.html)
 
 * 14 IV - USOS
 * 21 IV - IBE
