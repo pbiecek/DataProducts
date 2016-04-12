@@ -1,10 +1,9 @@
 library(shiny)
-library(PogromcyDanych)
 
 source("input.R")
 
-nazwyPrzedmiotow <- get_course_names(usos_dump)[
-  grep("^1000", get_course_names(usos_dump))]
+nazwyPrzedmiotow <- get_course_names(connection)[
+  grep("^1000", get_course_names(connection))]
   
 shinyUI(fluidPage(
   titlePanel("Porównanie występowania średnich ocen z wybranych grup przedmiotów"),
