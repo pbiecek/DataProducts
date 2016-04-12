@@ -22,6 +22,10 @@ avg_grades_group_statement <- function(group) {
 }
 
 get_comparison_points <- function(connection, group1, group2){
+    validate(
+        need(length(group1) > 0 & length(group2) > 0,
+             'Please select at least one subject in each group')
+    )
     avg_grades_groups_stmt <- paste(
         "select g1.osoba, g1.srednia as avg_group_1, g2.srednia as avg_group_2
         from (", avg_grades_group_statement(group1), ") g1
