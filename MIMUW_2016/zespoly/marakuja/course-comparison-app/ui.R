@@ -12,7 +12,7 @@ shinyUI(fluidPage(
       selectInput(inputId = "przedmiot1", 
                   label = "Wybierz grupę 1 do analizy",
                   choices = nazwyPrzedmiotow,
-                  selected = c("1000-211aWPI", "1000-211bPM"),
+                  selected = c("1000-211bWPI", "1000-211bPM"),
                   multiple = TRUE
                   ),
       selectInput(inputId = "przedmiot2", 
