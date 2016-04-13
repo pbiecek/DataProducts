@@ -1,0 +1,31 @@
+@import url("https://fonts.googleapis.com/css?family=Inconsolata:400,500,700&subset=latin,latin-ext");
+@import url("https://fonts.googleapis.com/css?family=Source+Code+Pro:400,300,700,900&subset=latin,latin-ext");
+@import url("https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300,700,900&subset=latin,latin-ext");
+@import url("https://fonts.googleapis.com/css?family=Fjord+One");
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,400,700,400italic,700italic,300italic&subset=latin,latin-ext");
+
+.control-label {
+  font-size: 1rem !important;
+  margin-top: 25px;
+  margin-bottom: 0px;
+}
+
+.col-sm-4 {
+  width: 28%;
+}
+
+.col-sm-8 {
+  width: 72%;
+}
+
+.well {
+  font-family: "Open Sans", sans-serif;
+  font-size: 0.9rem;
+  background-color: #ffffff;
+  border-radius: 5px;
+  border-top: 3px solid #e7c94c;
+}
+
+.option {
+  padding: 10px 12px;
+}
