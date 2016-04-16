@@ -11,6 +11,8 @@ init <<- function() {
   szkoly$gmina <<- character(0)
   szkoly$powiat <<- character(0)
   szkoly$wojewodztwo <<- character(0)
+  szkoly$nazwa <<- character(0)
+  szkoly$typ <<- character(0)
 
   typy_testow <<- data.frame()
   typy_testow$id <<- integer(0)
@@ -21,12 +23,12 @@ init <<- function() {
   oceny_szkol <<- data.frame()
   oceny_szkol$id <<- integer(0)
   oceny_szkol$id_testu <<- integer(0)
-  oceny_szkol$sredni_wynik <<- integer(0)
+  oceny_szkol$sredni_wynik <<- numeric(0)
 
   wyniki_szkol <<- data.frame()
   wyniki_szkol$id <<- integer(0)
   wyniki_szkol$id_testu <<- integer(0)
-  wyniki_szkol$sredni_wynik <<- integer(0)
+  wyniki_szkol$sredni_wynik <<- numeric(0)
   wyniki_szkol$id_kryterium <<- character(0)
 
   kryteria <<- data.frame()
