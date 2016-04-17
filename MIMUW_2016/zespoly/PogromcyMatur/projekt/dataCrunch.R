@@ -8,14 +8,14 @@ zapisz_male_dane <- function() {
 }
 
 zapisz_duze_dane() <- function() {
-  save(oceny_szkol, wyniki_szkol, file="bigData.RData")
+  save(oceny_szkol, wyniki_szkol, uczniowie_szkoly, oceny_uczniow, file="bigData.RData")
 }
 
 przeladuj_regiony <- function() {
   src = polacz()
   reg = pobierz_szkoly(src) %>%
         select(gmina_szkoly, powiat_szkoly, wojewodztwo_szkoly) %>%
-        unique(gmina_szkoly, powiat_szkoly, wojewodztwo_szkoly) %>%
+        distinct(select(gmina_szkoly, powiat_szkoly, wojewodztwo_szkoly)) %>%
         rename(gmina = gmina_szkoly, powiat = powiat_szkoly, wojewodztwo = wojewodztwo_szkoly) %>%
         collect() %>%
         as.data.frame()
@@ -87,19 +87,26 @@ zaladuj_nowe_wyniki_szkol <- function(rok) {
   uczszk = pobierz_dane_uczniowie_testy(src) %>%
            join(testy) %>%
            select(id_obserwacji, id_szkoly) %>%
-           unique(id_obserwacji, id_szkoly) %>%
+           distinct(select(id_obserwacji, id_szkoly)) %>%
            collect()
+
+  uczniowie_szkoly <<- rbind(uczniowie_szkoly, uczszk) %>%
+                       distinct(id_obserwacji, id_szkoly)
 
   oceny = dane %>%
           zsumuj_punkty() %>%
-          select(id_obserwacji, id_testu, wynik) %>%
-          join(uczszk) %>%
+          select(id_obserwacji, id_testu, wynik)
+
+  oceny_uczniow <<- rbind(oceny_uczniow, oceny)
+
+  nowe_wyniki = join(oceny_uczniow, uczszk) %>%
           group_by(id_testu, id_szkoly) %>%
           summarise(sredni_wynik = avg(wynik)) %>%
           rename(id = id_szkoly) %>%
           as.data.frame()
 
-  oceny_szkol <<- rbind(oceny_szkol, oceny)
+  oceny_szkol <<- rbind(oceny_szkol, nowe_wyniki) %>%
+                  distinct(select(id_szkoly, id_testu))
 }
 
 zaladuj_duze_dane_rok <- function(rok) {
