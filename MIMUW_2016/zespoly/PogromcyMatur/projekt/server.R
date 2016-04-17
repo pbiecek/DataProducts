@@ -11,17 +11,22 @@ library(ZPD)
 library(ggplot2)
 
 shinyServer(function(input, output) {
-  
-  output$distPlot <- renderPlot({
-    
-    # generate and plot an rnorm distribution with the requested
-    # number of observations
-    data <- as.data.frame(t(szkola_uczniowie(input$gmina, input$rok, input$typ, input$sprrdz, input$sprcz)))
-    ggplot(data, aes(x=rownames(data), y=V1))
-    
+  tmp = as.list(1:7)
+  names(tmp) = unique(wyniki_szkol$id_kryterium)
+  kryt = as.integer(lapply(wyniki_szkol$id_kryterium, function(x) tmp[[x]]))
+  kolory = c('red', 'purple', 'blue')
+  output$kryteriaPlot <- renderPlot({
+    plot(
+      x = kryt,
+      y = wyniki_szkol$sredni_wynik,
+      col = kolory[wyniki_szkol$id], type="p",
+      ylab = 'Ilość punktów',
+      main = 'Porównanie średnich wyników szkół za poszczególne kryteria',
+      xlab = 'Numer kryterium',
+      )
   })
   
 })
 
-load("bigData.RData")
-load("smallData.RData")
+load("test/bigData.RData")
+load("test/smallData.RData")
