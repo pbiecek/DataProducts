@@ -70,7 +70,9 @@ ggplot(mimuw_top5, aes(x = id_szkoly, y = mimuw_wynik, group=id_szkoly, fill=naz
         axis.ticks.x=element_blank()) +
   geom_violin() + geom_hline(aes(yintercept=85), size=0.8) +
   geom_hline(aes(yintercept=72), linetype=2, size=0.8) +
+  theme(legend.text = element_text(size = 7.6)) + 
   expand_limits(y=c(15, 100))
+  
 
 # Zestawienie podstawowej matury z polskiego do ogolnego wyniku na mimuw dla uczniow w 5 najlepszych szkolach
 # + statystyka
