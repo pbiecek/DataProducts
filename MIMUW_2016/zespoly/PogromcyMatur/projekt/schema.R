@@ -19,6 +19,7 @@ init <<- function() {
   typy_testow$rodzaj_egzaminu <<- character(0)
   typy_testow$czesc_egzaminu <<- character(0)
   typy_testow$rok <<- integer(0)
+  typy_testow$arkusz <<- character(0)
 
   oceny_szkol <<- data.frame()
   oceny_szkol$id <<- integer(0)
