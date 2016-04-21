@@ -18,7 +18,7 @@ scores_aggregate <- function(res){
   return("1%-20%")
 }
 
-get_table_for_results_of_school <- function(name, tbl,subjects){
+get_table_for_results_of_school <- function(name, tbl, subjects){
   tbl <- filter(tbl, id_szkoly == name)
   len <- dim(tbl)[2]
   wid <- dim(tbl)[1]
