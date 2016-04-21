@@ -21,14 +21,14 @@ Plan spotka&#324; MIM UW:
 * 7 IV - [shiny](https://pbiecek.gitbooks.io/przewodnik/content/Programowanie/jak_tworzyc_aplikajce.html)
 
 * 14 IV - USOS
-* 21 IV - IBE
+* 21 IV - awaryjnie - ca/arules [lab2](https://github.com/pbiecek/StatystykaII/blob/master/MIMUW_2016/materialy/lab6.Rmd)
 
-* 28 IV - tworzenie pakietów
+* 28 IV - IBE
 
-* 5 V - IBE
-* 12 V - USOS
+* 5 V - tworzenie pakietów
+* 12 V - IBE
 
-* 19 V - openCPU
+* 19 V - USOS / openCPU
 
 * 2 VI - IBE - końcowe prezentacje
 * 16 VI - USOS - końcowe prezentacje
