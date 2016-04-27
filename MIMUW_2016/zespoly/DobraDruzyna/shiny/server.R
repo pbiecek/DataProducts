@@ -8,8 +8,17 @@ shinyServer(function(input, output) {
     if (input$rodzajWskaznika == "wydatki")
       wskaznik <- arrange(polski_srednia_wydatki, nazwa_gminy)
     
-    if (input$rodzajWskaznika == "bezrobocie")
+    else if (input$rodzajWskaznika == "bezrobocie")
       wskaznik <- arrange(polski_srednia_bezrobocie, nazwa_gminy)
+    
+    else if (input$rodzajWskaznika == "biblioteki")
+      wskaznik <- arrange(polski_srednia_biblioteki, nazwa_gminy)
+    
+    else if (input$rodzajWskaznika == "czytelnicy")
+      wskaznik <- arrange(polski_srednia_czytelnicy, nazwa_gminy)
+    
+    else if (input$rodzajWskaznika == "wypozyczenia")
+      wskaznik <- arrange(polski_srednia_wypozyczenia, nazwa_gminy)
   })
    
   output$listaGmin <- renderUI({ 
@@ -24,23 +33,36 @@ shinyServer(function(input, output) {
     wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
     
-    
     if (input$rodzajWskaznika == "wydatki") {
       wykres <- ggplot(wskaznikWybranyRok, aes(suma_na_licealiste, sredni_wynik_matury)) +
-        ylab("Średni wynik matury") +
-        xlab("Suma trzyletnich wydatków na jednego ucznia") +
-        geom_point(colour = "lightblue")
+        xlab("Suma trzyletnich wydatków na jednego ucznia")
     }
     
-    if (input$rodzajWskaznika == "bezrobocie") {
+    else if (input$rodzajWskaznika == "bezrobocie") {
       wykres <- ggplot(wskaznikWybranyRok, aes(Wartosc, sredni_wynik_matury)) +
-        ylab("Średni wynik matury") +
-        xlab("Liczba bezrobotnych na 1000 osób w wieku produkcyjnym") +
-        geom_point(colour = "lightblue")
+        xlab("Liczba bezrobotnych na 1000 osób w wieku produkcyjnym")
     }
     
-    wykres <- wykres + geom_point(data = zaznaczonaGmina, colour = "#D55E00", size = 5) +
-              geom_text(data = zaznaczonaGmina, label = input$gmina, vjust = 2, colour = "#D55E00", size = 7)
+    else if (input$rodzajWskaznika == "biblioteki") {
+      wykres <- ggplot(wskaznikWybranyRok, aes(Wartosc, sredni_wynik_matury)) +
+        xlab("Liczba mieszkańców na 1 bibliotekę")
+    }
+    
+    else if (input$rodzajWskaznika == "czytelnicy") {
+      wykres <- ggplot(wskaznikWybranyRok, aes(Wartosc, sredni_wynik_matury)) +
+        xlab("Liczba czytelników na 1000 mieszkańców")
+    }
+    
+    else if (input$rodzajWskaznika == "wypozyczenia") {
+      wykres <- ggplot(wskaznikWybranyRok, aes(Wartosc, sredni_wynik_matury)) +
+        xlab("Liczba wypożyczonych książek na 1 czytelnika")
+    }
+    
+    wykres <- wykres + geom_point(colour = "lightblue") +
+      geom_point(data = zaznaczonaGmina, colour = "#D55E00", size = 5) +
+      geom_text(data = zaznaczonaGmina, label = input$gmina, vjust = 2,
+                colour = "#D55E00", size = 7) +
+      ylab("Średni wynik matury")
     
     wykres
   })
@@ -59,7 +81,8 @@ shinyServer(function(input, output) {
       zaznaczonaGmina <- subset(wskaznikWybranyRok, Nazwa == input$gmina)
       
       base <- ggplot(wskaznikWybranyRok, aes(Wartosc)) +
-        geom_area(aes(y = ..count..), stat = "bin", binwidth = 5, colour = "lightblue", fill = "lightblue")
+        geom_area(aes(y = ..count..), stat = "bin", binwidth = 5, colour = "lightblue", 
+                  fill = "lightblue")
       
       pl <- base +
         geom_vline(xintercept = zaznaczonaGmina$Wartosc, linetype = "dashed", color = "#D55E00", size = 0.8) +
@@ -67,6 +90,58 @@ shinyServer(function(input, output) {
         geom_text(aes(zaznaczonaGmina$Wartosc, mean(range(ggplot_build(base)$data[[1]]$count)), 
           label = zaznaczonaGmina$Wartosc), colour = "black", angle = 90, vjust = 1, nudge_x = 1)
     }
+    
+    else if (input$rodzajWskaznika == "biblioteki") {
+      wskaznikWybranyRok <- filter(ludnosc_na_biblioteke_bez_dupl, Rok == input$rok)
+      zaznaczonaGmina <- subset(wskaznikWybranyRok, Nazwa == input$gmina)
+      
+      base <- ggplot(wskaznikWybranyRok, aes(Wartosc)) +
+        geom_area(aes(y = ..count..), stat = "bin", binwidth = 500, colour = "lightblue", 
+                  fill = "lightblue")
+      
+      pl <- base +
+        geom_vline(xintercept = zaznaczonaGmina$Wartosc, linetype = "dashed", color = "#D55E00", size = 0.8) +
+        labs(x = "Liczba mieszkańców na 1 bibliotekę", y = "Liczba gmin") +
+        geom_text(aes(zaznaczonaGmina$Wartosc, mean(range(ggplot_build(base)$data[[1]]$count)),
+                    label = zaznaczonaGmina$Wartosc), colour = "black", angle = 90, vjust = 1,
+                    nudge_x = 200, size = 5)
+    }
+    
+    else if (input$rodzajWskaznika == "czytelnicy") {
+      wskaznikWybranyRok <- filter(czytelnicy_bez_dupl, Rok == input$rok)
+      zaznaczonaGmina <- subset(wskaznikWybranyRok, Nazwa == input$gmina)
+      
+      base <- ggplot(wskaznikWybranyRok, aes(Wartosc)) +
+        geom_area(aes(y = ..count..), stat = "bin", binwidth = 15, colour = "lightblue",
+                  fill = "lightblue")
+      
+      pl <- base +
+        geom_vline(xintercept = zaznaczonaGmina$Wartosc, linetype = "dashed", color = "#D55E00",
+                   size = 0.6) +
+        labs(x = "Liczba czytelników na 1000", y = "Liczba gmin") +
+        geom_text(aes(zaznaczonaGmina$Wartosc, mean(range(ggplot_build(base)$data[[1]]$count)), 
+                      label = zaznaczonaGmina$Wartosc), colour = "black", angle = 90, vjust = 1, 
+                      nudge_x = 5, size = 5)
+    }
+    
+    else if (input$rodzajWskaznika == "wypozyczenia") {
+      wskaznikWybranyRok <- filter(wypozyczenia_bez_dupl, Rok == input$rok)
+      zaznaczonaGmina <- subset(wskaznikWybranyRok, Nazwa == input$gmina)
+      
+      base <- ggplot(wskaznikWybranyRok, aes(Wartosc)) +
+        geom_area(aes(y = ..count..), stat = "bin", binwidth = 1.5, colour = "lightblue", 
+                  fill = "lightblue")
+      
+      pl <- base +
+        geom_vline(xintercept = zaznaczonaGmina$Wartosc, linetype = "dashed", color = "#D55E00", size = 0.6) +
+        labs(x = "Liczba wypożyczonych książek na 1 czytelnika", y = "Liczba gmin") +
+        geom_text(aes(zaznaczonaGmina$Wartosc, mean(range(ggplot_build(base)$data[[1]]$count)), 
+                      label = zaznaczonaGmina$Wartosc), colour = "black", angle = 90, vjust = 1,
+                      nudge_x = 1, size = 5)
+      
+      
+    }
+    
     pl
   })
   

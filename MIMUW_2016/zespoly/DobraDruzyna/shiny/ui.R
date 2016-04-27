@@ -10,9 +10,9 @@ shinyUI(fluidPage(
                 label = "Wybierz wskaźnik do porównania",
                 choices = c("Wydatki gminy na licealistę przez 3 lata" = "wydatki",
                             "Liczba komputerów na licealistę" = "komputery",
-                            "Liczba bibliotek na 1000 mieszkańców" = "biblioteki",
+                            "Liczba mieszkańców na 1 bibliotekę" = "biblioteki",
                             "Liczba czytelników bibliotek na 1000 mieszkańców" = "czytelnicy",
-                            "Liczba wypożyczeń na 1 czytelnika" = "wypożyczenia",
+                            "Liczba wypożyczeń na 1 czytelnika" = "wypozyczenia",
                             "Bezrobocie" = "bezrobocie"),
                 selected = "bezrobocie"),
   
