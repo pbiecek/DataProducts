@@ -9,8 +9,12 @@ shinyUI(fluidPage(
     selectInput(inputId = "rodzajWskaznika",
                 label = "Wybierz wskaźnik do porównania",
                 choices = c("Wydatki gminy na licealistę przez 3 lata" = "wydatki",
-                            "Liczba komputerów na licealistę" = "komputery"),
-                selected = "wydatki"),
+                            "Liczba komputerów na licealistę" = "komputery",
+                            "Liczba bibliotek na 1000 mieszkańców" = "biblioteki",
+                            "Liczba czytelników bibliotek na 1000 mieszkańców" = "czytelnicy",
+                            "Liczba wypożyczeń na 1 czytelnika" = "wypożyczenia",
+                            "Bezrobocie" = "bezrobocie"),
+                selected = "bezrobocie"),
   
       htmlOutput("listaGmin"),
   
@@ -29,9 +33,12 @@ shinyUI(fluidPage(
     
   mainPanel(
     tabsetPanel(
-      tabPanel("Wykres", 
-               h3("Porównianie wyników z matury do wybranego wskaźnika"), 
+      tabPanel("Wykres porówujący", 
+               h3("Porównanie wyników z matury do wybranego wskaźnika"), 
                plotOutput("wykres")),
+      tabPanel("Wykres dla wskaźnika", 
+                 h3("Wartość wskaźnika w porównaniu do innych gmin "), 
+                 plotOutput("wykres2")),
       tabPanel("Opis",
                h3("Opis porównania"),
                verbatimTextOutput("opis")
