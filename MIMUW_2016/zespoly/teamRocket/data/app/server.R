@@ -5,6 +5,7 @@ library(sqldf)
 library(tidyr)
 library(ggplot2)
 library(rCharts)
+library(ca)
 
 # ~~~~~~~~~~~~~~~~~~~~~~UWAGA~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Zmiana przelicznika. Zamiast punktow trzeba liczyc procenty - na razie tylko dla mimuw
@@ -49,41 +50,128 @@ uksford_classify <- uksford_classify %>% rowwise() %>% mutate(wynik =
 )
 
 
-shinyServer(function(input, output) {
-  output$wykresSlupkowy = renderPrint({
-    if (input$wybranaUczelnia == 'UW') {
-      classify <- mimuw_classify
-      if (input$wybranyKierunek == 'Matematyka')
-        prog <- 72
-      else if (input$wybranyKierunek == 'Informatyka')
-        prog <- 85
-      else
-        prog <- 0
-    } else if (input$wybranaUczelnia == 'PW') {
-      classify <- mini_classify
-      if (input$wybranyKierunek == 'Matematyka')
-        prog <- 70
-      else if (input$wybranyKierunek == 'Informatyka')
-        prog <- 80
-      else
-        prog <- 0
-    } else if (input$wybranaUczelnia == 'UJ') {
-      classify <- uj_classify
-      if (input$wybranyKierunek == 'Matematyka')
-        prog <- 70
-      else if (input$wybranyKierunek == 'Informatyka')
-        prog <- 80
-      else
-        prog <- 0
-    } else if (input$wybranaUczelnia == 'UKSW') {
-      classify <- uksford_classify
-      if (input$wybranyKierunek == 'Matematyka')
-        prog <- 70
-      else if (input$wybranyKierunek == 'Informatyka')
-        prog <- 80
-      else
-        prog <- 0
-    }
+
+
+get_classify <- function(wybranaUczelnia, wybranyKierunek) {
+  if (wybranaUczelnia == 'UW') {
+    classify <- mimuw_classify
+    if (wybranyKierunek == 'Matematyka')
+      prog <- 72
+    else if (wybranyKierunek == 'Informatyka')
+      prog <- 85
+    else
+      prog <- 0
+  } else if (wybranaUczelnia == 'PW') {
+    classify <- mini_classify
+    if (wybranyKierunek == 'Matematyka')
+      prog <- 70
+    else if (wybranyKierunek == 'Informatyka')
+      prog <- 80
+    else
+      prog <- 0
+  } else if (wybranaUczelnia == 'UJ') {
+    classify <- uj_classify
+    if (wybranyKierunek == 'Matematyka')
+      prog <- 70
+    else if (wybranyKierunek == 'Informatyka')
+      prog <- 80
+    else
+      prog <- 0
+  } else if (wybranaUczelnia == 'UKSW') {
+    classify <- uksford_classify
+    if (wybranyKierunek == 'Matematyka')
+      prog <- 70
+    else if (wybranyKierunek == 'Informatyka')
+      prog <- 80
+    else
+      prog <- 0
+  }
+  return(classify)
+}
+
+get_prog <- function(wybranaUczelnia, wybranyKierunek) {
+  if (wybranaUczelnia == 'UW') {
+    classify <- mimuw_classify
+    if (wybranyKierunek == 'Matematyka')
+      prog <- 72
+    else if (wybranyKierunek == 'Informatyka')
+      prog <- 85
+    else
+      prog <- 0
+  } else if (wybranaUczelnia == 'PW') {
+    classify <- mini_classify
+    if (wybranyKierunek == 'Matematyka')
+      prog <- 70
+    else if (wybranyKierunek == 'Informatyka')
+      prog <- 80
+    else
+      prog <- 0
+  } else if (wybranaUczelnia == 'UJ') {
+    classify <- uj_classify
+    if (wybranyKierunek == 'Matematyka')
+      prog <- 70
+    else if (wybranyKierunek == 'Informatyka')
+      prog <- 80
+    else
+      prog <- 0
+  } else if (wybranaUczelnia == 'UKSW') {
+    classify <- uksford_classify
+    if (wybranyKierunek == 'Matematyka')
+      prog <- 70
+    else if (wybranyKierunek == 'Informatyka')
+      prog <- 80
+    else
+      prog <- 0
+  }
+  return(prog)
+}
+
+
+
+scores_aggregate <- function(res){
+  if(is.na(res)) return("NAN")
+  if(res > 40) return("81%-100%")
+  if(res > 30) return("61%-80%")
+  if(res > 20) return("41%-60%")
+  if(res > 10) return("21%-40%")
+  return("1%-20%")
+}
+
+get_table_for_results_of_school <- function(name, tbl, subjects){
+  tbl <- filter(tbl, id_szkoly == name)
+  len <- dim(tbl)[2]
+  wid <- dim(tbl)[1]
+  tbl <- tbl[,2:(len-1)]
+  final <- as.data.frame(lapply(tbl,FUN = function(x) {sapply(x,FUN=scores_aggregate)}))
+  gathered <- gather(final, key = przedmiot, value = wynik)
+  gathered <- filter(gathered, wynik != "NAN")
+  gathered <- filter(gathered, przedmiot %in% subjects)
+  print(table(gathered$wynik, gathered$przedmiot))
+  return(table(gathered$wynik, gathered$przedmiot))
+}
+
+
+get_school_id <- function(school) {
+  school_row <- szkoly %>% filter(nazwa_szkoly == school) %>% head(1)
+  return(school_row$id_szkoly)
+}
+
+
+
+shinyServer(function(input, output) { 
+  ###########################################################################
+  # TYTUL
+  ###########################################################################
+  output$tytul <- renderText({
+    "</br><h4>Procent uczniow danej szkoly dostajacych sie na wybrany kierunek</h4></br>"
+  })
+  
+  ###########################################################################
+  #  TABELA Z DANYMI (ILE PROCENT UCZNIOW Z DANEJ SZKOLY SIE DOSTAJE)
+  ###########################################################################
+  output$ranking <- renderDataTable({
+    classify <- get_classify(input$wybranaUczelnia, input$wybranyKierunek)
+    prog <- get_prog(input$wybranaUczelnia, input$wybranyKierunek)
     
     # Lista 300 najlepszych studentow ogolnie + wynik 300 studenta
     best_300 <- classify %>% arrange(desc(wynik)) %>% head(300)
@@ -98,52 +186,48 @@ shinyServer(function(input, output) {
     # Zamiana id_szkoly z typu numeric na character
     top$id_szkoly <- as.character(top$id_szkoly)
     
-    procent <- top %>% group_by(nazwa_szkoly) %>% summarise(procent = mean(wynik > prog))
+    procent <- top %>% group_by(id_szkoly, nazwa_szkoly) %>% summarise(procent = 100*mean(wynik > prog))
     procent
-#     
-#     slupkowy <- ggplot(procent) +
-#       theme(axis.title.x=element_blank(), axis.text.x=element_blank(),
-#             axis.ticks.x=element_blank(), legend.text=element_text(size=7.6),
-#             legend.position='right') +
-#       geom_bar() +
-#       expand_limits(y=c(15, 100))
-#     slupkowy
+  })
+
+  ###########################################################################
+  #  WYKRES SLUPKOWY (ILE PROCENT UCZNIOW Z DANEJ SZKOLY SIE DOSTAJE)
+  ###########################################################################
+  output$wykresSlupkowy <- renderPlot({
+    classify <- get_classify(input$wybranaUczelnia, input$wybranyKierunek)
+    prog <- get_prog(input$wybranaUczelnia, input$wybranyKierunek)
+    
+    # Lista 300 najlepszych studentow ogolnie + wynik 300 studenta
+    best_300 <- classify %>% arrange(desc(wynik)) %>% head(300)
+    wynik_300 <- best_300[300,]$wynik
+    
+    # Wyliczanie top 5 szkol
+    top <- classify %>% group_by(id_szkoly) %>%
+      summarise(all_count = n(), top_300_count = sum(wynik >= wynik_300), procent = 100*top_300_count/all_count) %>%
+      arrange(desc(procent)) %>% filter(all_count > 10) %>% head(input$ileSzkol) %>%
+      merge(filter(szkoly, rok==2015), by = "id_szkoly") %>% merge(classify, by = "id_szkoly")
+    
+    # Zamiana id_szkoly z typu numeric na character
+    top$id_szkoly <- as.character(top$id_szkoly)
+    
+    procent <- top %>% group_by(nazwa_szkoly, id_szkoly) %>% summarise(procent = 100*mean(wynik > prog))
+    slupkowy <- ggplot(procent, aes(x=id_szkoly, y=procent)) + geom_bar(stat='identity', fill='blue', width=0.5)
+    slupkowy
   })
   
-  output$wykresSrzypcowy = renderPlot({
-    if (input$wybranaUczelnia == 'UW') {
-      classify <- mimuw_classify
-      if (input$wybranyKierunek == 'Matematyka')
-        prog <- 72
-      else if (input$wybranyKierunek == 'Informatyka')
-        prog <- 85
-      else
-        prog <- 0
-    } else if (input$wybranaUczelnia == 'PW') {
-      classify <- mini_classify
-      if (input$wybranyKierunek == 'Matematyka')
-        prog <- 70
-      else if (input$wybranyKierunek == 'Informatyka')
-        prog <- 80
-      else
-        prog <- 0
-    } else if (input$wybranaUczelnia == 'UJ') {
-      classify <- uj_classify
-      if (input$wybranyKierunek == 'Matematyka')
-        prog <- 70
-      else if (input$wybranyKierunek == 'Informatyka')
-        prog <- 80
-      else
-        prog <- 0
-    } else if (input$wybranaUczelnia == 'UKSW') {
-      classify <- uksford_classify
-      if (input$wybranyKierunek == 'Matematyka')
-        prog <- 70
-      else if (input$wybranyKierunek == 'Informatyka')
-        prog <- 80
-      else
-        prog <- 0
-    }
+  ###########################################################################
+  # TYTUL
+  ###########################################################################
+  output$tytulDwa <- renderText({
+    "</br><h4>Rozklad wynikow w procesie rekrutacyjnym uczniow danej szkoly</h4></br>"
+  })
+  
+  ###########################################################################
+  #  WYKRES SKRZYPCOWY (ROZKLAD WYNIKOW REKRUTACJI UCZNIOW Z DANEJ SZKOLY)
+  ###########################################################################
+  output$wykresSrzypcowy <- renderPlot({
+    classify <- get_classify(input$wybranaUczelnia, input$wybranyKierunek)
+    prog <- get_prog(input$wybranaUczelnia, input$wybranyKierunek)
     
     # Lista 300 najlepszych studentow ogolnie + wynik 300 studenta
     best_300 <- classify %>% arrange(desc(wynik)) %>% head(300)
@@ -174,7 +258,66 @@ shinyServer(function(input, output) {
     skrzypcowy
   })
   
-  output$ranking = renderPrint({
+  ###########################################################################
+  # TYTUL
+  ###########################################################################
+  output$tytul2 <- renderText({
+    "</br><h4>Ilosc uczniow uzyskujacy wynik z matury na okreslonym poziomie</h4></br>"
+  })
+  
+  ###########################################################################
+  # LISTA SZKOL
+  ###########################################################################
+  output$wyborSzkoly <- renderUI({
+    # id szkol z Warszawy
+    id_szkol_warszawa <- unique(data.wawa['id_szkoly'])
     
+    # id szkol z Warszawy jako wektor
+    id_szkol_warszawa_vec <- id_szkol_warszawa %>% select(id_szkoly) %>% sapply(as.character) %>% as.vector
+
+    # id szkoly + nazwa szkoly (Warszawa)
+    szkoly_warszawa <- szkoly %>% filter(id_szkoly %in% id_szkol_warszawa_vec) %>% select(nazwa_szkoly) %>% unique()
+    
+    selectInput(inputId = "szkola2",
+                label = "Szkola",
+                choices = szkoly_warszawa,
+                selected = "I")
+  })
+  
+  ###########################################################################
+  # LISTA PRZEDMIOTOW
+  ###########################################################################
+  output$wyborPrzedmiotow <- renderUI({
+    checkboxGroupInput("przedmioty2",
+                       label = "Przedmioty",
+                       choices = names(data.wawa)[2:15])
+  })
+  
+  ###########################################################################
+  #  TABELA Z DANYMI (WYNIKI MATUR)
+  ###########################################################################
+  output$ranking2 = renderDataTable({
+    szkola <- get_school_id(input$szkola2)
+    przedmioty <- input$przedmioty2
+    if (length(przedmioty) > 0) {
+      curr_tbl <- get_table_for_results_of_school(szkola, data.wawa, przedmioty)
+  
+      # uzupelnij curr_tbl o %   lub   skonstruuj inna tabele
+  
+      curr_tbl
+    }
+  })
+
+  ###########################################################################
+  #  WYKRES TENDENCJI WYKINOW Z MATUR DLA SZKOLY
+  ###########################################################################
+  output$wykresCA2 = renderPlot({
+    szkola <- get_school_id(input$szkola2)
+    przedmioty <- input$przedmioty2
+    if (length(przedmioty) > 2) {
+      curr_tbl <- get_table_for_results_of_school(szkola, data.wawa, przedmioty)
+      wykres <- plot(ca(curr_tbl), arrows = c(TRUE, FALSE))
+      wykres
+    }
   })
 })

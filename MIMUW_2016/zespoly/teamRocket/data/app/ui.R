@@ -4,34 +4,36 @@ library(shiny)
 shinyUI(fluidPage(
   tabsetPanel(
     tabPanel(
-      "Najlepsze szkoły",
-      titlePanel("Szkoły najlepiej przygotowujące na wybrany kierunek studiów"),
+      "Najlepsze szkoly",
+      titlePanel("Szkoly najlepiej przygotowujace na wybrany kierunek studiow"),
       sidebarLayout(
         sidebarPanel(
           selectInput(inputId = "region",
-                      label = "Szkoły: Wybierz region",
+                      label = "Szkoly: Wybierz region",
                       choices = c("Warszawa"),
                       selected = "Warszawa"),
           selectInput(inputId = "wybranaUczelnia", 
-                      label = "Wybierz uczelnię",
+                      label = "Wybierz uczelnie",
                       choices = c("UW", "PW", "UJ", "UKSW"),
                       selected = "UW"),
           selectInput(inputId = "wybranyKierunek", 
                       label = "Wybierz kierunek",
                       choices = c("Matematyka", "Informatyka"),
                       selected = "Informatyka"),
-          sliderInput("ileSzkol", label = "Ile szkół?", min = 2, max = 10, value = 5),
+          sliderInput("ileSzkol", label = "Ile szkol?", min = 2, max = 10, value = 5),
           checkboxInput(inputId = "prog",
-                        label = "Czy zaznaczyć próg?",
+                        label = "Czy zaznaczyc prog?",
                         value = TRUE)
         ),
         mainPanel(
           tabsetPanel(
             tabPanel("Ranking",
-                     verbatimTextOutput("wykresSlupkowy"),
-              verbatimTextOutput("ranking")
+              htmlOutput("tytul"),
+              plotOutput("wykresSlupkowy"),
+              dataTableOutput("ranking")
             ),
-            tabPanel("Rozkład wyników",
+            tabPanel("Rozklad wynikow",
+              htmlOutput("tytulDwa"),
               plotOutput("wykresSrzypcowy")
             )
           )
@@ -39,19 +41,23 @@ shinyUI(fluidPage(
       )
     ),
     tabPanel(
-      "Profil szkoły",
-      titlePanel("Profil wybranych szkół"),
+      "Profil szkoly",
+      titlePanel("Profil wybranych szkol"),
       sidebarLayout(
         sidebarPanel(
           selectInput(inputId = "region2",
-                      label = "Szkoły: Wybierz region",
+                      label = "Szkoly: Wybierz region",
                       choices = c("Warszawa"),
                       selected = "Warszawa"),
-          checkboxGroupInput("przedmioty", label = "Szkoły", choices = names(data.wawa)[2:15])
+          htmlOutput("wyborSzkoly"),
+          htmlOutput("wyborPrzedmiotow")
         ),
         mainPanel(
           tabsetPanel(
-            tabPanel("Rankingg"
+            tabPanel("Tendencje wynikow z matur",
+              htmlOutput("tytul2"),
+              dataTableOutput("ranking2"),
+              plotOutput("wykresCA2")
             )
           )
         )
