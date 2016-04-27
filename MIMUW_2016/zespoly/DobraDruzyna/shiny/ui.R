@@ -6,6 +6,7 @@ shinyUI(fluidPage(
   titlePanel("Wyniki egzaminów maturalnych a dane społeczno-ekonomiczne"),
   
   sidebarPanel(
+    width = 3,
     selectInput(inputId = "rodzajWskaznika",
                 label = "Wybierz wskaźnik do porównania",
                 choices = c("Wydatki gminy na licealistę przez 3 lata" = "wydatki",
@@ -32,6 +33,7 @@ shinyUI(fluidPage(
   ),
     
   mainPanel(
+    width = 9,
     tabsetPanel(
       tabPanel("Wykres porówujący", 
                h3("Porównanie wyników z matury do wybranego wskaźnika"), 

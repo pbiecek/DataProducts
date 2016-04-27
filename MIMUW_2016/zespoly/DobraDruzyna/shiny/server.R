@@ -138,8 +138,6 @@ shinyServer(function(input, output) {
         geom_text(aes(zaznaczonaGmina$Wartosc, mean(range(ggplot_build(base)$data[[1]]$count)), 
                       label = zaznaczonaGmina$Wartosc), colour = "black", angle = 90, vjust = 1,
                       nudge_x = 1, size = 5)
-      
-      
     }
     
     pl
