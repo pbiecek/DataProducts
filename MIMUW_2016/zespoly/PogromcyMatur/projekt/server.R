@@ -59,7 +59,7 @@ getplot <- function(id_testu_wyniki, id_testu_ocena, kwantyle) {
 }
 
 shinyServer(function(input, output) {
-  tmp = as.list(1:7)
+  tmp = as.list(1:18)
   names(tmp) = unique(wyniki_szkol$id_kryterium)
   kryt = as.integer(lapply(wyniki_szkol$id_kryterium, function(x) tmp[[x]]))
   kolory = c('red', 'purple', 'blue')
