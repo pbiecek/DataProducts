@@ -1,0 +1,63 @@
+init <<- function() {
+
+  regiony <<- data.frame()
+  regiony$wojewodztwo <<- character(0)
+  regiony$powiat <<- character(0)
+  regiony$gmina <<- character(0)
+
+  szkoly <<- data.frame()
+  szkoly$id <<- integer(0)
+  szkoly$rok <<- integer(0)
+  szkoly$gmina <<- character(0)
+  szkoly$powiat <<- character(0)
+  szkoly$wojewodztwo <<- character(0)
+  szkoly$nazwa <<- character(0)
+  szkoly$typ <<- character(0)
+
+  typy_testow <<- data.frame()
+  typy_testow$id <<- integer(0)
+  typy_testow$rodzaj_egzaminu <<- character(0)
+  typy_testow$czesc_egzaminu <<- character(0)
+  typy_testow$rok <<- integer(0)
+  typy_testow$arkusz <<- character(0)
+
+  oceny_szkol <<- data.frame()
+  oceny_szkol$id <<- integer(0)
+  oceny_szkol$rodzaj_egzaminu <<- character(0)
+  oceny_szkol$czesc_egzaminu <<- character(0)
+  oceny_szkol$rok <<- integer(0)
+  oceny_szkol$sredni_wynik <<- numeric(0)
+
+  wyniki_szkol <<- data.frame()
+  wyniki_szkol$id <<- integer(0)
+  wyniki_szkol$rodzaj_egzaminu <<- character(0)
+  wyniki_szkol$czesc_egzaminu <<- character(0)
+  wyniki_szkol$rok <<- integer(0)
+  wyniki_szkol$sredni_wynik <<- numeric(0)
+  wyniki_szkol$id_kryterium <<- character(0)
+
+  kryteria <<- data.frame()
+  kryteria$id <<- character(0)
+  kryteria$numer_pytania <<- character(0)
+  kryteria$id_pytania <<- character(0)
+  kryteria$id_wiazki <<- character(0)
+  kryteria$tresc_pytania <<- character(0)
+  kryteria$tresc_wiazki <<- character(0)
+  kryteria$numer_kryterium <<- character(0)
+  kryteria$max_punktow <<- integer(0)
+
+  # Tabele pomocnicze
+  oceny_uczniow <<- data.frame()
+  oceny_uczniow$id_testu <<- integer(0)
+  oceny_uczniow$id_szkoly <<- integer(0)
+  oceny_uczniow$rodzaj_egzaminu <<- character(0)
+  oceny_uczniow$typ_egzaminu <<- character(0)
+  oceny_uczniow$id_obserwacji <<- integer(0)
+  oceny_uczniow$wynik <<- numeric(0)
+
+  ostatnie_przystapienia <<- data.frame()
+  ostatnie_przystapienia$id_testu <<- integer(0)
+  ostatnie_przystapienia$rodzaj_egzaminu <<- character(0)
+  ostatnie_przystapienia$czesc_egzaminu <<- character(0)
+  ostatnie_przystapienia$rok <<- integer(0)
+}

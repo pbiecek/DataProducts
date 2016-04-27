@@ -5,5 +5,4 @@ Sklad zespolu:
 2. Franciszek Piszcz - opieka nad kodem, opieka nad dokumentacja koncowa
 3. Igor Kotrasinski - opieka nad czescia analityczna, specyfikacja wymagan
 
-Temat - wyniki egzaminacyjne, kladziemy nacisk na przebieg rozwoju indywidualnych uczniow w czasie nauki w danej szkole, po czym agregujemy wyniki.
-
+Temat: Analiza średnich wyników szkół z poszczególnych części egzaminów w zależności od poziomu uczniów rekrutowanych przez szkoły.
