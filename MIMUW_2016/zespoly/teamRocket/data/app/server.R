@@ -146,8 +146,8 @@ get_table_for_results_of_school <- function(name, tbl, subjects){
   gathered <- gather(final, key = przedmiot, value = wynik)
   gathered <- filter(gathered, wynik != "NAN")
   gathered <- filter(gathered, przedmiot %in% subjects)
-  print(table(gathered$wynik, gathered$przedmiot))
-  return(table(gathered$wynik, gathered$przedmiot))
+  tab <- table(gathered$wynik, gathered$przedmiot)
+  return(tab)
 }
 
 
@@ -301,9 +301,7 @@ shinyServer(function(input, output) {
     przedmioty <- input$przedmioty2
     if (length(przedmioty) > 0) {
       curr_tbl <- get_table_for_results_of_school(szkola, data.wawa, przedmioty)
-  
-      # uzupelnij curr_tbl o %   lub   skonstruuj inna tabele
-  
+      curr_tbl <- curr_tbl %>% as.data.frame.matrix() %>% add_rownames("Wynik")
       curr_tbl
     }
   })
