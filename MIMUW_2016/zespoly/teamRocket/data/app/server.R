@@ -187,7 +187,7 @@ shinyServer(function(input, output) {
     top$id_szkoly <- as.character(top$id_szkoly)
     
     procent <- top %>% group_by(id_szkoly, nazwa_szkoly) %>% summarise(procent = 100*mean(wynik > prog))
-    procent
+    procent[order(-procent$procent),]
   })
 
   ###########################################################################
@@ -211,6 +211,10 @@ shinyServer(function(input, output) {
     top$id_szkoly <- as.character(top$id_szkoly)
     
     procent <- top %>% group_by(nazwa_szkoly, id_szkoly) %>% summarise(procent = 100*mean(wynik > prog))
+    
+    # posortuj
+    procent <- transform(procent, id_szkoly=reorder(id_szkoly, -procent) ) 
+    
     slupkowy <- ggplot(procent, aes(x=id_szkoly, y=procent)) + geom_bar(stat='identity', fill='blue', width=0.5)
     slupkowy
   })
