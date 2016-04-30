@@ -12,8 +12,10 @@ namespace jnpcleaner {
         inFile_.open(inDir_, std::ios::in);
     }
     void JnpCleaner::closeFiles() {
-        inFile_.close();
-        outFile_.close();
+        if(inFile_.is_open())
+            inFile_.close();
+        if(outFile_.is_open())
+            outFile_.close();
     }
     void JnpCleaner::setOutputLine(std::string line) {
         outFile_ << line;
