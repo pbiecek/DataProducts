@@ -77,3 +77,14 @@ count_A_by_mark_B_not_attending <- function(courseA, courseB) {
     mutate(liczba_studentow = liczba_studentow.x - liczba_studentow.y) %>%
     select(ocena, liczba_studentow)
 }
+
+emptydf <- data.frame(ocena_przedmiot_B = c(2.0, 3.0, 3.5, 4.0, 4.5, 5.0), liczba_studentow = c(0, 0, 0, 0, 0, 0))
+df_for_plot <- function(df) {
+  df <- bind_rows(df, emptydf)
+  df %>%
+    group_by(ocena_przedmiot_B) %>%
+    summarise(liczba_studentow = sum(liczba_studentow)) %>%
+    arrange(-row_number()) -> df_new
+  df_new[2] = cumsum(df_new[2])
+  arrange(df_new, -row_number())
+}
