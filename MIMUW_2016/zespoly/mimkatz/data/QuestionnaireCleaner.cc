@@ -20,12 +20,20 @@ namespace questionnairecleaner {
                             found = tmp.find("CW");
                             if(found == std::string::npos) {
                                 found = tmp.find("LAB");
-                                if(found == std::string::npos)
-                                    if(question.empty())
-                                        subjectName = tmp;
-                                    else
-                                        subjectName = subjectName + " " + tmp;
-                                else
+                                if(found == std::string::npos) {
+                                    found = tmp.find("SEM-MGR");
+                                    if (found == std::string::npos) {
+                                        found = tmp.find("WYK-MON");
+                                        if (found == std::string::npos)
+                                            if (subjectName.empty())
+                                                subjectName = tmp;
+                                            else
+                                                subjectName = subjectName + " " + tmp;
+                                        else
+                                            type = tmp;
+                                    } else
+                                        type = tmp;
+                                } else
                                     type = tmp;
                             } else
                                 type = tmp;
