@@ -1,5 +1,7 @@
 source("input.R")
 
+library(ggplot2)
+
 courseA = '1000-214bJAO'
 courseB = '1000-214bSIK'
 
