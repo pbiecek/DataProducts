@@ -21,13 +21,6 @@ init <<- function() {
   typy_testow$rok <<- integer(0)
   typy_testow$arkusz <<- character(0)
 
-  oceny_szkol <<- data.frame()
-  oceny_szkol$id <<- integer(0)
-  oceny_szkol$rodzaj_egzaminu <<- character(0)
-  oceny_szkol$czesc_egzaminu <<- character(0)
-  oceny_szkol$rok <<- integer(0)
-  oceny_szkol$sredni_wynik <<- numeric(0)
-
   wyniki_szkol <<- data.frame()
   wyniki_szkol$id <<- integer(0)
   wyniki_szkol$rodzaj_egzaminu <<- character(0)
@@ -46,12 +39,36 @@ init <<- function() {
   kryteria$numer_kryterium <<- character(0)
   kryteria$max_punktow <<- integer(0)
 
+  wyniki_po_egz <<- data.frame()
+  wyniki_po_egz$rok <<- numeric(0)
+  wyniki_po_egz$kwantyl <<- numeric(0)
+  wyniki_po_egz$rodzaj_egzaminu <<- character(0)
+  wyniki_po_egz$czesc_egzaminu <<- character(0)
+  wyniki_po_egz$rodzaj_poprzedni <<- character(0)
+  wyniki_po_egz$czesc_poprzedni <<- character(0)
+  wyniki_po_egz$id_kryterium <<- numeric(0)
+  wyniki_po_egz$wynik <<- numeric(0)
+
+  wyniki_po_plci <<- data.frame()
+  wyniki_po_plci$rok <<- numeric(0)
+  wyniki_po_plci$rodzaj_egzaminu <<- character(0)
+  wyniki_po_plci$czesc_egzaminu <<- character(0)
+  wyniki_po_plci$plec <<- character(0)
+  wyniki_po_plci$id_kryterium <<- numeric(0)
+  wyniki_po_plci$wynik <<- numeric(0)
+
+
+  uczniowie <<- data.frame()
+  uczniowie$id_obserwacji <<- character(0)
+  uczniowie$dysleksja <<- logical(0)
+  uczniowie$plec <<- character(0)
+
   # Tabele pomocnicze
   oceny_uczniow <<- data.frame()
   oceny_uczniow$id_testu <<- integer(0)
   oceny_uczniow$id_szkoly <<- integer(0)
   oceny_uczniow$rodzaj_egzaminu <<- character(0)
-  oceny_uczniow$typ_egzaminu <<- character(0)
+  oceny_uczniow$czesc_egzaminu <<- character(0)
   oceny_uczniow$id_obserwacji <<- integer(0)
   oceny_uczniow$wynik <<- numeric(0)
 
