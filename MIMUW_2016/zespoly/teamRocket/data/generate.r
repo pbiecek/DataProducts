@@ -11,21 +11,24 @@ generate_single <- function(ido_cke, czesc, szk) {
   } else {
     czesc_d <- paste("pods_", czesc[2], sep='')
   }
-  czesc_s <-paste(czesc, sep="", collapse="_")
+  czesc_s <-paste(czesc[1], czesc[2], sep="_", collapse="")
 
   load(file = paste("../raw_data/ZPD", czesc_d, "2015.dat", sep="_"))
   dt <-get(paste("mt", czesc_d, "2015", sep="_"))
   l_kol <- ncol(dt)
-  #print(dt)
+  mx_sum <- strtoi(czesc[3]) / 100
+  #print(mx_sum)
   dt %>%
     inner_join(szk, by = "id_szkoly") %>%
     mutate_(.dots=setNames(
-      list(lazyeval::interp(~(rowSums(.[5 : l_kol ], na.rm = TRUE)))),
+      list(~(rowSums(.[5 : l_kol ], na.rm = TRUE)/mx_sum)),
            czesc_s)) %>%
     select_("id_obserwacji", czesc_s, "id_szkoly") -> wyn
   inner_join(wyn, ido_cke, by="id_obserwacji") %>%
     select_("id_cke", czesc_s, "id_szkoly") %>%
-    rename(id_szkoly_new = id_szkoly)
+    rename(id_szkoly_new = id_szkoly) -> wyn
+  print(paste("Generated ", czesc[1], czesc[2]))
+  return(wyn)
 }
 
 generate_all <- function(ucz, szk, czesci) {
@@ -40,41 +43,38 @@ generate_all <- function(ucz, szk, czesci) {
 }
 
 
-szkoly %>%
-  filter(powiat_szkoly == "Warszawa", rok==2015) %>%
-  select(id_szkoly, nazwa_szkoly) -> szkoly_wawa_2015
-
 # Jak użyć?
 # zasource'uj ten plik
 # wywoływanie:
 # lista.matur = list(c("p", "mat"), c("r", "mat")) ## <-- p - podstawa, r - rozszerzenie
 # generate_all(ucz, szkoly_wawa_2015, lista.matur) ## <-- lista może być dłuższa
 
-generuj.1.iter <- function() {
+generuj.3.iter <- function() {
   load(file = "../raw_data/ZPD_ucz.dat")
   load(file = "../raw_data/ZPD_szkoly.dat")
+  szkoly %>%
+    filter(rok==2015) %>%
+    filter(typ_szkoly %in% c("LO", "LOU","LP", "T", "TU", "ZZ")) %>%
+    select(id_szkoly, nazwa_szkoly) -> szkoly.2015
+  
+  #lista dobrana mniej-więcej eksperymentalnie. potrzebne konkretniejsze dane :P
   lista.matur = list(
-    c("p", "mat"),
-    c("p", "pl"),
-    c("p", "ang"),
-    c("p", "fiz"),
-    c("p", "bio"),
-    c("p", "chem"),
-    c("p", "inf"),
-    c("r", "mat"),
-    c("r", "pl"),
-    c("r", "ang"),
-    c("r", "fiz"),
-    c("r", "bio"),
-    c("r", "chem"),
-    c("r", "inf")
+    c("p", "mat", 50),
+    c("p", "pl", 70),
+    c("p", "ang", 50),
+    c("p", "fiz", 50),
+    c("p", "bio", 50),
+    c("p", "chem", 50),
+    c("p", "inf", 60),
+    c("r", "mat", 50),
+    c("r", "pl", 40),
+    c("r", "ang", 50),
+    c("r", "fiz", 60),
+    c("r", "bio", 47),
+    c("r", "chem", 48),
+    c("r", "inf", 50)
   )
-  data.wawa <- generate_all(ucz, szkoly_wawa_2015, lista.matur)
-  save(data.wawa, file = "ZPD_iter1.dat")
-}
-
-# demo użycia z ggplot
-rysuj.matma <- function() {
-  load("ZPD_iter1.dat")
-  ggplot(data.wawa, aes(x= r_mat, y = p_mat)) + geom_density2d()
+  data.all.pl <- generate_all(ucz, szkoly.2015, lista.matur)
+  save(data.all.pl, file = "ZPD_iter3.dat")
+  return(data.all.pl)
 }
