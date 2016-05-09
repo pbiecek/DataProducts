@@ -11,53 +11,63 @@ library(ZPD)
 library(ggplot2)
 library(scales)
 
-load("test/bigData.RData")
-load("test/smallData.RData")
-
-# Generuje wykres wyników szkół po kryteriach z testu "id_testu_wyniki" porządkowanych
-# po "id_testu_ocena". Kwantyle to lista kwantyli (dwuelementowych list początek, koniec).
-# Przykładowo pojedynczy kwantyl to (0.5, 0.7).
-getplot <- function(id_testu_wyniki, id_testu_ocena, kwantyle) {
-
-  # Wyciągnij najpierw dane o czkołach, których dotyczą te testy
-  dane = oceny_szkol %>%
-         filter(id_testu == id_testu_ocena) %>%
-         arrange(sredni_wynik) %>%
-         select(-id_testu)
-  szkoly = dane %>% select(id)
-  wyniki = wyniki_szkol %>%
-           filter(id_testu == id_testu_wyniki) %>%
-           inner_join(szkoly) %>%
-           select(-id_testu)
-  dane_wykresu = NULL
-
-  # Dla każdego kwantyla wyciągnij i uśrednij dane z wyniki_szkol
-  for (i in 1:length(kwantyle)) {
-    kwantyl = dane %>%
-              filter(sredni_wynik >= quantile(dane$sredni_wynik, kwantyle[[i]][[1]]),
-                     sredni_wynik <= quantile(dane$sredni_wynik, kwantyle[[i]][[2]])) %>%
-              select(id)
-    wynikk = wyniki %>%
-             inner_join(kwantyl) %>%
-             group_by(id_kryterium) %>%
-             summarise(suma_wynik = mean(sredni_wynik)) %>%
-             select(id_kryterium, suma_wynik)
-    wynikk$kwantyl = paste(as.character(kwantyle[[i]][[1]]), ":", as.character(kwantyle[[i]][[2]]))
-    dane_wykresu <- rbind(dane_wykresu, wynikk)
+# Multiple plot function
+#
+# ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
+# - cols:   Number of columns in layout
+# - layout: A matrix specifying the layout. If present, 'cols' is ignored.
+#
+# If the layout is something like matrix(c(1,2,3,3), nrow=2, byrow=TRUE),
+# then plot 1 will go in the upper left, 2 will go in the upper right, and
+# 3 will go all the way across the bottom.
+#
+multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
+  library(grid)
+  
+  # Make a list from the ... arguments and plotlist
+  plots <- c(list(...), plotlist)
+  
+  numPlots = length(plots)
+  
+  # If layout is NULL, then use 'cols' to determine layout
+  if (is.null(layout)) {
+    # Make the panel
+    # ncol: Number of columns of plots
+    # nrow: Number of rows needed, calculated from # of cols
+    layout <- matrix(seq(1, cols * ceiling(numPlots/cols)),
+                     ncol = cols, nrow = ceiling(numPlots/cols))
   }
-
-  #Przeskaluj dane na procenty
-  dane_z_kryt = dane_wykresu %>%
-                 inner_join(kryteria, by = c("id_kryterium" = "id"))
-  dane_wykresu$suma_wynik = dane_z_kryt$suma_wynik / dane_z_kryt$max_punktow
-
-  #Wykres
-  plot = ggplot(dane_wykresu, aes(x = id_kryterium, y = suma_wynik, fill = factor(kwantyl))) + geom_bar(stat="identity", position = "dodge") +
-  scale_fill_discrete(name = "Kwantyl") + ylab("Średni wynik (%)") + xlab("Id kryterium") +
-  scale_y_continuous(labels = scales::percent)
-  return(plot)
+  
+  if (numPlots==1) {
+    print(plots[[1]])
+    
+  } else {
+    # Set up the page
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
+    
+    # Make each plot, in the correct location
+    for (i in 1:numPlots) {
+      # Get the i,j matrix positions of the regions that contain this subplot
+      matchidx <- as.data.frame(which(layout == i, arr.ind = TRUE))
+      
+      print(plots[[i]], vp = viewport(layout.pos.row = matchidx$row,
+                                      layout.pos.col = matchidx$col))
+    }
+  }
 }
 
+rysuj_wykres_plec <- function() {
+  wyniki_dobre = head(filter(wyniki_po_plci, plec != 0),20)
+  return (ggplot(wyniki_dobre, aes(x=id_kryterium, y = wynik)) + 
+            geom_bar(stat = "identity", aes(fill=plec), position = "dodge") +
+            scale_fill_discrete(name="Płeć", breaks=c("k","m"), labels=c("Kobieta", "Mężczyzna")))
+}
+
+
 shinyServer(function(input, output) {
-  output$kryteriaPlot <- renderPlot(getplot(1, 2, list(list(0, 0.5), list(0.25, 0.75), list(0.5, 1))))
+  observeEvent(input$gen, {
+    if(input$wykresy_plec)
+      output$plec_plot <- renderPlot(rysuj_wykres_plec())
+ })
 })

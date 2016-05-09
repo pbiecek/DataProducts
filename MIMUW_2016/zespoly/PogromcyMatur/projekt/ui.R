@@ -11,35 +11,42 @@ prep_choices = function(vec) setNames(as.list(unique(vec)), unique(vec))
 
 shinyUI(pageWithSidebar(
   
-  # Application title
-  headerPanel("Proof of concept"),
+  headerPanel("Trzecia iteracja"),
   
-  # Sidebar with a slider input for number of observations
   sidebarPanel(
-    sliderInput("rok", label = "Rok:", min = 1990, max=2015, value=1990, sep=""),
-    textInput("twoj_text", "Wpisz swój tekst:"),
-    selectInput("typ_szkoly", "Typ szkoły:",
-              choices = prep_choices(szkoly$typ_szkoly)),
     selectInput("egzamin", label = "Egzamin:",
-                  choices = prep_choices(
+                choices = prep_choices(
                   paste(typy_testow$rodzaj_egzaminu,
                         typy_testow$czesc_egzaminu,
                         typy_testow$rok, sep=" ")
-              )),
-    selectInput("wojewodztwo", label = "Województwo:",
-                choices = prep_choices(regiony$wojewodztwo)),
-    selectInput("powiat", label = "Powiat:", 
-                choices = prep_choices(regiony$powiat),
-                selected = 1),
-    selectInput("gmina", label = "Gmina:", 
-                choices = prep_choices(regiony$gmina),
-                selected = 1),
-    selectInput("szkola", label = "Szkoła:",
-                choices = prep_choices(szkoly$nazwa_szkoly))
-  ),
-  
-  # Show a plot of the generated distribution
-  mainPanel(
-    plotOutput("kryteriaPlot")
+                  )),
+    
+    checkboxInput("wykresy_woj", "Wykres zależności dla województw?", 
+                                 value = FALSE),
+    checkboxInput("wykresy_plec", "Wykres zależności dla płci?", 
+                  value = FALSE),
+    checkboxInput("wykresy_wies", "Wykres zależności przy podziale wieś/miasto?", 
+                  value = FALSE),
+    checkboxInput("wykresy_szkola", "Wykres zależności dla danych szkół?", 
+                  value = FALSE),
+    actionButton("gen", "Generuj")
+    ),
+    mainPanel(
+      conditionalPanel(
+        condition = "input.wykresy_plec == true",
+        plotOutput("plec_plot")
+      ),
+      conditionalPanel(
+        condition = "input.wykresy_plec == true",
+        plotOutput("woj_plot")
+      ),
+      conditionalPanel(
+        condition = "input.wykresy_plec == true",
+        plotOutput("wies_plot")
+      ),
+      conditionalPanel(
+        condition = "input.wykresy_ == true",
+        plotOutput("szkola_plot")
+      )
   )
 ))
