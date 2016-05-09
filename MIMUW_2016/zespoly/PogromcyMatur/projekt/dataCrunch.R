@@ -173,10 +173,11 @@ dodaj_oceny_po_poprzednich <- function(src, dane, row) {
 dodaj_oceny_po_plci <- function(dane, row) {
   nowe = uczniowie %>%
     select(id_obserwacji, plec) %>%
+    filter(!is.na(plec)) %>% # Niektorzy uczniowie nie maja informacji o plci
     inner_join(dane)
   nowe = nowe %>%
     group_by(plec) %>%
-    summarise_each(funs(mean),
+    summarise_each(funs(mean(., na.rm = TRUE)),
                    starts_with("k_"))
     nowe = nowe %>%
     gather(id_kryterium, wynik, starts_with("k_"), na.rm = TRUE)
