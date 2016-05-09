@@ -111,7 +111,7 @@ zaladuj_ostatnie_przystapienia <- function() {
 dodaj_wyniki_szkol <- function(src, dane, row) {
   nowe_wyniki_szkol = dane %>%
     group_by(id_szkoly) %>%
-    summarise_each(funs(mean),
+    summarise_each(funs(mean(., na.rm=TRUE)),
                    -id_szkoly, -id_obserwacji, -id_testu) %>%
     gather(id_kryterium, wynik, -id_szkoly, na.rm = TRUE) %>%
     rename(id = id_szkoly) %>%
