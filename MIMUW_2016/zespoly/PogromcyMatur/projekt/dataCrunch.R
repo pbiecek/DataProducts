@@ -156,13 +156,17 @@ dodaj_oceny_po_poprzednich <- function(src, dane, row) {
       inner_join(egz) %>%
       rename(rodzaj_poprzedni=rodzaj_egzaminu, czesc_poprzedni=czesc_egzaminu) %>%
       select(id_obserwacji, rodzaj_poprzedni, czesc_poprzedni, wynik) %>%
-      inner_join(dane)
+      inner_join(dane) %>%
+      arrange(wynik) %>%
+      rename(poprzedni_wynik = wynik)
 
-    szer$kwantyl = ntile(szer$wynik, 100)
     szer = szer %>%
-      group_by(kwantyl) %>%
-      summarise_each(funs(mean),
+      group_by(poprzedni_wynik, rodzaj_poprzedni, czesc_poprzedni) %>%
+      mutate(liczba = n()) %>%
+      mutate_each(funs(mean(., na.rm = TRUE)),
                      starts_with("k_")) %>%
+      select(poprzedni_wynik, rodzaj_poprzedni, czesc_poprzedni, starts_with("k_"), liczba) %>%
+      distinct() %>%
       gather(id_kryterium, wynik, starts_with("k_"), na.rm = TRUE) %>%
       mutate(rodzaj_egzaminu = row$rodzaj_egzaminu, czesc_egzaminu = row$czesc_egzaminu, rok = row$rok)
 
