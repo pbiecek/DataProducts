@@ -59,7 +59,7 @@ init <<- function() {
 
 
   uczniowie <<- data.frame()
-  uczniowie$id_obserwacji <<- character(0)
+  uczniowie$id_obserwacji <<- integer(0)
   uczniowie$dysleksja <<- logical(0)
   uczniowie$plec <<- character(0)
 

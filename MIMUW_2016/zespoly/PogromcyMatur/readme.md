@@ -18,4 +18,4 @@ Temat: Analiza średnich wyników szkół z poszczególnych części egzaminów 
 
 ##Temat
 
- Wyniki egzaminacyjne: kladziemy nacisk na przebieg rozwoju indywidualnych uczniow w czasie nauki w danej szkole. Przedstawiamy również powyższe wyniki zagregowane w obrębie szkoły - podsumowujemy czy nauka w szkole odniosła korzystny wpływ na wyniki uczniów uczęszczających do niej.
+Analiza szczegółowych wyników egzaminów w zależności od różnych czynników różnicujących uczniów, takich jak płeć, uczęszczana szkoła czy wyniki z poprzednich egzaminów.
