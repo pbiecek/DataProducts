@@ -1,0 +1,35 @@
+       id
+1 4525203
+2 4534284
+3 4431494
+4 4460352
+5 4441011
+6 4319246
+                                                                                                                                                                                                         href
+1                                                                                                                                   http://www.pracuj.pl/praca/senior-financial-analyst-krakow,oferta,4525203
+2                                                                                                                                 http://www.pracuj.pl/praca/analityk-ds-raportowania-warszawa,oferta,4534284
+3 http://www.pracuj.pl/praca/wlasciciel-gazety-sync-tv-bielawa-bogatynia-dzierzoniow-glogow-jawor-jelenia-gora-kamienna-gora-klodzko-legnica-luban-lubin-nowa-ruda-olawa-polkowice-strzegom-sw,oferta,4431494
+4                                                                                                                                 http://www.pracuj.pl/praca/ifs-erp-professionals-malopolskie,oferta,4460352
+5                                                                                                                     http://www.pracuj.pl/praca/kierowca-kat-c%2be-transport-krajowy-zielonka,oferta,4441011
+6                                                                                                                 http://www.pracuj.pl/praca/specjalista-do-spraw-produkcji-roslinnej-lubuskie,oferta,4319246
+                                  position       date
+1                 Senior Financial Analyst 2016-04-17
+2                Analityk ds. Raportowania 2016-04-19
+3                Właściciel Gazety SYNC TV 2016-02-29
+4                    IFS ERP Professionals 2016-03-11
+5    Kierowca Kat. C+E - transport krajowy 2016-03-02
+6 Specjalista do spraw produkcji roślinnej 2016-02-28
+                                                                                                                                                                                                                                       location
+1                                                                                                                                                                                                                         Kraków, małopolskie  
+2                                                                                                                                                                                                                       Warszawa, mazowieckie  
+3 Bielawa, Bogatynia, Dzierżoniów, Głogów, Jawor, Jelenia Góra, Kamienna Góra, Kłodzko, Legnica, Lubań, Lubin, Nowa Ruda, Oława, Polkowice, Strzegom, Świebodzice, Wałbrzych, Wrocław, Zgorzelec, Bolesławiec, Oleśnica, Świdnica, dolnośląskie
+4                                                                                                                                                                                                                                   małopolskie
+5                                                                                                                                                                                                                         Zielonka, mazowieckie
+6                                                                  Gorzów Wielkopolski, Gubin, Krosno Odrzańskie, Lubsko, Międzyrzecz, Nowa Sól, Sulechów, Świebodzin, Wschowa, Zielona Góra, Żagań, Żary, Kostrzyn nad Odrą, Słubice, lubuskie
+          grade                      employer
+1  Specjalista                            Aon
+2  Specjalista                     Devonshire
+3          <NA>                   ELECTROSYNC
+4          <NA>      ELTEL NETWORKS POLAND SA
+5          <NA>   Stalko Przybysz i Wspólnicy
+6          <NA> Agro-Perfect sp. z o.o. sp.k.
