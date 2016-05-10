@@ -19,7 +19,7 @@ Katarzyna Herba
 Marcin Kania
 
 ### Opieka nad częścią analityczną:
-Magdalena Waśniowska, Marcin Kania
+Magdalena Waśniowska
 
 ### Opieka nad częścią wizualną:
 Katarzyna Herba, Marcin Kania
