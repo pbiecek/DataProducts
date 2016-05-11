@@ -222,6 +222,7 @@ zaladuj_nowe_wyniki_szkol <- function(p_rok, t_rodzaj = NULL, t_czesc = NULL) {
     
     # Wyniki egzaminu
     dane = pobierz_wyniki_egzaminu(src, row$rodzaj_egzaminu, row$czesc_egzaminu, row$rok, TRUE) %>%
+      collect() %>%
       select(-rok) %>%
       inner_join(t_szkoly, by = c("id_szkoly" = "id"))
    
