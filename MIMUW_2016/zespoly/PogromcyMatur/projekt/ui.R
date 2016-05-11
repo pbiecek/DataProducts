@@ -36,27 +36,27 @@ choice_names = c(
 )
 
 choice_vals = c(
-  "ZPD_gm_his_2012",
-  "ZPD_rozsz_mat_2015",
-  "ZPD_pods_pl_2015",
-  "ZPD_pods_inf_2015",
-  "ZPD_rozsz_chem_2015",
-  "ZPD_pods_wos_2015",
-  "ZPD_rozsz_ang_2015",
-  "ZPD_gm_pl_2012",
-  "ZPD_pods_ang_2015",
-  "ZPD_rozsz_fiz_2015",
-  "ZPD_pods_mat_2015",
-  "ZPD_pods_chem_2015",
-  "ZPD_rozsz_inf_2015",
-  "ZPD_gm_prz_2012",
-  "ZPD_pods_fiz_2015",
-  "ZPD_rozsz_pl_2015",
-  "ZPD_gm_mat_2012",
-  "ZPD_pods_bio_2015",
-  "ZPD_rozsz_geo_2015",
-  "ZPD_pods_geo_2015",
-  "ZPD_rozsz_bio_2015"
+  "gm_his_2012",
+  "rozsz_mat_2015",
+  "pods_pl_2015",
+  "pods_inf_2015",
+  "rozsz_chem_2015",
+  "pods_wos_2015",
+  "rozsz_ang_2015",
+  "gm_pl_2012",
+  "pods_ang_2015",
+  "rozsz_fiz_2015",
+  "pods_mat_2015",
+  "pods_chem_2015",
+  "rozsz_inf_2015",
+  "gm_prz_2012",
+  "pods_fiz_2015",
+  "rozsz_pl_2015",
+  "gm_mat_2012",
+  "pods_bio_2015",
+  "rozsz_geo_2015",
+  "pods_geo_2015",
+  "rozsz_bio_2015"
 )
 
 choices = setNames(as.list(choice_vals), choice_names)
