@@ -57,11 +57,37 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-rysuj_wykres_plec <- function() {
+rysuj_wykres_plec_old <- function() {
   wyniki_dobre = head(filter(wyniki_po_plci, plec != 0),20)
   return (ggplot(wyniki_dobre, aes(x=id_kryterium, y = wynik)) + 
             geom_bar(stat = "identity", aes(fill=plec), position = "dodge") +
             scale_fill_discrete(name="Płeć", breaks=c("k","m"), labels=c("Kobieta", "Mężczyzna")))
+}
+
+rysuj_wykres_plec <- function() {
+  # TODO
+  #kry = names(dane)
+  #kry = kry[grepl('^k_', kry)]
+  #d <- (uczniowie %>% inner_join(dane))[c("plec", kry)]
+  #d <- d %>% group_by(plec) %>% summarize_each(funs(mean))
+  #d <- d %>% gather()
+  #View(d)
+  #return(plot(rnorm(100), rnorm(100)))
+}
+
+rysuj_histogram_calosci <- function() {
+  kry = names(dane)
+  kry = kry[grepl('^k_', kry)]
+  tmp <- dane[, kry]
+  do_wykresu <- rowSums(tmp, na.rm=TRUE)
+  res <- qplot(do_wykresu,
+               geom="histogram",
+               binwidth = 0.5,  
+               main = paste0("Histogram of overall results."), 
+               xlab = "Ilość punktów",
+               fill=I("blue"),
+               col=I("red"))
+  return(res)
 }
 
 ustaw_dane <- function(wybrano) {
@@ -69,7 +95,8 @@ ustaw_dane <- function(wybrano) {
   load(paste0("../../teamRocket/raw_data/ZPD_", wybrano, ".dat"), data_env)
   nowe_dane = data_env[[ls(data_env)]]
   dane <<- nowe_dane
-  cat(paste0("Loading data set: ", wybrano, "\n"))
+  cat(paste0("Loaded data set: ", wybrano, "\n"))
+  gc()
 }
 
 shinyServer(function(input, output) {
@@ -79,5 +106,6 @@ shinyServer(function(input, output) {
   })
   observeEvent(input$egzamin, {
     ustaw_dane(input$egzamin)
+    output$histogram_plot <- renderPlot(rysuj_histogram_calosci())
   })
 })

@@ -99,6 +99,9 @@ shinyUI(pageWithSidebar(
             plotOutput("szkola_plot")
           )
         ),
+        tabPanel("Histogram",
+                 plotOutput("histogram_plot")
+        ),
         tabPanel("Szczegóły",
             plotOutput("szczegoly_ui", height="4000px")
         )
