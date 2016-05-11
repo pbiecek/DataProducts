@@ -111,7 +111,7 @@ zaladuj_ostatnie_przystapienia <- function() {
 dodaj_wyniki_szkol <- function(src, dane, row) {
   nowe_wyniki_szkol = dane %>%
     group_by(id_szkoly) %>%
-    summarise_each(funs(mean),
+    summarise_each(funs(mean(., na.rm=TRUE)),
                    -id_szkoly, -id_obserwacji, -id_testu) %>%
     gather(id_kryterium, wynik, -id_szkoly, na.rm = TRUE) %>%
     rename(id = id_szkoly) %>%
@@ -156,13 +156,17 @@ dodaj_oceny_po_poprzednich <- function(src, dane, row) {
       inner_join(egz) %>%
       rename(rodzaj_poprzedni=rodzaj_egzaminu, czesc_poprzedni=czesc_egzaminu) %>%
       select(id_obserwacji, rodzaj_poprzedni, czesc_poprzedni, wynik) %>%
-      inner_join(dane)
+      inner_join(dane) %>%
+      arrange(wynik) %>%
+      rename(poprzedni_wynik = wynik)
 
-    szer$kwantyl = ntile(szer$wynik, 100)
     szer = szer %>%
-      group_by(kwantyl) %>%
-      summarise_each(funs(mean),
+      group_by(poprzedni_wynik, rodzaj_poprzedni, czesc_poprzedni) %>%
+      mutate(liczba = n()) %>%
+      mutate_each(funs(mean(., na.rm = TRUE)),
                      starts_with("k_")) %>%
+      select(poprzedni_wynik, rodzaj_poprzedni, czesc_poprzedni, starts_with("k_"), liczba) %>%
+      distinct() %>%
       gather(id_kryterium, wynik, starts_with("k_"), na.rm = TRUE) %>%
       mutate(rodzaj_egzaminu = row$rodzaj_egzaminu, czesc_egzaminu = row$czesc_egzaminu, rok = row$rok)
 
@@ -173,10 +177,11 @@ dodaj_oceny_po_poprzednich <- function(src, dane, row) {
 dodaj_oceny_po_plci <- function(dane, row) {
   nowe = uczniowie %>%
     select(id_obserwacji, plec) %>%
+    filter(!is.na(plec)) %>% # Niektorzy uczniowie nie maja informacji o plci
     inner_join(dane)
   nowe = nowe %>%
     group_by(plec) %>%
-    summarise_each(funs(mean),
+    summarise_each(funs(mean(., na.rm = TRUE)),
                    starts_with("k_"))
     nowe = nowe %>%
     gather(id_kryterium, wynik, starts_with("k_"), na.rm = TRUE)
@@ -217,6 +222,7 @@ zaladuj_nowe_wyniki_szkol <- function(p_rok, t_rodzaj = NULL, t_czesc = NULL) {
     
     # Wyniki egzaminu
     dane = pobierz_wyniki_egzaminu(src, row$rodzaj_egzaminu, row$czesc_egzaminu, row$rok, TRUE) %>%
+      collect() %>%
       select(-rok) %>%
       inner_join(t_szkoly, by = c("id_szkoly" = "id"))
    

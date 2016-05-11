@@ -41,7 +41,8 @@ init <<- function() {
 
   wyniki_po_egz <<- data.frame()
   wyniki_po_egz$rok <<- numeric(0)
-  wyniki_po_egz$kwantyl <<- numeric(0)
+  wyniki_po_egz$poprzedni_wynik <<- numeric(0)
+  wyniki_po_egz$liczba <<- integer(0)
   wyniki_po_egz$rodzaj_egzaminu <<- character(0)
   wyniki_po_egz$czesc_egzaminu <<- character(0)
   wyniki_po_egz$rodzaj_poprzedni <<- character(0)
@@ -59,7 +60,7 @@ init <<- function() {
 
 
   uczniowie <<- data.frame()
-  uczniowie$id_obserwacji <<- character(0)
+  uczniowie$id_obserwacji <<- integer(0)
   uczniowie$dysleksja <<- logical(0)
   uczniowie$plec <<- character(0)
 

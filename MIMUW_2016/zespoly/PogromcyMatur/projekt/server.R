@@ -64,10 +64,20 @@ rysuj_wykres_plec <- function() {
             scale_fill_discrete(name="Płeć", breaks=c("k","m"), labels=c("Kobieta", "Mężczyzna")))
 }
 
+ustaw_dane <- function(wybrano) {
+  data_env = new.env()
+  load(paste0("../../teamRocket/raw_data/ZPD_", wybrano, ".dat"), data_env)
+  nowe_dane = data_env[[ls(data_env)]]
+  dane <<- nowe_dane
+  cat(paste0("Loading data set: ", wybrano, "\n"))
+}
 
 shinyServer(function(input, output) {
   observeEvent(input$gen, {
     if(input$wykresy_plec)
       output$plec_plot <- renderPlot(rysuj_wykres_plec())
- })
+  })
+  observeEvent(input$egzamin, {
+    ustaw_dane(input$egzamin)
+  })
 })
