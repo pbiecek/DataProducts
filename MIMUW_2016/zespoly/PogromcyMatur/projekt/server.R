@@ -10,6 +10,7 @@ library(dplyr)
 library(ZPD)
 library(ggplot2)
 library(scales)
+library(tidyr)
 
 source("./pobierz_pytania.R")
 
@@ -130,7 +131,7 @@ rysuj_histogram_calosci <- function() {
   return(res)
 }
 
-ustaw_dane <- function(wybrano) {
+ustaw_dane <- function(wybrano = "pods_mat_2015") {
   data_env = new.env()
   load(paste0("../../teamRocket/raw_data/ZPD_", wybrano, ".dat"), data_env)
   dane <<- data_env[[ls(data_env)]]  # there is only one var in this env
@@ -176,6 +177,7 @@ rysuj_wykres_poprzedni <- function(egzamin, poprzedni, poziom = NULL) {
 }
 
 shinyServer(function(input, output) {
+  ustaw_dane()
   observeEvent(input$gen, {
       
   })
@@ -192,10 +194,10 @@ shinyServer(function(input, output) {
     else
       output$plec_plot <- renderPlot(rysuj_wykres_plec_barplot())
     output$histogram_plot <- renderPlot(rysuj_histogram_calosci())
-    if (input$wykresy_plec)
-      output$plec_plot <- renderPlot(rysuj_wykres_plec(input$egzamin, input$poziom))
-    if (input$wykresy_poprzedni)
-      output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(input$egzamin, input$poprzedni_egzamin, input$poziom))
+    #if (input$wykresy_plec)
+    #  output$plec_plot <- renderPlot(rysuj_wykres_plec(input$egzamin, input$poziom))
+    #if (input$wykresy_poprzedni)
+    #  output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(input$egzamin, input$poprzedni_egzamin, input$poziom))
   })
   output$plec_hover_info <- renderUI({
     hover <- input$plec_hover
@@ -220,7 +222,6 @@ shinyServer(function(input, output) {
                     "left:", left_px + 2, "px; top:", top_px + 2, "px;")
     
     # actual tooltip created as wellPanel
-    mainPanel(
       p(HTML(paste0("<b> Kryterium: </b>", point$id_kryterium, "<br/>",
                     "<b> Pytanie: </b>", point$id_pytania, "<br/>",
                     "<b> Średnia kobiet: </b>", point$k, "<br/>",
@@ -229,7 +230,6 @@ shinyServer(function(input, output) {
                     "<b> ________________ </b> <br />",
                     pobierz_wiazke(point$id_wiazki)
                     ))
-    )
     )
   })
 })
