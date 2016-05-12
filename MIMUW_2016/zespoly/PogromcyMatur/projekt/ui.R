@@ -76,9 +76,17 @@ shinyUI(pageWithSidebar(
   
   sidebarPanel(
     conditionalPanel(
-      condition = "input.tabset == 'plec_pytan' || input.tabset == 'histogram'",
+      condition = "input.tabset == 'plec_pytan' || input.tabset == 'histogram' || input.tabset == 'kor'",
       selectInput("egzamin", label = "Egzamin:",
                 choices = choices)
+    ),
+    conditionalPanel(
+      condition = "input.tabset == 'kor'",
+      checkboxInput(
+        "klastrowac",
+        "Czy klastorwać kryteria?",
+        value=FALSE
+      )
     ),
     conditionalPanel(
       condition = "input.tabset == 'roznice' || input.tabset == 'poprzednie'",
@@ -96,7 +104,7 @@ shinyUI(pageWithSidebar(
     tabsetPanel(
       id = "tabset",
       tabPanel(
-        "Jaką płeć mają pytania?",
+        "Porównanie pytań",
         value = "plec_pytan",
         div(
           # style = "position:relative",
@@ -116,15 +124,26 @@ shinyUI(pageWithSidebar(
         value = "poprzednie",
         plotOutput("poprz_plot")
       ),
-      tabPanel(
-        "Wieś/miasto",
-        value = "wiesmiasto",
-        plotOutput("wies_plot")
-      ),
+      #tabPanel(
+      #  "Wieś/miasto",
+      #  value = "wiesmiasto",
+      #  plotOutput("wies_plot")
+      #),
       tabPanel(
         "Histogram",
         value = "histogram",
         plotOutput("histogram_plot")
+      ),
+      tabPanel(
+        "Korelacje",
+        value = "kor",
+        div(
+          # style = "position:relative",
+          plotOutput("correlation_plot", click = "kor_hover"
+                     #click = clickOpts("plec_hover"#, delay = 100, delayType = "debounce")
+          ),
+          uiOutput("kor_hover_info", height = "800px")
+        )
       )
     )
   )

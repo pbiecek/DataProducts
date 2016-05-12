@@ -11,6 +11,7 @@ library(ZPD)
 library(ggplot2)
 library(scales)
 library(tidyr)
+library(corrplot)
 
 source("./pobierz_pytania.R")
 
@@ -60,14 +61,6 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-
-rysuj_wykres_plec_barplot <- function() {
-  kry = names(dane)
-  kry = kry[grepl('^k_', kry)]
-  d <- dane_plec_wykresy
-  return (ggplot(d, aes(x=id_kryterium, y = wynik)) + geom_point())
-}
-
 rysuj_wykres_plec <- function(egzamin, poziom = NULL) {
   d_egz = typy_testow %>% #filter(id == egzamin) %>%
     select(rok, rodzaj_egzaminu, czesc_egzaminu)
@@ -97,49 +90,6 @@ rysuj_wykres_plec <- function(egzamin, poziom = NULL) {
   return (ggplot(wyniki_plec, aes(x=factor(id), y = wynik)) + 
             geom_bar(stat = "identity", aes(fill=plec), position = "dodge") +
             scale_fill_discrete(name="Płeć", breaks=c("k","m"), labels=c("Kobieta", "Mężczyzna")))
-}
-
-rysuj_wykres_plec_scatterplot <- function() {
-  plot(dane_plec_wykresy$m, dane_plec_wykresy$k, col='green', type='p', lwd=8)
-  abline(a=0.0, b=1.0, col='blue')
-}
-
-policz_dane_plec_wykresy <- function() {
-  kry = names(dane)
-  kry = kry[grepl('^k_', kry)]
-  d <- (uczniowie %>% inner_join(dane))[c("plec", kry)]
-  d <- d %>% group_by(plec) %>% summarize_each(funs(mean))
-  d <- d %>% gather(id_kryterium, wynik, starts_with("k_"))
-  d <- d %>% inner_join(kryteria, by=c("id_kryterium"="id"))
-  d <- d %>% select(-tresc_pytania, -tresc_wiazki) %>% na.omit
-  d <- d %>% spread(plec, wynik)
-  dane_plec_wykresy <<- d
-  last_point <<- d[0, ]
-}
-
-rysuj_histogram_calosci <- function() {
-  kry = names(dane)
-  kry = kry[grepl('^k_', kry)]
-  tmp <- dane[, kry]
-  do_wykresu <- rowSums(tmp, na.rm=TRUE)
-  res <- qplot(do_wykresu,
-               geom="histogram",
-               binwidth = 0.5,  
-               main = paste0("Histogram of overall results."), 
-               xlab = "Ilość punktów",
-               fill=I("blue"),
-               col=I("red"))
-  return(res)
-}
-
-ustaw_dane <- function(wybrano = "pods_mat_2015") {
-  data_env = new.env()
-  load(paste0("../../teamRocket/raw_data/ZPD_", wybrano, ".dat"), data_env)
-  dane <<- data_env[[ls(data_env)]]  # there is only one var in this env
-  dane[is.na(dane)] <<- 0
-  policz_dane_plec_wykresy()
-  cat(paste0("Loaded data set: ", wybrano, "\n"))
-  gc()
 }
 
 rysuj_wykres_poprzedni <- function(egzamin, poprzedni, poziom = NULL) {
@@ -174,11 +124,83 @@ rysuj_wykres_poprzedni <- function(egzamin, poprzedni, poziom = NULL) {
   wyniki_egz$wynik = wyniki_egz$wynik / wyniki_egz$max_punktow
   
   return (ggplot(wyniki_egz, aes(x = factor(id), y = wynik)) +
-          geom_point(aes(color = poprzedni_wynik, size = liczba)))
+            geom_point(aes(color = poprzedni_wynik, size = liczba)))
+}
+
+rysuj_wykres_plec_barplot <- function() {
+  kry = names(dane)
+  kry = kry[grepl('^k_', kry)]
+  d <- dane_plec_wykresy
+  return (ggplot(d, aes(x=id_kryterium, y = wynik)) + geom_point())
+}
+
+rysuj_wykres_plec_scatterplot <- function() {
+  plot(
+    dane_plec_wykresy$m,
+    dane_plec_wykresy$k,
+    col='blue', type='p', lwd=3,
+    ylab="Średni wynik kobiet w %",
+    xlab="Średni wynik mężczyzn w %",
+    xlim=c(0,100),
+    ylim=c(0,100)
+  )
+  points(last_point$m, last_point$k, col='green', lwd=10)
+  title("Porównanie pytań ze wz. na płeć.")
+  abline(a=0.0, b=1.0, col='green')
+}
+
+rysuj_wykres_korelacji <- function(czy_klastrowac) {
+  kry = names(dane)
+  kry = kry[grepl('^k_', kry)]
+  tmp <- dane[, kry]
+  c_dane <- cor(tmp)
+  if(czy_klastrowac)
+    corrplot(c_dane, order='hclust')
+  else
+    corrplot(c_dane, order='hclust')
+}
+
+rysuj_histogram_calosci <- function() {
+  kry = names(dane)
+  kry = kry[grepl('^k_', kry)]
+  tmp <- dane[, kry]
+  do_wykresu <- rowSums(tmp, na.rm=TRUE)
+  res <- qplot(do_wykresu,
+               geom="histogram",
+               binwidth = 0.5,  
+               main = paste0("Histogram of overall results."), 
+               xlab = "Ilość punktów",
+               fill=I("blue"),
+               col=I("red"))
+  return(res)
+}
+
+policz_dane_plec_wykresy <- function() {
+  kry = names(dane)
+  kry = kry[grepl('^k_', kry)]
+  d <- (uczniowie %>% inner_join(dane))[c("plec", kry)]
+  d <- d %>% group_by(plec) %>% summarize_each(funs(mean))
+  d <- d %>% gather(id_kryterium, wynik, starts_with("k_"))
+  d <- d %>% inner_join(kryteria, by=c("id_kryterium"="id"))
+  d <- d %>% select(-tresc_pytania, -tresc_wiazki) %>% na.omit
+  d$wynik <- d$wynik / d$max_punktow * 100.0
+  d <- d %>% spread(plec, wynik)
+  dane_plec_wykresy <<- d
+  last_point <<- d[1, ]
+}
+
+ustaw_dane <- function(wybrano = "pods_mat_2015") {
+  data_env = new.env()
+  load(paste0("../../teamRocket/raw_data/ZPD_", wybrano, ".dat"), data_env)
+  dane <<- data_env[[ls(data_env)]]  # there is only one var in this env
+  dane[is.na(dane)] <<- 0
+  policz_dane_plec_wykresy()
+  cat(paste0("Loaded data set: ", wybrano, "\n"))
+  gc()
 }
 
 shinyServer(function(input, output) {
-  ustaw_dane()
+  #ustaw_dane()
   observeEvent(input$poziom, {
     output$plec_plot_alt <- renderPlot(rysuj_wykres_plec(input$egzamin_alt, input$poziom))
     output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(input$egzamin_alt, input$poprzedni_egzamin, input$poziom))
@@ -187,13 +209,52 @@ shinyServer(function(input, output) {
     ustaw_dane(input$egzamin)
     output$plec_plot <- renderPlot(rysuj_wykres_plec_scatterplot())
     output$histogram_plot <- renderPlot(rysuj_histogram_calosci())
+    output$correlation_plot <- renderPlot(rysuj_wykres_korelacji(input$klastrowac))
   })
   output$plec_hover_info <- renderUI({
     hover <- input$plec_hover
-    point <- nearPoints(dane_plec_wykresy, hover, xvar="m", yvar='k', threshold = 5, maxpoints = 1, addDist = TRUE)
+    point <- nearPoints(dane_plec_wykresy, hover, xvar="m", yvar='k', threshold = 15, maxpoints = 1, addDist = TRUE)
     if (nrow(point) == 0)
       point <- last_point
+    else
+      output$plec_plot <- renderPlot(rysuj_wykres_plec_scatterplot())
     last_point <<- point
+    
+    # calculate point position INSIDE the image as percent of total dimensions
+    # from left (horizontal) and from top (vertical)
+    left_pct <- (hover$x - hover$range$left) / (hover$range$right - hover$range$left)
+    top_pct <- (hover$range$top - hover$y) / (hover$range$top - hover$range$bottom)
+    
+    # calculate distance from left and bottom side of the picture in pixels
+    left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
+    top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
+    
+    # create style property fot tooltip
+    # background color is set so tooltip is a bit transparent
+    # z-index is set so we are sure are tooltip will be on top
+    style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.85); ",
+                    "left:", left_px + 2, "px; top:", top_px + 2, "px;")
+    
+    # actual tooltip created as wellPanel
+      p(HTML(paste0("<h2> Treść pytania numer ", point$id_pytania, ": </h2><br/>",
+                    pobierz_pytanie(point$id_pytania),
+                    "<h2> Dodatkowe informacje: </h2><br />",
+                    pobierz_wiazke(point$id_wiazki)
+                    ))
+    )
+  })
+  
+  output$kor_hover_info <- renderUI({
+    hover <- input$kor_hover
+    #point <- nearPoints(dane_plec_wykresy, hover, xvar="m", yvar='k', threshold = 15, maxpoints = 1, addDist = TRUE)
+    #if (nrow(point) == 0)
+    #  kor_point <- last_kor_point
+    #else
+    #  output$kor_plot <- renderPlot(rysuj_wykres_korelacji())
+    #last_kor_point <<- kor_point
+    
+    kry = names(dane)
+    kry = kry[grepl('^k_', kry)]
     
     # calculate point position INSIDE the image as percent of total dimensions
     # from left (horizontal) and from top (vertical)
@@ -210,15 +271,15 @@ shinyServer(function(input, output) {
     style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.85); ",
                     "left:", left_px + 2, "px; top:", top_px + 2, "px;")
     
+    return( paste(kry[round(left_pct * length(kry)) + 1],
+           kry[round(top_pct * length(kry)) + 1]) )
+    
     # actual tooltip created as wellPanel
-      p(HTML(paste0("<b> Kryterium: </b>", point$id_kryterium, "<br/>",
-                    "<b> Pytanie: </b>", point$id_pytania, "<br/>",
-                    "<b> Średnia kobiet: </b>", point$k, "<br/>",
-                    "<b> Średnia mężczyzn: </b>", point$m, "<br/>",
-                    pobierz_pytanie(point$id_pytania),
-                    "<b> ________________ </b> <br />",
-                    pobierz_wiazke(point$id_wiazki)
-                    ))
-    )
+    #p(HTML(paste0("<h2> Treść pytania numer ", point$id_pytania, ": </h2><br/>",
+    #              pobierz_pytanie(point$id_pytania),
+    #              "<h2> Dodatkowe informacje: </h2><br />",
+    #              pobierz_wiazke(point$id_wiazki)
+    #))
+    #)
   })
 })
