@@ -9,21 +9,7 @@ shinyUI(navbarPage(
     tags$script(src = "https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/js/bootstrap.js")
   ),
 
-  tabPanel("Porównanie",
-    sidebarLayout(
-      sidebarPanel(
-        tags$label(class="control-label", "Wybierz przedmioty do porównania:"),
-
-        htmlOutput("firstSubject"),
-        htmlOutput("secondSubject")
-      ),
-      mainPanel(
-        plotOutput("comparisonPlot")
-      )
-    )
-  ),
-
-  tabPanel("Wykładowcy",
+  tabPanel("Wyniki egzaminów względem wykładowcy",
     sidebarLayout(
       sidebarPanel(
         tags$label(class="control-label", "Wybierz przedmiot:"),
@@ -40,6 +26,9 @@ shinyUI(navbarPage(
        sidebarPanel(
          tags$label(class="control-label", "Wybierz przedmioty:"),
          htmlOutput("trendSubjectsGroup"),
+
+         tags$label(class="control-label", "Wybierz miarę:"),
+         htmlOutput("trendEstimators"),
 
          tags$label(class="control-label", "Wybierz przedział lat:"),
          htmlOutput("yearsTrendSlider")
@@ -61,18 +50,6 @@ shinyUI(navbarPage(
       ),
       mainPanel(
         plotOutput("yearsPlot")
-      )
-    )
-  ),
-  
-  tabPanel("Przedmiot: Historia ocen",
-    sidebarLayout(
-      sidebarPanel(
-        #tags$label(class="control-label", "Wybierz przedmiot:"),
-        htmlOutput("histSubject")
-      ),
-      mainPanel(
-        htmlOutput("histPlot")
       )
     )
   )
