@@ -59,11 +59,41 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
+
 rysuj_wykres_plec_barplot <- function() {
   kry = names(dane)
   kry = kry[grepl('^k_', kry)]
   d <- dane_plec_wykresy
-  return (ggplot(d, aes(x=id_kryterium, y = wynik)) + 
+  return (ggplot(d, aes(x=id_kryterium, y = wynik)) + geom_point())
+}
+
+rysuj_wykres_plec <- function(egzamin, poziom = NULL) {
+  d_egz = typy_testow %>% filter(id == egzamin) %>%
+    select(rok, rodzaj_egzaminu, czesc_egzaminu)
+  
+  wyniki_plec = wyniki_po_plci %>%
+    inner_join(d_egz)
+  
+  if (poziom == "pyt") {
+    wyniki_plec = wyniki_plec %>%
+      inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
+      group_by(plec, id_pytania) %>%
+      summarise_each(funs(sum), wynik, max_punktow) %>%
+      rename(id = id_pytania)
+  } else if (poziom == "wia") {
+    wyniki_plec = wyniki_plec %>%
+      inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
+      group_by(plec, id_wiazki) %>%
+      summarise_each(funs(sum), wynik, max_punktow) %>%
+      rename(id = id_wiazki)
+  } else {
+    wyniki_plec = wyniki_plec %>%
+      inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
+      rename(id = id_kryterium)
+  }
+  wyniki_plec$wynik = wyniki_plec$wynik / wyniki_plec$max_punktow
+  
+  return (ggplot(wyniki_plec, aes(x=factor(id), y = wynik)) + 
             geom_bar(stat = "identity", aes(fill=plec), position = "dodge") +
             scale_fill_discrete(name="Płeć", breaks=c("k","m"), labels=c("Kobieta", "Mężczyzna")))
 }
@@ -110,6 +140,41 @@ ustaw_dane <- function(wybrano) {
   gc()
 }
 
+rysuj_wykres_poprzedni <- function(egzamin, poprzedni, poziom = NULL) {
+  d_egz = typy_testow %>% filter(id == egzamin) %>%
+    select(rok, rodzaj_egzaminu, czesc_egzaminu)
+  d_poprz = typy_testow %>% filter(id == poprzedni) %>%
+    select(rodzaj_egzaminu, czesc_egzaminu) %>%
+    rename(rodzaj_poprzedni = rodzaj_egzaminu, czesc_poprzedni = czesc_egzaminu)
+  
+  wyniki_egz = wyniki_po_egz %>%
+    inner_join(d_egz) %>%
+    inner_join(d_poprz)
+  
+  if (poziom == "pyt") {
+    wyniki_egz = wyniki_egz %>%
+      inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
+      group_by(poprzedni_wynik, id_pytania, liczba) %>%
+      summarise_each(funs(sum), wynik, max_punktow) %>%
+      rename(id = id_pytania)
+  } else if (poziom == "wia") {
+    wyniki_egz = wyniki_egz %>%
+      inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
+      group_by(poprzedni_wynik, id_wiazki, liczba) %>%
+      summarise_each(funs(sum), wynik, max_punktow) %>%
+      rename(id = id_wiazki)
+  } else {
+    wyniki_egz = wyniki_egz %>%
+      inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
+      rename(id = id_kryterium)
+  }
+  
+  wyniki_egz$wynik = wyniki_egz$wynik / wyniki_egz$max_punktow
+  
+  return (ggplot(wyniki_egz, aes(x = factor(id), y = wynik)) +
+          geom_point(aes(color = poprzedni_wynik, size = liczba)))
+}
+
 shinyServer(function(input, output) {
   observeEvent(input$gen, {
       
@@ -127,6 +192,10 @@ shinyServer(function(input, output) {
     else
       output$plec_plot <- renderPlot(rysuj_wykres_plec_barplot())
     output$histogram_plot <- renderPlot(rysuj_histogram_calosci())
+    if (input$wykresy_plec)
+      output$plec_plot <- renderPlot(rysuj_wykres_plec(input$egzamin, input$poziom))
+    if (input$wykresy_poprzedni)
+      output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(input$egzamin, input$poprzedni_egzamin, input$poziom))
   })
   output$plec_hover_info <- renderUI({
     hover <- input$plec_hover
