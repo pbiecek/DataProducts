@@ -11,6 +11,8 @@ library(ZPD)
 library(ggplot2)
 library(scales)
 
+source("./pobierz_pytania.R")
+
 # Multiple plot function
 #
 # ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
@@ -57,22 +59,30 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-rysuj_wykres_plec_old <- function() {
-  wyniki_dobre = head(filter(wyniki_po_plci, plec != 0),20)
-  return (ggplot(wyniki_dobre, aes(x=id_kryterium, y = wynik)) + 
+rysuj_wykres_plec_barplot <- function() {
+  kry = names(dane)
+  kry = kry[grepl('^k_', kry)]
+  d <- dane_plec_wykresy
+  return (ggplot(d, aes(x=id_kryterium, y = wynik)) + 
             geom_bar(stat = "identity", aes(fill=plec), position = "dodge") +
             scale_fill_discrete(name="Płeć", breaks=c("k","m"), labels=c("Kobieta", "Mężczyzna")))
 }
 
-rysuj_wykres_plec <- function() {
-  # TODO
-  #kry = names(dane)
-  #kry = kry[grepl('^k_', kry)]
-  #d <- (uczniowie %>% inner_join(dane))[c("plec", kry)]
-  #d <- d %>% group_by(plec) %>% summarize_each(funs(mean))
-  #d <- d %>% gather()
-  #View(d)
-  #return(plot(rnorm(100), rnorm(100)))
+rysuj_wykres_plec_scatterplot <- function() {
+  d <- dane_plec_wykresy  %>% spread(plec, wynik)
+  # View(d)
+  return(plot(d$m, d$k))
+}
+
+policz_dane_plec_wykresy <- function() {
+  kry = names(dane)
+  kry = kry[grepl('^k_', kry)]
+  d <- (uczniowie %>% inner_join(dane))[c("plec", kry)]
+  d <- d %>% group_by(plec) %>% summarize_each(funs(mean))
+  d <- d %>% gather(id_kryterium, wynik, starts_with("k_"))
+  d <- d %>% inner_join(kryteria, by=c("id_kryterium"="id"))
+  d <- d %>% select(-tresc_pytania, -tresc_wiazki) %>% na.omit
+  dane_plec_wykresy <<- d
 }
 
 rysuj_histogram_calosci <- function() {
@@ -93,19 +103,64 @@ rysuj_histogram_calosci <- function() {
 ustaw_dane <- function(wybrano) {
   data_env = new.env()
   load(paste0("../../teamRocket/raw_data/ZPD_", wybrano, ".dat"), data_env)
-  nowe_dane = data_env[[ls(data_env)]]
-  dane <<- nowe_dane
+  dane <<- data_env[[ls(data_env)]]  # there is only one var in this env
+  dane[is.na(dane)] <<- 0
+  policz_dane_plec_wykresy()
   cat(paste0("Loaded data set: ", wybrano, "\n"))
   gc()
 }
 
 shinyServer(function(input, output) {
   observeEvent(input$gen, {
-    if(input$wykresy_plec)
-      output$plec_plot <- renderPlot(rysuj_wykres_plec())
+      
+  })
+  observeEvent(input$is_scatterplot, {
+    if(input$is_scatterplot)
+      output$plec_plot <- renderPlot(rysuj_wykres_plec_scatterplot())
+    else
+      output$plec_plot <- renderPlot(rysuj_wykres_plec_barplot())
   })
   observeEvent(input$egzamin, {
     ustaw_dane(input$egzamin)
+    if(input$is_scatterplot)
+      output$plec_plot <- renderPlot(rysuj_wykres_plec_scatterplot())
+    else
+      output$plec_plot <- renderPlot(rysuj_wykres_plec_barplot())
     output$histogram_plot <- renderPlot(rysuj_histogram_calosci())
+  })
+  output$plec_hover_info <- renderUI({
+    hover <- input$plec_hover
+    point <- nearPoints(dane_plec_wykresy %>% spread(plec, wynik), hover, xvar="m", yvar='k', threshold = 5, maxpoints = 1, addDist = TRUE)
+    if (nrow(point) == 0)
+      point <- last_point
+    last_point <<- point
+    
+    # calculate point position INSIDE the image as percent of total dimensions
+    # from left (horizontal) and from top (vertical)
+    left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
+    top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
+    
+    # calculate distance from left and bottom side of the picture in pixels
+    left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
+    top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
+    
+    # create style property fot tooltip
+    # background color is set so tooltip is a bit transparent
+    # z-index is set so we are sure are tooltip will be on top
+    style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.85); ",
+                    "left:", left_px + 2, "px; top:", top_px + 2, "px;")
+    
+    # actual tooltip created as wellPanel
+    mainPanel(
+      p(HTML(paste0("<b> Kryterium: </b>", point$id_kryterium, "<br/>",
+                    "<b> Pytanie: </b>", point$id_pytania, "<br/>",
+                    "<b> Średnia kobiet: </b>", point$k, "<br/>",
+                    "<b> Średnia mężczyzn: </b>", point$m, "<br/>",
+                    pobierz_pytanie(point$id_pytania),
+                    "<b> ________________ </b> <br />",
+                    pobierz_wiazke(point$id_wiazki)
+                    ))
+    )
+    )
   })
 })

@@ -68,42 +68,29 @@ shinyUI(pageWithSidebar(
   sidebarPanel(
     selectInput("egzamin", label = "Egzamin:",
                 choices = choices),
-    
-    checkboxInput("wykresy_woj", "Wykres zależności dla województw?", 
-                                 value = FALSE),
-    checkboxInput("wykresy_plec", "Wykres zależności dla płci?", 
-                  value = FALSE),
-    checkboxInput("wykresy_wies", "Wykres zależności przy podziale wieś/miasto?", 
-                  value = FALSE),
-    checkboxInput("wykresy_szkola", "Wykres zależności dla danych szkół?", 
-                  value = FALSE),
+    checkboxInput("is_scatterplot", "Scatterplot zamiast wykresu słupkowego.",
+                  value = TRUE),
     actionButton("gen", "Generuj")
     ),
     mainPanel(
       tabsetPanel(
-        tabPanel("Podsumowanie",
-          conditionalPanel(
-            condition = "input.wykresy_plec == true",
-            plotOutput("plec_plot")
-          ),
-          conditionalPanel(
-            condition = "input.wykresy_plec == true",
-            plotOutput("woj_plot")
-          ),
-          conditionalPanel(
-            condition = "input.wykresy_plec == true",
-            plotOutput("wies_plot")
-          ),
-          conditionalPanel(
-            condition = "input.wykresy_ == true",
-            plotOutput("szkola_plot")
+        tabPanel("Kobieta/mężczyzna",
+          div(
+            # style = "position:relative",
+            plotOutput("plec_plot", clickId = "plec_hover"
+                      #click = clickOpts("plec_hover"#, delay = 100, delayType = "debounce")
+                                        ),
+            uiOutput("plec_hover_info", height="800px")
           )
         ),
+        tabPanel("Wieś/miasto",
+          plotOutput("wies_plot")
+        ),
         tabPanel("Histogram",
-                 plotOutput("histogram_plot")
+            plotOutput("histogram_plot")
         ),
         tabPanel("Szczegóły",
-            plotOutput("szczegoly_ui", height="4000px")
+            plotOutput("szczegoly_ui", height="4000px", width="600px")
         )
       )
   )
