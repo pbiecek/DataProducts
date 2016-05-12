@@ -1,7 +1,7 @@
 library(ggplot2)
 library(dplyr)
-library(googleVis)
 library(shiny)
+library(scales)
 
 oceny <- tbl_df(read.csv("../../data/oceny.txt", sep=";", dec=","))
 database <- read.csv("../../data/database.txt", sep=";", dec=",")
@@ -9,11 +9,17 @@ database <- read.csv("../../data/database.txt", sep=";", dec=",")
 subjectNames <- c("Matematyka dyskretna",
                   "Analiza matematyczna inf. I",
                   "Analiza matematyczna inf. II",
-                  "Algorytmy i struktury danych")
+                  "Algorytmy i struktury danych",
+                  "Programowanie obiektowe",
+                  "Systemy operacyjne",
+                  "Indywidualny projekt programistyczny")
+
+estimators <- c("Średnia", "Mediana", "Wariancja", "Zaliczenie")
 
 
 # UI
 plotTitleUI <- element_text(size=27, margin=margin(b=20, unit="pt"))
+plotMarginUI <- unit(c(1,1,1,1), "cm")
 axisTextUI <- element_text(size=14)
 axisTitleXUI <- element_text(size=18, margin=margin(t=15, unit="pt"))
 axisTitleYUI <- element_text(size=18, margin=margin(r=20, unit="pt"))
@@ -24,92 +30,82 @@ legendTextUI <- element_text(size=16, margin=margin(b=20, unit="pt"))
 
 shinyServer(function(input, output) {
   
-  #FIRST TAB
-  output$firstSubject <- renderUI({
-    selectInput("firstSubject", "", sort(subjectNames))
-  })
-
-  output$secondSubject <- renderUI({
-    selectInput("secondSubject", "", sort(setdiff(subjectNames, input$firstSubject)))
-  })
-
-  firstSubjectReactive <- reactive({
-    dplyr:::filter(database, NAZWA == input$firstSubject) %>% dplyr:::select(OS_ID, OCENA_WARTOSC)
-  })
-
-  secondSubjectReactive <- reactive({
-    dplyr:::filter(database, NAZWA == input$secondSubject) %>% dplyr:::select(OS_ID, OCENA_WARTOSC)
-  })
-
-  output$comparisonPlot = renderPlot({
-    firstSubject <- firstSubjectReactive()
-    secondSubject <- secondSubjectReactive()
-
-    analysis <- merge(firstSubject, secondSubject, by = "OS_ID")
-
-    library(stringr)
-    analysis <- mutate(analysis, a1 = str_replace(OCENA_WARTOSC.x, ",", "."))
-    analysis <- mutate(analysis, a2 = str_replace(OCENA_WARTOSC.y, ",", "."))
-    analysis <- mutate(analysis, a1num = as.numeric(as.character(a1)))
-    analysis <- mutate(analysis, a2num = as.numeric(as.character(a2)))
-    analysis <- dplyr:::filter(analysis, a1num != "NA")
-    analysis <- dplyr:::filter(analysis, a2num != "NA")
-
-    analysis <- mutate(analysis, Roznica = a1num - a2num)
-
-    groupAnalysis = dplyr:::group_by(analysis, Roznica) %>% summarise(Count = n())
-
-    (ggplot(groupAnalysis, aes(x=Roznica, y=Count))
-     + geom_point(size = groupAnalysis$Count*0.15)
-     + scale_x_continuous(limits = c(-2.5, 2.5))
-     + scale_y_continuous(limits = c(0, 250))
-     + ggtitle("Różnica w wynikach")
-     + xlab("Różnica") + ylab("Ilość osób")
-     + theme(plot.title=plotTitleUI,
-            axis.text=axisTextUI,
-            axis.title.x=axisTitleXUI,
-            axis.title.y=axisTitleYUI)
-    )
-  })
-
-
-  # SECOND TAB
+  # FIRST TAB
   output$lecturerSubject <- renderUI({
     selectInput("lecturerSubject", "", sort(subjectNames))
   })
 
-  selectedLecturerSubject <- reactive({
+  selectedSubject <- reactive({
     data <- dplyr:::filter(database, NAZWA == input$lecturerSubject)
-    data[grepl("*WYK$", data$TZAJ_KOD_1),]
+  })
+  
+  lecturers <- reactive({
+    data <- selectedSubject()
+    temp <- data[grepl("*WYK$", data$TZAJ_KOD_1),]
+    temp <- dplyr:::select(temp, PRAC_ID_1)
+    dplyr:::group_by(temp, PRAC_ID_1) %>% summarise()
   })
 
   output$lecturerPlot = renderPlot({
-    lecturerData <- selectedLecturerSubject()
+    lecturerData <- selectedSubject()
+    lecturers <- lecturers()
+    lv <- c(t(lecturers))
+    
+    lecturerData <- dplyr:::filter(lecturerData, OCENA_WARTOSC != "", PRAC_ID_1 %in% lv) %>% dplyr:::select(PRAC_ID_1, OCENA_WARTOSC)
+    
+    dFMatrix <- matrix(nrow = 0, ncol = nrow(lecturers))
 
-    lecturerData <- dplyr:::group_by(lecturerData, PRAC_ID_1, OCENA_WARTOSC) %>%
-      filter(OCENA_WARTOSC != "") %>%
-      tally %>%
-      group_by(PRAC_ID_1) %>%
-      mutate(PCT=n/sum(n))
+    grades = c('2', '3', '3,5', '4', '4,5', '5')
+    
+    for (i in grades) {
+      temp <- c()
+      for (w in lecturers$PRAC_ID_1) {
+        temp <- c(temp, nrow(dplyr:::filter(lecturerData, PRAC_ID_1 == w, OCENA_WARTOSC == i)))
+      }
+      dFMatrix <- rbind(dFMatrix, temp)
+    }
+    
+    rownames(dFMatrix) <- grades
+    colnames(dFMatrix) <- c(t(lecturers))
+    
+    df <- as.data.frame(dFMatrix)
+    df$Oceny <- row.names(df)
 
-    ggplot(data=lecturerData, aes(x=OCENA_WARTOSC, y=PCT, colour = as.factor(PRAC_ID_1))) +
-      geom_line(aes(group = PRAC_ID_1), size=2) + geom_point() +
-      scale_y_continuous(labels = scales::percent) +
-      ggtitle("Porównanie wyników wykładowców") +
-      xlab("Ocena") + ylab("Procent osób uzyskująca dany wynik") +
-      labs(colour = "ID Wykładowcy") +
-      theme(plot.title=plotTitleUI,
+    library(reshape2)
+    df.molten <- melt(df, value.name="Rozkład", variable.name="Wykładowcy", na.rm=TRUE)
+    library(ggplot2)
+    
+    plot <- ggplot(data = df.molten, aes(x=Wykładowcy, fill=Oceny)) + 
+      geom_bar(data = subset(df.molten, Oceny %in% c("2")),
+               aes(y = -Rozkład), position="stack", stat="identity") +
+      geom_bar(data = subset(df.molten, !Oceny %in% c("2")), 
+               aes(y = Rozkład), position="stack", stat="identity") + 
+      scale_y_continuous(breaks = NULL) +
+      geom_hline(aes(yintercept = 0)) +
+      labs(x = "Id wykładowcy", y = "Rozkład ocen") + 
+      ggtitle("Wyniki egzaminów względem wykładowcy") +
+      theme(plot.title=plotTitleUI, plot.margin=plotMarginUI,
             axis.text=axisTextUI,
             axis.title.x=axisTitleXUI,
             axis.title.y=axisTitleYUI,
-            legend.title=legendTitleUI, legend.text=legendTextUI, legend.title.align=0.5,
+            legend.title=legendTitleUI,
             legend.key.width=unit(3,"line"), legend.key.height=unit(2,"line"))
+    
+    for (i in 1:(ncol(df)-1)) {
+      plot <- plot +
+        annotate("text", x = i, y = (sum(df[,i]) - df[1,i]) + 2, label = sum(df[,i]), size = 10)
+    }
+    
+    plot
   })
 
-  #THIRD TAB
-
+  # SECOND TAB
   output$trendSubjectsGroup <- renderUI({
     selectInput("trendSubjectsGroup", "", sort(subjectNames), multiple = TRUE)
+  })
+
+  output$trendEstimators <- renderUI({
+    selectInput("trendEstimators", "", estimators)
   })
 
   output$yearsTrendSlider <- renderUI({
@@ -126,6 +122,11 @@ shinyServer(function(input, output) {
     data
   })
 
+  selectedEstimator <- reactive({
+    selectedEstimator <- input$trendEstimators
+    selectedEstimator
+  })
+
   chosenYearsTrendSlider <- reactive({
     sliderTrend <- input$yearsTrendSlider
 
@@ -136,25 +137,56 @@ shinyServer(function(input, output) {
 
 
   output$trendPlot = renderPlot({
-    yearsTrendData <- chosenYearsTrendSlider() %>%
-      filter(OCENA != "") %>% filter(OCENA != "NK") %>%
-      dplyr:::group_by(CDYD_KOD, PRZ_NAZWA) %>%
-      summarise(srednia=mean(as.numeric(OCENA)))
+    estimator <- selectedEstimator()
 
-    ggplot(data=yearsTrendData, aes(x=CDYD_KOD, y=srednia, colour = as.factor(PRZ_NAZWA))) +
-      geom_line(aes(group = PRZ_NAZWA), size=2) + geom_point() +
-      ggtitle("Średnia ocen przedmiotów w kolejnych latach") +
-      xlab("Lata") + ylab("Średnia ocena") +
-      labs(colour = "Przedmiot") +
-      theme(plot.title=plotTitleUI,
-            axis.text=axisTextUI,
-            axis.title.x=axisTitleXUI,
-            axis.title.y=axisTitleYUI,
-            legend.title=legendTitleUI, legend.text=legendTextUI, legend.title.align=0.5,
-            legend.key.width=unit(3,"line"), legend.key.height=unit(2,"line"))
+    yearsTrendData <- chosenYearsTrendSlider() %>%
+      filter(OCENA != "") %>%
+      dplyr:::group_by(CDYD_KOD, PRZ_NAZWA)
+
+    if (estimator == "Zaliczenie") {
+      pos <- position_dodge(width=0.9)
+      yearsTrendData <- yearsTrendData %>% summarise(count=n(), niezal=sum(ifelse(as.numeric(OCENA) > 2, 0, 1)))
+      pl <- ggplot(data=yearsTrendData, aes(x=CDYD_KOD, weight=niezal, y=count, ymin=niezal, ymax=niezal, fill=as.factor(PRZ_NAZWA))) +
+        geom_bar(aes(group = PRZ_NAZWA), size=2, position=pos, stat="identity") +
+        geom_errorbar(aes(y=niezal), linetype="dashed", position=pos) +
+        ggtitle("Zaliczenia przedmiotów w kolejnych latach") +
+        xlab("Lata") + ylab("Ilość studentów") +
+        labs(fill = "Przedmiot") +
+        theme(plot.title=plotTitleUI, plot.margin=plotMarginUI,
+              axis.text=axisTextUI,
+              axis.title.x=axisTitleXUI,
+              axis.title.y=axisTitleYUI,
+              legend.position="top",
+              legend.title=legendTitleUI, legend.text=legendTextUI, legend.title.align=0.5,
+              legend.key.width=unit(3,"line"), legend.key.height=unit(2,"line")) +
+        scale_x_continuous(breaks=seq(2000, 2015, 1))
+      pl
+    } else {
+      if (estimator == "Średnia") {
+        yearsTrendData <- yearsTrendData %>% summarise(srednia=mean(as.numeric(OCENA)))
+      } else if (estimator == "Mediana") {
+        yearsTrendData <- yearsTrendData %>% summarise(srednia=median(as.numeric(OCENA)))
+      } else if (estimator == "Wariancja") {
+        yearsTrendData <- yearsTrendData %>% summarise(srednia=var(as.numeric(OCENA)))
+      }
+
+      ggplot(data=yearsTrendData, aes(x=CDYD_KOD, y=srednia, colour = as.factor(PRZ_NAZWA))) +
+        geom_line(aes(group = PRZ_NAZWA), size=2) + geom_point() +
+        ggtitle(paste(estimator, "ocen przedmiotów w kolejnych latach")) +
+        xlab("Lata") + ylab(paste(estimator, "ocen")) +
+        labs(colour = "Przedmiot") +
+        theme(plot.title=plotTitleUI, plot.margin=plotMarginUI,
+              axis.text=axisTextUI,
+              axis.title.x=axisTitleXUI,
+              axis.title.y=axisTitleYUI,
+              legend.position="top",
+              legend.title=legendTitleUI, legend.text=legendTextUI, legend.title.align=0.5,
+              legend.key.width=unit(3,"line"), legend.key.height=unit(2,"line")) +
+        scale_x_continuous(breaks=seq(2000, 2015, 1))
+    }
   })
 
-  # FOURTH TAB
+  # THIRD TAB
   output$yearsSubject <- renderUI({
     selectInput("yearsSubject", "", sort(subjectNames))
   })
@@ -184,41 +216,64 @@ shinyServer(function(input, output) {
 
     yearsData <- dplyr:::group_by(yearsData, CDYD_KOD, OCENA) %>%
       filter(OCENA != "") %>% filter(OCENA != "NK") %>%
-      tally %>%
-      group_by(CDYD_KOD) %>%
-      mutate(PCT=n/sum(n))
-
-    ggplot(data=yearsData, aes(x=OCENA, y=PCT, colour = as.factor(CDYD_KOD))) +
-      geom_line(aes(group = CDYD_KOD), size=2) + geom_point() +
-      scale_y_continuous(labels = scales::percent) +
-      ggtitle("Porównanie wyników przedmiotu w kolejnych latach") +
-      xlab("Ocena") + ylab("Procent osób uzyskująca dany wynik") +
-      labs(colour = "Rok") +
-      theme(plot.title=plotTitleUI,
+      dplyr:::select(CDYD_KOD, OCENA)
+      #tally %>%
+      #group_by(CDYD_KOD) %>%
+      #summarise()
+      #mutate(PCT=n/sum(n))
+    
+    years <- dplyr:::group_by(yearsData, CDYD_KOD) %>% summarise()
+    
+    dFMatrix <- matrix(nrow = 0, ncol = nrow(years))
+    
+    grades = c('2', '3', '3,5', '4', '4,5', '5')
+    
+    for (i in grades) {
+      temp <- c()
+      for (w in years$CDYD_KOD) {
+        #print(nrow(dplyr:::filter(yearsData, CDYD_KOD == w, OCENA == i)))
+        temp <- c(temp, nrow(dplyr:::filter(yearsData, CDYD_KOD == w, OCENA == i)))
+      }
+      dFMatrix <- rbind(dFMatrix, temp)
+    }
+    
+    rownames(dFMatrix) <- grades
+    colnames(dFMatrix) <- c(t(years))
+    
+    df <- as.data.frame(dFMatrix)
+    df$Oceny <- row.names(df)
+    
+    
+    
+    library(reshape2)
+    df.molten <- melt(df, value.name="Rozkład", variable.name="Lata", na.rm=TRUE)
+    library(ggplot2)
+    
+    print(df.molten)
+    
+    plot <- ggplot(data = df.molten, aes(x=Lata, fill=Oceny)) + 
+      geom_bar(data = subset(df.molten, Oceny %in% c('2')),
+               aes(y = -Rozkład), position="stack", stat="identity") +
+      geom_bar(data = subset(df.molten, !Oceny %in% c('2')), 
+               aes(y = Rozkład), position="stack", stat="identity") + 
+      scale_y_continuous(breaks = NULL) +
+      geom_hline(aes(yintercept = 0)) +
+      labs(x = "Lata", y = "Rozkład ocen") + 
+      ggtitle("Wyniki egzaminów względem lat") +
+      theme(plot.title=plotTitleUI, plot.margin=plotMarginUI,
             axis.text=axisTextUI,
             axis.title.x=axisTitleXUI,
             axis.title.y=axisTitleYUI,
-            legend.title=legendTitleUI, legend.text=legendTextUI, legend.title.align=0.5,
+            legend.title=legendTitleUI,
             legend.key.width=unit(3,"line"), legend.key.height=unit(2,"line"))
+    
+    for (i in 1:(ncol(df)-1)) {
+      plot <- plot +
+        annotate("text", x = i, y = (sum(df[,i]) - df[1,i]) + 2, label = sum(df[,i]), size = 10)
+    }
+    
+    plot
+    
   })
-  
-  # FIFTH TAB
-  output$histSubject <- renderUI({
-    selectInput("histSubject", "", sort(subjectNames))
-  })
-  
-  selectedHistSubject <- reactive({
-    data <- dplyr:::filter(oceny, PRZ_NAZWA == input$histSubject)
-  })
-  
-  output$histPlot <- renderGvis({
-    data <- selectedHistSubject()
-    data <- dplyr:::mutate(data, ROK = substr(CDYD_KOD, 0, 4))
-    data <- dplyr:::mutate(data, ROKNUM = as.numeric(as.character(ROK)))
-    data <- dplyr:::select(data, ROKNUM, OCENA)
-    data <- dplyr:::group_by(data, ROKNUM, OCENA) %>% dplyr:::summarise(ILE = n())
-    data <- filter(data, OCENA != 'NK')
-    gvisMotionChart(data, idvar="OCENA", timevar="ROKNUM")
-  })
-  
+
 })
