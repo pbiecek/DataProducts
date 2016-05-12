@@ -69,7 +69,7 @@ rysuj_wykres_plec_barplot <- function() {
 }
 
 rysuj_wykres_plec <- function(egzamin, poziom = NULL) {
-  d_egz = typy_testow %>% filter(id == egzamin) %>%
+  d_egz = typy_testow %>% #filter(id == egzamin) %>%
     select(rok, rodzaj_egzaminu, czesc_egzaminu)
   
   wyniki_plec = wyniki_po_plci %>%
@@ -142,16 +142,16 @@ ustaw_dane <- function(wybrano = "pods_mat_2015") {
 }
 
 rysuj_wykres_poprzedni <- function(egzamin, poprzedni, poziom = NULL) {
-  d_egz = typy_testow %>% filter(id == egzamin) %>%
+  d_egz = typy_testow %>% # filter(id == egzamin) %>%
     select(rok, rodzaj_egzaminu, czesc_egzaminu)
-  d_poprz = typy_testow %>% filter(id == poprzedni) %>%
+  d_poprz = typy_testow %>% # filter(id == poprzedni) %>%
     select(rodzaj_egzaminu, czesc_egzaminu) %>%
     rename(rodzaj_poprzedni = rodzaj_egzaminu, czesc_poprzedni = czesc_egzaminu)
   
   wyniki_egz = wyniki_po_egz %>%
     inner_join(d_egz) %>%
     inner_join(d_poprz)
-  
+  View(wyniki_egz)
   if (poziom == "pyt") {
     wyniki_egz = wyniki_egz %>%
       inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
@@ -178,26 +178,14 @@ rysuj_wykres_poprzedni <- function(egzamin, poprzedni, poziom = NULL) {
 
 shinyServer(function(input, output) {
   ustaw_dane()
-  observeEvent(input$gen, {
-      
-  })
-  observeEvent(input$is_scatterplot, {
-    if(input$is_scatterplot)
-      output$plec_plot <- renderPlot(rysuj_wykres_plec_scatterplot())
-    else
-      output$plec_plot <- renderPlot(rysuj_wykres_plec_barplot())
+  observeEvent(input$poziom, {
+    output$plec_plot_alt <- renderPlot(rysuj_wykres_plec(input$egzamin_alt, input$poziom))
+    output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(input$egzamin_alt, input$poprzedni_egzamin, input$poziom))
   })
   observeEvent(input$egzamin, {
     ustaw_dane(input$egzamin)
-    if(input$is_scatterplot)
-      output$plec_plot <- renderPlot(rysuj_wykres_plec_scatterplot())
-    else
-      output$plec_plot <- renderPlot(rysuj_wykres_plec_barplot())
+    output$plec_plot <- renderPlot(rysuj_wykres_plec_scatterplot())
     output$histogram_plot <- renderPlot(rysuj_histogram_calosci())
-    #if (input$wykresy_plec)
-    #  output$plec_plot <- renderPlot(rysuj_wykres_plec(input$egzamin, input$poziom))
-    #if (input$wykresy_poprzedni)
-    #  output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(input$egzamin, input$poprzedni_egzamin, input$poziom))
   })
   output$plec_hover_info <- renderUI({
     hover <- input$plec_hover

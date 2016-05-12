@@ -62,59 +62,69 @@ choice_vals = c(
 
 choices = setNames(as.list(choice_vals), choice_names)
 
+alt_choices = list(
+  "matura podstawowa - jezyk polski - 2015"=1681
+)
+
+alt_choices_poprzedni = list(
+  "egzamin gimnazjalny - jezyk polski - 2012"=875
+)
+
 shinyUI(pageWithSidebar(
   
   headerPanel("Trzecia iteracja"),
   
   sidebarPanel(
-    selectInput("egzamin", label = "Egzamin:",
-                choices = choices),
+    conditionalPanel(
+      condition = "input.tabset == 'plec_pytan' || input.tabset == 'histogram'",
+      selectInput("egzamin", label = "Egzamin:",
+                choices = choices)
+    ),
+    conditionalPanel(
+      condition = "input.tabset == 'roznice' || input.tabset == 'poprzednie'",
+      selectInput("alt_egzamin", label = "Egzamin:",
+                choices = alt_choices),
     
-    checkboxInput("is_scatterplot", "Scatterplot zamiast wykresu słupkowego.",
-                  value = TRUE),
+      selectInput("poprzedni_egzamin", label = "Poprzedni egzamin:",
+                choices = alt_choices_poprzedni),
     
-    selectInput("egzamin_1", label = "Egzamin:",
-                choices = choices),
-    
-    selectInput("poprzedni_egzamin", label = "Poprzedni egzamin:",
-                choices = choices),
-    
-    selectInput("poziom", label = "Prezentuj po:",
-                choices = list(Kryteriach = "kryt", Pytaniach = "pyt", Wiązkach = "wia")),
-    
-    checkboxInput("wykresy_plec", "Wykres zależności dla płci?", 
-                  value = FALSE),
-    checkboxInput("wykresy_poprzedni", "Wykres zależności od poprzednich egzaminów?", 
-                  value = FALSE),
-    actionButton("gen", "Generuj")
+      selectInput("poziom", label = "Prezentuj po:",
+                choices = list(Kryteriach = "kryt", Pytaniach = "pyt", Wiązkach = "wia"))
+    )
   ),
   mainPanel(
     tabsetPanel(
-      tabPanel("Kobieta/mężczyzna",
-               div(
-                 # style = "position:relative",
-                 plotOutput("plec_plot", clickId = "plec_hover"
-                            #click = clickOpts("plec_hover"#, delay = 100, delayType = "debounce")
-                 ),
-                 uiOutput("plec_hover_info", height="800px")
-               )
+      id = "tabset",
+      tabPanel(
+        "Jaką płeć mają pytania?",
+        value = "plec_pytan",
+        div(
+          # style = "position:relative",
+          plotOutput("plec_plot", click = "plec_hover"
+                    #click = clickOpts("plec_hover"#, delay = 100, delayType = "debounce")
+          ),
+          uiOutput("plec_hover_info", height = "800px")
+        )
       ),
       tabPanel(
-        "plec plot",
-        plotOutput("plec_plot_0")
+        "Różnice pomiędzy płciami",
+        value = "roznice",
+        plotOutput("plec_plot_alt")
       ),
       tabPanel(
-        "Poprzedni",
+        "Wpływ wcześniejszych etapów edukacji",
+        value = "poprzednie",
         plotOutput("poprz_plot")
       ),
-      tabPanel("Wieś/miasto",
-               plotOutput("wies_plot")
+      tabPanel(
+        "Wieś/miasto",
+        value = "wiesmiasto",
+        plotOutput("wies_plot")
       ),
-      tabPanel("Histogram",
-               plotOutput("histogram_plot")
-      ),
-      tabPanel("Szczegóły",
-               plotOutput("szczegoly_ui", height="4000px", width="600px")
+      tabPanel(
+        "Histogram",
+        value = "histogram",
+        plotOutput("histogram_plot")
       )
     )
   )
