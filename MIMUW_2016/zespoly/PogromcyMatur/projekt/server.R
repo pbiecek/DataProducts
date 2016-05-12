@@ -100,9 +100,8 @@ rysuj_wykres_plec <- function(egzamin, poziom = NULL) {
 }
 
 rysuj_wykres_plec_scatterplot <- function() {
-  d <- dane_plec_wykresy  %>% spread(plec, wynik)
-  # View(d)
-  return(plot(d$m, d$k))
+  plot(dane_plec_wykresy$m, dane_plec_wykresy$k, col='green', type='p', lwd=8)
+  abline(a=0.0, b=1.0, col='blue')
 }
 
 policz_dane_plec_wykresy <- function() {
@@ -113,7 +112,9 @@ policz_dane_plec_wykresy <- function() {
   d <- d %>% gather(id_kryterium, wynik, starts_with("k_"))
   d <- d %>% inner_join(kryteria, by=c("id_kryterium"="id"))
   d <- d %>% select(-tresc_pytania, -tresc_wiazki) %>% na.omit
+  d <- d %>% spread(plec, wynik)
   dane_plec_wykresy <<- d
+  last_point <<- d[0, ]
 }
 
 rysuj_histogram_calosci <- function() {
@@ -189,7 +190,7 @@ shinyServer(function(input, output) {
   })
   output$plec_hover_info <- renderUI({
     hover <- input$plec_hover
-    point <- nearPoints(dane_plec_wykresy %>% spread(plec, wynik), hover, xvar="m", yvar='k', threshold = 5, maxpoints = 1, addDist = TRUE)
+    point <- nearPoints(dane_plec_wykresy, hover, xvar="m", yvar='k', threshold = 5, maxpoints = 1, addDist = TRUE)
     if (nrow(point) == 0)
       point <- last_point
     last_point <<- point
