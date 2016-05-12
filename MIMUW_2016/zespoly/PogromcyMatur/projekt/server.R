@@ -102,7 +102,6 @@ rysuj_wykres_poprzedni <- function(egzamin, poprzedni, poziom = NULL) {
   wyniki_egz = wyniki_po_egz %>%
     inner_join(d_egz) %>%
     inner_join(d_poprz)
-  View(wyniki_egz)
   if (poziom == "pyt") {
     wyniki_egz = wyniki_egz %>%
       inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
@@ -157,7 +156,7 @@ rysuj_wykres_korelacji <- function(czy_klastrowac) {
   if(czy_klastrowac)
     corrplot(c_dane, order='hclust')
   else
-    corrplot(c_dane, order='hclust')
+    corrplot(c_dane)
 }
 
 rysuj_histogram_calosci <- function() {
@@ -209,6 +208,9 @@ shinyServer(function(input, output) {
     ustaw_dane(input$egzamin)
     output$plec_plot <- renderPlot(rysuj_wykres_plec_scatterplot())
     output$histogram_plot <- renderPlot(rysuj_histogram_calosci())
+    output$correlation_plot <- renderPlot(rysuj_wykres_korelacji(input$klastrowac))
+  })
+  observeEvent(input$klastrowac, {
     output$correlation_plot <- renderPlot(rysuj_wykres_korelacji(input$klastrowac))
   })
   output$plec_hover_info <- renderUI({

@@ -92,13 +92,14 @@ shinyUI(pageWithSidebar(
       condition = "input.tabset == 'roznice' || input.tabset == 'poprzednie'",
       selectInput("alt_egzamin", label = "Egzamin:",
                 choices = alt_choices),
-    
-      selectInput("poprzedni_egzamin", label = "Poprzedni egzamin:",
-                choices = alt_choices_poprzedni),
-    
       selectInput("poziom", label = "Prezentuj po:",
                 choices = list(Kryteriach = "kryt", Pytaniach = "pyt", Wiązkach = "wia"))
-    )
+    ),
+    conditionalPanel(
+      condition = "input.tabset == 'poprzednie'",
+      selectInput("poprzedni_egzamin", label = "Poprzedni egzamin:",
+                  choices = alt_choices_poprzedni)
+      )
   ),
   mainPanel(
     tabsetPanel(
@@ -108,14 +109,12 @@ shinyUI(pageWithSidebar(
         value = "plec_pytan",
         div(
           # style = "position:relative",
-          plotOutput("plec_plot", click = "plec_hover"
-                    #click = clickOpts("plec_hover"#, delay = 100, delayType = "debounce")
-          ),
+          plotOutput("plec_plot", click = "plec_hover"),
           uiOutput("plec_hover_info", height = "800px")
         )
       ),
       tabPanel(
-        "Różnice pomiędzy płciami",
+        "Zróżnicowanie wyników w zależności od płci",
         value = "roznice",
         plotOutput("plec_plot_alt")
       ),
@@ -135,13 +134,11 @@ shinyUI(pageWithSidebar(
         plotOutput("histogram_plot")
       ),
       tabPanel(
-        "Korelacje",
+        "Korelacje między kryteriami oceny",
         value = "kor",
         div(
           # style = "position:relative",
-          plotOutput("correlation_plot", click = "kor_hover"
-                     #click = clickOpts("plec_hover"#, delay = 100, delayType = "debounce")
-          ),
+          plotOutput("correlation_plot", click = "kor_hover"),
           uiOutput("kor_hover_info", height = "800px")
         )
       )
