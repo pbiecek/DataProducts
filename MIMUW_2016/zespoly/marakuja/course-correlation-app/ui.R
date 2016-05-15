@@ -11,13 +11,17 @@ shinyUI(fluidPage(
       selectInput(inputId = "przedmiot", 
                   label = "Wybierz przedmiot",
                   choices = nazwyPrzedmiotow,
-                  selected = "1000-213aBAD"
+                  selected = "1000-213bASD"
       )
     ),
     mainPanel(
       tabsetPanel(
-          tabPanel("Sprzyjające zdanie", plotOutput("corDiagramPositive")),
-          tabPanel("Niesprzyjające niezdanie", plotOutput("corDiagramNegative"))
+          tabPanel("Sprzyjające zdanie",
+                   textOutput("headerPositive"),
+                   plotOutput("corDiagramPositive")),
+          tabPanel("Niesprzyjające niezdanie",
+                   textOutput("headerNegative"),
+                   plotOutput("corDiagramNegative"))
       )
     )
   )

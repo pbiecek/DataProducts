@@ -38,11 +38,21 @@ shinyServer(function(input, output) {
     plot_for_data(computed_course, count_A_by_mark_B_failed(computed_course, course))
   })
   
+  output$headerPositive <- renderText({
+    paste("Jeżeli zdałeś ", positive_subject(), "przedmiot ",
+          input$przedmiot, " jest dla Ciebie")
+  })
+
+  output$headerNegative <- renderText({
+    paste("Jeżeli nie zdałeś ", negative_subject(),
+          "lepiej nie wybieraj przedmiotu ", input$przedmiot)
+  })
+
   output$corDiagramPositive = renderPlot(
     ggplot(points_positive(), aes(x = ocena_przedmiot_B - 0.25, y = liczba_studentow)) +
       geom_step() + ggtitle(positive_subject())
   )
-  
+
   output$corDiagramNegative = renderPlot(
     ggplot(points_negative(), aes(x = ocena_przedmiot_B - 0.25, y = liczba_studentow)) +
       geom_step() + ggtitle(negative_subject())
