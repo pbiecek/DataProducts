@@ -7,6 +7,43 @@ get_marks_dataset <- function() {
   data <- tbl_df(table)
 }
 
+data <- get_marks_dataset()
+
+#' Returns dataframe of subjects and their codes.
+get_subjects_data <- function() {
+  subjects <- data %>% distinct(KOD) %>% select(PRZ_NAZWA, KOD)
+}
+
+#' Returns vector of subjects' names retrieved from dataset.
+get_subjects_names <- function() {
+  subjects <- get_subjects_data() %>% select(PRZ_NAZWA)
+  c(t(subjects))
+}
+
+#' Returns vector of subjects' names retrieved from dataset.
+get_subjects_codes <- function() {
+  subjects <- get_subjects_data() %>% select(KOD)
+  c(t(subjects))
+}
+
+#' Returns list of subjects: codes with names
+get_subjects_dictionary <- function() {
+  subjects <- get_subjects_data()
+  kody <- subjects %>% select(KOD)
+  przedmioty <- subjects %>% select(PRZ_NAZWA)
+  kody <- c(t(kody))
+  przedmioty <- c(t(przedmioty))
+  codes_dictionary <- as.list(kody)
+  names(codes_dictionary) <- przedmioty
+  codes_dictionary
+}
+
+map_subject_name_to_code <- function(name) {
+  courses_mapping = get_subjects_dictionary()
+  courses_mapping[[name]]
+}
+
+
 get_last_grade_for_course <- function(data, course) {
   data %>%
     filter(!is.na(OCENA_LICZBOWA)) %>%
@@ -40,14 +77,13 @@ courses_summary <- function(dataA, dataB) {
 }
 
 count_A_by_mark_B <- function(courseA, courseB, filterA) {
-  data <- get_marks_dataset()
   dataA <- filterA(get_last_grade_for_course(data, courseA))
   dataB <- get_last_grade_for_course(data, courseB)
   courses_summary(dataA, dataB)
 }
 
 count_A_by_mark_B_all <- function(course) {
-  all_data <- get_marks_dataset()
+  all_data <- data
   course_data <- get_last_grade_for_course(all_data, course)
   course_data %>%
     group_by(OCENA_LICZBOWA) %>%
