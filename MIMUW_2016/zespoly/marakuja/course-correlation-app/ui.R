@@ -2,26 +2,23 @@ library(shiny)
 
 source("input.R")
 
-nazwyPrzedmiotow <- get_subjects_codes() 
+nazwyPrzedmiotow <- get_subjects_codes()
 
 shinyUI(fluidPage(
-  titlePanel("Zależność rozkładu ocen z przedmiotu B od przedmiotu A"),
+  titlePanel("Wpływ przedmiotów na MIMie na wybrany"),
   sidebarLayout(
     sidebarPanel(
-      selectInput(inputId = "przedmiot1", 
-                  label = "Wybierz przedmiot A",
+      selectInput(inputId = "przedmiot", 
+                  label = "Wybierz przedmiot",
                   choices = nazwyPrzedmiotow,
-                  selected = "1000-211aWPI"
-                  ),
-      selectInput(inputId = "przedmiot2", 
-                  label = "Wybierz przedmiot B",
-                  choices = nazwyPrzedmiotow,
-                  selected = "1000-214bWWW"
+                  selected = "1000-213aBAD"
       )
     ),
     mainPanel(
-      plotOutput("corDiagram"),
-      dataTableOutput("corTable")
+      tabsetPanel(
+          tabPanel("Sprzyjające zdanie", plotOutput("corDiagramPositive")),
+          tabPanel("Niesprzyjające niezdanie", plotOutput("corDiagramNegative"))
+      )
     )
   )
 ))
