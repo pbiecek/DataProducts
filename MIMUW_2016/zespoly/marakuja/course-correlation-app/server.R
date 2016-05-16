@@ -19,9 +19,10 @@ shinyServer(function(input, output) {
     c(t(sorted))
   })
   
-  plot_for_data <- function(computed_course, data) {
+  plot_for_data <- function(computed_course, data, p_or_f) {
     input_course <- input$przedmiot
-    plot <- df_for_plot(data)
+    all <- count_A_by_mark_B_all(computed_course)
+    plot <- data_for_plot(data, all, p_or_f)
     plot$header <- computed_course
     plot
   }
@@ -29,13 +30,13 @@ shinyServer(function(input, output) {
   points_positive <- reactive ({
     input_course <- input$przedmiot
     computed_course <- positive_subject()
-    plot_for_data(computed_course, count_A_by_mark_B_passed(computed_course, input_course))
+    plot_for_data(computed_course, count_A_by_mark_B_passed(computed_course, input_course), "passed")
   })
   
   points_negative <- reactive ({
     course <- input$przedmiot
     computed_course <- negative_subject()
-    plot_for_data(computed_course, count_A_by_mark_B_failed(computed_course, course))
+    plot_for_data(computed_course, count_A_by_mark_B_failed(computed_course, course), "failed")
   })
   
   output$headerPositive <- renderText({
@@ -49,12 +50,10 @@ shinyServer(function(input, output) {
   })
 
   output$corDiagramPositive = renderPlot(
-    ggplot(points_positive(), aes(x = ocena_przedmiot_B - 0.25, y = liczba_studentow)) +
-      geom_step() + ggtitle(positive_subject())
+    ggplot(points_positive(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = typ)) + geom_line() + geom_errorbar(aes(ymax = max_err, ymin = min_err))
   )
 
   output$corDiagramNegative = renderPlot(
-    ggplot(points_negative(), aes(x = ocena_przedmiot_B - 0.25, y = liczba_studentow)) +
-      geom_step() + ggtitle(negative_subject())
+    ggplot(points_negative(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = typ)) + geom_line() +geom_errorbar(aes(ymax = max_err, ymin = min_err))
   )
 })

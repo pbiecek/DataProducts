@@ -123,19 +123,38 @@ df_for_plot <- function(df) {
     summarise(liczba_studentow = sum(liczba_studentow)) %>%
     arrange(-row_number()) -> df_new
   maks <- sum(df_new[2])
-  df_new[2] = cumsum(df_new[2]) / maks
-  arrange(df_new, -row_number())
+  df_new[2] = cumsum(df_new[2])
+  df_new <- arrange(df_new, -row_number())
+  df_new = add_error(df_new)
+  df_new[2] = df_new[2] / maks
+  df_new
 }
 
-data_for_plot <- function(failed, passed, not_attending) {
-  failed_plot <- df_for_plot(failed)
-  failed_plot$typ = "Nie zdał"
+add_error <- function(df) {
+  x <- df$liczba_studentow
+  maks <- x[1]
+  wyn1 <- x
+  wyn2 <- x
+  i <- 1
+  for(a in x) {
+    b <- prop.test(a, maks)
+    wyn1[i] = b$conf.int[1]
+    wyn2[i] = b$conf.int[2]
+    i <- i + 1
+  }
+  df$min_err = wyn1
+  df$max_err = wyn2
+  df[1,3] = 1
+  df
+}
 
-  passed_plot <- df_for_plot(passed)
-  passed_plot$typ = "Zdał"
-
-  not_attending_plot <- df_for_plot(not_attending)
-  not_attending_plot$typ = "Nie uczestniczył"
-
-  union(union(failed_plot, passed_plot), not_attending_plot)
+data_for_plot <- function(chosen, all, rodzaj) {
+  
+  chosen_plot <- df_for_plot(chosen)
+  chosen_plot$typ = rodzaj
+  
+  all_plot <- df_for_plot(not_attending)
+  all_plot$typ = "all"
+  
+  union(chosen_plot, all_plot)
 }
