@@ -32,4 +32,4 @@ Instalacja
 ```R
 devtools::install_github(repo = "piotrb5e3/dataproducts", ref="devel", subdir="/MIMUW_2016/zespoly/teamRocket/package")
 ```
-Niesety taka metoda pobiera dużo nadmiarowych danych. Ostrożnie!
+Niestety taka metoda pobiera dużo nadmiarowych danych. Ostrożnie!
