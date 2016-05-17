@@ -27,3 +27,9 @@ Temat
 
 Porównanie wyników matur ze szkół ponadgimnazjalnych w danym rejonie pod kątem rekrutacji na wybrane kierunki studiów.
 
+Instalacja
+---
+```R
+devtools::install_github(repo = "piotrb5e3/dataproducts", ref="devel", subdir="/MIMUW_2016/zespoly/teamRocket/package")
+```
+Niesety taka metoda pobiera dużo nadmiarowych danych. Ostrożnie!
