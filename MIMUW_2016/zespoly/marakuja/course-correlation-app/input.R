@@ -153,7 +153,7 @@ data_for_plot <- function(chosen, all, rodzaj) {
   chosen_plot <- df_for_plot(chosen)
   chosen_plot$typ = rodzaj
   
-  all_plot <- df_for_plot(not_attending)
+  all_plot <- df_for_plot(all)
   all_plot$typ = "all"
   
   union(chosen_plot, all_plot)
