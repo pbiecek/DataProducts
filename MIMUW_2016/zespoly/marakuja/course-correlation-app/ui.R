@@ -5,7 +5,7 @@ source("input.R")
 nazwyPrzedmiotow <- get_subjects_codes()
 
 shinyUI(fluidPage(
-  titlePanel("Wpływ przedmiotów na MIMie na wybrany"),
+  titlePanel("Przedmioty skorelowane"),
   sidebarLayout(
     sidebarPanel(
       selectInput(inputId = "przedmiot", 
@@ -15,14 +15,10 @@ shinyUI(fluidPage(
       )
     ),
     mainPanel(
-      tabsetPanel(
-          tabPanel("Sprzyjające zdanie",
-                   textOutput("headerPositive"),
-                   plotOutput("corDiagramPositive")),
-          tabPanel("Niesprzyjające niezdanie",
-                   textOutput("headerNegative"),
-                   plotOutput("corDiagramNegative"))
-      )
+      textOutput("headerNegative"),
+      plotOutput("corDiagramNegative"),
+      textOutput("headerPositive"),
+      plotOutput("corDiagramPositive")
     )
   )
 ))
