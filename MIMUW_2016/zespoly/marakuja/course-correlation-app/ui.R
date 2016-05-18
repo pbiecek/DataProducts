@@ -11,7 +11,7 @@ shinyUI(fluidPage(
       selectInput(inputId = "przedmiot", 
                   label = "Wybierz przedmiot",
                   choices = nazwyPrzedmiotow,
-                  selected = "1000-213bASD"
+                  selected = "1000-214bJAO"
       )
     ),
     mainPanel(
