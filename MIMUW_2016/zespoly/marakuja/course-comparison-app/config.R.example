@@ -1,6 +1,0 @@
-classPath <- "ojdbc6.jar"
-host <- 127.0.0.1
-port <- 1521
-service_name <- "database"
-user <- "user"
-password <- "password"
