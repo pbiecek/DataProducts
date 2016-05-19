@@ -22,7 +22,7 @@ Marcin Kania
 Magdalena Waśniowska
 
 ### Opieka nad częścią wizualną:
-Katarzyna Herba
+Katarzyna Herba, Marcin Kania
 
 ### Opieka nad dokumentacją końcową:
 Marcin Kania
