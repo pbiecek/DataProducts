@@ -28,7 +28,7 @@ Plan spotka&#324; MIM UW:
 * 5 V - tworzenie pakietów (start z `archivist::aread("pbiecek/DataProducts/arepo/9d402d5aec1790d05105784de65025ba")`, później [te materiały](https://pbiecek.gitbooks.io/przewodnik/content/Programowanie/pakiety/po_co.html))
 * 12 V - IBE
 
-* 19 V - USOS / openCPU
+* 19 V - USOS / [openCPU](https://pbiecek.gitbooks.io/przewodnik/content/Programowanie/pazury/REST.html)
 
 * 2 VI - IBE - końcowe prezentacje
 * 16 VI - USOS - końcowe prezentacje
