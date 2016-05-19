@@ -21,7 +21,7 @@ shinyServer(function(input, output) {
   
   plot_for_data <- function(computed_course, data, p_or_f) {
     input_course <- input$przedmiot
-    all <- count_A_by_mark_B_all(computed_course)
+    all <- count_A_by_mark_B_all(input_course)
     plot <- data_for_plot(data, all, p_or_f)
     plot$header <- computed_course
     plot
