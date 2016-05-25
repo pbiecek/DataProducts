@@ -1,0 +1,20 @@
+---
+title: "Zapisane testy"
+author: "Igor Kotrasinski"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{zapisane_testy}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+*_data\@zapisane\_testy_*
+
+Testy zapisane w bazie danych.
+
+Tabela testów, które zapisano w bazie danych. Kolumny to:
+
+* rok. Rok testu.
+* rodzaj_egzaminu. Rodzaj testu (matura, sprawdzian szóstoklasisty...).
+* czesc_egzaminu. Część testu (matematyka, język polski...).

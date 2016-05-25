@@ -1,0 +1,23 @@
+---
+title: "Dane"
+author: "Igor Kotrasinski"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Dane}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Dane, które przetwarza pakiet są powiązane między sobą. W różnych tabelach trzyma się informacje pomocnicze, takie jak skale zrównujące, listy testów i sumaryczne wyniki uczniów, jak i wyniki przezentowane bezpośrednio na wykresach. W związku z tym są oone powiązane w obiekt jednej klasy nazwanej DataCrunch.
+
+Część tabel w DataCrunch używana jest wewnętrznie. Poniżej opisane są tabele, które w zamierzeniu mają być dostępne publicznie:
+
+* [Typy testów](typy_testow.html)
+* [Zapisane testy](zapisane_testy.html)
+* [Kryteria](kryteria.html)
+* [Wyniki po egzaminach](wyniki_po_egz.html)
+* [Wyniki po płci](wyniki_po_plci.html)
+
+Funkcje pobierające i przetwarzające dane przyjmują DataCrunch jako pierwszy argument i zwracają wersję zmodyfikowaną.
+Pustą klasę DataCrunch możesz stworzyć za pomocą funkcji puste_dane.
