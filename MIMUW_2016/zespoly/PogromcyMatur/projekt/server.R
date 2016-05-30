@@ -15,6 +15,14 @@ library(corrplot)
 
 source("./pobierz_pytania.R")
 
+load("./data.RData")
+
+egzaminy <<- dane@zapisane_testy
+egzaminy_poprz <<- dane@wyniki_po_egz %>%
+  select(rok, rodzaj_egzaminu, czesc_egzaminu, rodzaj_poprzedni, czesc_poprzedni) %>%
+  distinct()
+egzaminy_poprz$nr <<- 1:nrow(egzaminy_poprz)
+
 # Multiple plot function
 #
 # ggplot objects can be passed in ..., or to plotlist (as a list of ggplot objects)
@@ -61,227 +69,96 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-rysuj_wykres_plec <- function(egzamin, poziom = NULL) {
-  d_egz = typy_testow %>% #filter(id == egzamin) %>%
-    select(rok, rodzaj_egzaminu, czesc_egzaminu)
+dane_poprzedni <- function(nr, poziom = "kry") {
+  egz_p = egzaminy_poprz[nr,]
   
-  wyniki_plec = wyniki_po_plci %>%
-    inner_join(d_egz)
-  
-  if (poziom == "pyt") {
-    wyniki_plec = wyniki_plec %>%
-      inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
-      group_by(plec, id_pytania) %>%
-      summarise_each(funs(sum), wynik, max_punktow) %>%
-      rename(id = id_pytania)
-  } else if (poziom == "wia") {
-    wyniki_plec = wyniki_plec %>%
-      inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
-      group_by(plec, id_wiazki) %>%
-      summarise_each(funs(sum), wynik, max_punktow) %>%
-      rename(id = id_wiazki)
-  } else {
-    wyniki_plec = wyniki_plec %>%
-      inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
-      rename(id = id_kryterium)
-  }
-  wyniki_plec$wynik = wyniki_plec$wynik / wyniki_plec$max_punktow
-  
-  return (ggplot(wyniki_plec, aes(x=factor(id), y = wynik)) + 
-            geom_bar(stat = "identity", aes(fill=plec), position = "dodge") +
-            scale_fill_discrete(name="Płeć", breaks=c("k","m"), labels=c("Kobieta", "Mężczyzna")))
-}
-
-rysuj_wykres_poprzedni <- function(egzamin, poprzedni, poziom = NULL) {
-  d_egz = typy_testow %>% # filter(id == egzamin) %>%
-    select(rok, rodzaj_egzaminu, czesc_egzaminu)
-  d_poprz = typy_testow %>% # filter(id == poprzedni) %>%
-    select(rodzaj_egzaminu, czesc_egzaminu) %>%
-    rename(rodzaj_poprzedni = rodzaj_egzaminu, czesc_poprzedni = czesc_egzaminu)
-  
-  wyniki_egz = wyniki_po_egz %>%
-    inner_join(d_egz) %>%
-    inner_join(d_poprz)
+  wyniki_egz = dane@wyniki_po_egz %>%
+    inner_join(egz_p)
   if (poziom == "pyt") {
     wyniki_egz = wyniki_egz %>%
-      inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
+      inner_join(dane@kryteria, by = c("id_kryterium" = "id")) %>%
       group_by(poprzedni_wynik, id_pytania, liczba) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
       rename(id = id_pytania)
+    n_poziom <- "id pytania"
   } else if (poziom == "wia") {
     wyniki_egz = wyniki_egz %>%
-      inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
+      inner_join(dane@kryteria, by = c("id_kryterium" = "id")) %>%
       group_by(poprzedni_wynik, id_wiazki, liczba) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
       rename(id = id_wiazki)
+    n_poziom <- "id wiązki"
   } else {
     wyniki_egz = wyniki_egz %>%
-      inner_join(kryteria, by = c("id_kryterium" = "id")) %>%
+      inner_join(dane@kryteria, by = c("id_kryterium" = "id")) %>%
       rename(id = id_kryterium)
+    n_poziom <- "id kryterium"
   }
   
   wyniki_egz$wynik = wyniki_egz$wynik / wyniki_egz$max_punktow
-  
-  return (ggplot(wyniki_egz, aes(x = factor(id), y = wynik)) +
-            geom_point(aes(color = poprzedni_wynik, size = liczba)))
+  wyniki_egz$id_factor = factor(wyniki_egz$id)
+  return(list(wyniki_egz, n_poziom))
 }
 
-rysuj_wykres_plec_barplot <- function() {
-  kry = names(dane)
-  kry = kry[grepl('^k_', kry)]
-  d <- dane_plec_wykresy
-  return (ggplot(d, aes(x=id_kryterium, y = wynik)) + geom_point())
+dane_poprzedni_jedno <- function(poprzednie, p_id) {
+  return(poprzednie %>% filter(id == p_id))
 }
 
-rysuj_wykres_plec_scatterplot <- function() {
-  plot(
-    dane_plec_wykresy$m,
-    dane_plec_wykresy$k,
-    col='blue', type='p', lwd=3,
-    ylab="Średni wynik kobiet w %",
-    xlab="Średni wynik mężczyzn w %",
-    xlim=c(0,100),
-    ylim=c(0,100)
-  )
-  points(last_point$m, last_point$k, col='green', lwd=10)
-  title("Porównanie pytań ze wz. na płeć.")
-  abline(a=0.0, b=1.0, col='green')
+rysuj_wykres_poprzedni <- function(dane, nazwa_x) {
+  ggplot(dane, aes(x = id_factor, y = wynik)) +
+    geom_point(aes(color = poprzedni_wynik, size = liczba)) +
+    labs(x = nazwa_x, y = "poprzedni wynik") +
+    ylim(0, 1)
 }
 
-rysuj_wykres_korelacji <- function(czy_klastrowac) {
-  kry = names(dane)
-  kry = kry[grepl('^k_', kry)]
-  tmp <- dane[, kry]
-  c_dane <- cor(tmp)
-  if(czy_klastrowac)
-    corrplot(c_dane, order='hclust')
-  else
-    corrplot(c_dane)
-}
-
-rysuj_histogram_calosci <- function() {
-  kry = names(dane)
-  kry = kry[grepl('^k_', kry)]
-  tmp <- dane[, kry]
-  do_wykresu <- rowSums(tmp, na.rm=TRUE)
-  res <- qplot(do_wykresu,
-               geom="histogram",
-               binwidth = 0.5,  
-               main = paste0("Histogram of overall results."), 
-               xlab = "Ilość punktów",
-               fill=I("blue"),
-               col=I("red"))
-  return(res)
-}
-
-policz_dane_plec_wykresy <- function() {
-  kry = names(dane)
-  kry = kry[grepl('^k_', kry)]
-  d <- (uczniowie %>% inner_join(dane))[c("plec", kry)]
-  d <- d %>% group_by(plec) %>% summarize_each(funs(mean))
-  d <- d %>% gather(id_kryterium, wynik, starts_with("k_"))
-  d <- d %>% inner_join(kryteria, by=c("id_kryterium"="id"))
-  d <- d %>% select(-tresc_pytania, -tresc_wiazki) %>% na.omit
-  d$wynik <- d$wynik / d$max_punktow * 100.0
-  d <- d %>% spread(plec, wynik)
-  dane_plec_wykresy <<- d
-  last_point <<- d[1, ]
-}
-
-ustaw_dane <- function(wybrano = "pods_mat_2015") {
-  data_env = new.env()
-  load(paste0("../../teamRocket/raw_data/ZPD_", wybrano, ".dat"), data_env)
-  dane <<- data_env[[ls(data_env)]]  # there is only one var in this env
-  dane[is.na(dane)] <<- 0
-  policz_dane_plec_wykresy()
-  cat(paste0("Loaded data set: ", wybrano, "\n"))
-  gc()
+rysuj_wykres_poprzedni_jedno <- function(dane, nazwa) {
+  ggplot(dane, aes(x = poprzedni_wynik, y = wynik)) +
+  geom_point(aes(size = liczba)) +
+  labs(x = "poprzedni wynik", y = "wynik", title = nazwa) +
+  ylim(0, 1)
 }
 
 shinyServer(function(input, output) {
-  #ustaw_dane()
-  observeEvent(input$poziom, {
-    output$plec_plot_alt <- renderPlot(rysuj_wykres_plec(input$egzamin_alt, input$poziom))
-    output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(input$egzamin_alt, input$poprzedni_egzamin, input$poziom))
-  })
-  observeEvent(input$egzamin, {
-    ustaw_dane(input$egzamin)
-    output$plec_plot <- renderPlot(rysuj_wykres_plec_scatterplot())
-    output$histogram_plot <- renderPlot(rysuj_histogram_calosci())
-    output$correlation_plot <- renderPlot(rysuj_wykres_korelacji(input$klastrowac))
-  })
-  observeEvent(input$klastrowac, {
-    output$correlation_plot <- renderPlot(rysuj_wykres_korelacji(input$klastrowac))
-  })
-  output$plec_hover_info <- renderUI({
-    hover <- input$plec_hover
-    point <- nearPoints(dane_plec_wykresy, hover, xvar="m", yvar='k', threshold = 15, maxpoints = 1, addDist = TRUE)
-    if (nrow(point) == 0)
-      point <- last_point
-    else
-      output$plec_plot <- renderPlot(rysuj_wykres_plec_scatterplot())
-    last_point <<- point
-    
-    # calculate point position INSIDE the image as percent of total dimensions
-    # from left (horizontal) and from top (vertical)
-    left_pct <- (hover$x - hover$range$left) / (hover$range$right - hover$range$left)
-    top_pct <- (hover$range$top - hover$y) / (hover$range$top - hover$range$bottom)
-    
-    # calculate distance from left and bottom side of the picture in pixels
-    left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
-    top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
-    
-    # create style property fot tooltip
-    # background color is set so tooltip is a bit transparent
-    # z-index is set so we are sure are tooltip will be on top
-    style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.85); ",
-                    "left:", left_px + 2, "px; top:", top_px + 2, "px;")
-    
-    # actual tooltip created as wellPanel
-      p(HTML(paste0("<h2> Treść pytania numer ", point$id_pytania, ": </h2><br/>",
-                    pobierz_pytanie(point$id_pytania),
-                    "<h2> Dodatkowe informacje: </h2><br />",
-                    pobierz_wiazke(point$id_wiazki)
-                    ))
-    )
+  
+  # dane do wykresu poprzednich kryteriow
+  poprzedni_data <- data.frame()
+  # poziom tych danych (kryteria, pytania, wiązki)
+  poprzedni_poziom <- character(0)
+  # dane do wykresu pojedynczego elementu
+  poprzedni_data_jedno <- data.frame()
+  
+  output$egz_wybor <- renderUI({
+    nazwy_egzaminow <- as.list(1:nrow(egzaminy))
+    names(nazwy_egzaminow) <- apply(egzaminy, 1, (function(x) paste(x, collapse=" ")))
+    selectInput("egzamin_nr", label = "Egzamin:",
+                choices = nazwy_egzaminow)
   })
   
-  output$kor_hover_info <- renderUI({
-    hover <- input$kor_hover
-    #point <- nearPoints(dane_plec_wykresy, hover, xvar="m", yvar='k', threshold = 15, maxpoints = 1, addDist = TRUE)
-    #if (nrow(point) == 0)
-    #  kor_point <- last_kor_point
-    #else
-    #  output$kor_plot <- renderPlot(rysuj_wykres_korelacji())
-    #last_kor_point <<- kor_point
+  output$egz_wybor_poprz <- renderUI({
+    egz_o <- egzaminy[input$egzamin_nr,]
+    egz_p <- egzaminy_poprz %>% inner_join(egz_o)
+      
+    poprz_nazwy <- as.list(egz_p$nr)
+    egz_p <- egz_p %>% select(rodzaj_poprzedni, czesc_poprzedni)
+    names(poprz_nazwy) <- apply(egz_p, 1, (function(x) paste(x, collapse=" ")))
     
-    kry = names(dane)
-    kry = kry[grepl('^k_', kry)]
-    
-    # calculate point position INSIDE the image as percent of total dimensions
-    # from left (horizontal) and from top (vertical)
-    left_pct <- (hover$x - hover$domain$left) / (hover$domain$right - hover$domain$left)
-    top_pct <- (hover$domain$top - hover$y) / (hover$domain$top - hover$domain$bottom)
-    
-    # calculate distance from left and bottom side of the picture in pixels
-    left_px <- hover$range$left + left_pct * (hover$range$right - hover$range$left)
-    top_px <- hover$range$top + top_pct * (hover$range$bottom - hover$range$top)
-    
-    # create style property fot tooltip
-    # background color is set so tooltip is a bit transparent
-    # z-index is set so we are sure are tooltip will be on top
-    style <- paste0("position:absolute; z-index:100; background-color: rgba(245, 245, 245, 0.85); ",
-                    "left:", left_px + 2, "px; top:", top_px + 2, "px;")
-    
-    return( paste(kry[round(left_pct * length(kry)) + 1],
-           kry[round(top_pct * length(kry)) + 1]) )
-    
-    # actual tooltip created as wellPanel
-    #p(HTML(paste0("<h2> Treść pytania numer ", point$id_pytania, ": </h2><br/>",
-    #              pobierz_pytanie(point$id_pytania),
-    #              "<h2> Dodatkowe informacje: </h2><br />",
-    #              pobierz_wiazke(point$id_wiazki)
-    #))
-    #)
+    selectInput("nr_poprzedni", label = "Poprzedni egzamin:",
+                choices = poprz_nazwy)
   })
+  
+  observeEvent(list(input$nr_poprzedni, input$poziom), {
+    d <- dane_poprzedni(input$nr_poprzedni, input$poziom)
+    poprzedni_data <<- d[[1]]
+    poprzedni_poziom <<- input$poziom
+    output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(d[[1]], d[[2]]))
+  })
+  
+  observeEvent(input$poprz_click, {
+    dane <- nearPoints(poprzedni_data, xvar="id_factor", yvar="wynik", input$poprz_click, threshold = 15, maxpoints = 1)
+    if (nrow(dane) == 0)
+      return()
+    
+    poprzedni_data_jedno <<- dane_poprzedni_jedno(poprzedni_data, dane$id)
+    output$poprz_plot_jedno <- renderPlot(rysuj_wykres_poprzedni_jedno(poprzedni_data_jedno, poprzedni_poziom))
+    })
 })
