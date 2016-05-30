@@ -22,9 +22,15 @@ ten egzamin. Następnie dla danego rodzaju i typu poprzedniego egzaminu wybieran
 którzy pisali wcześniej taki egzamin i wybierane są ich ostatnie wyniki z tego egzaminu. Wyniki
 te są normowane i agregowane po wyniku punktowym z poprzedniego egzaminu.
 
+Obliczenia te wykonywane są przez funkcję zaladuj_nowe_wyniki. Wyniki z ładowanego egzaminu w niej
+obliczane względem wszystkich już załadowanych egzaminów. *W związku z tym ważne jest, aby egzaminy
+w funkcji zaladuj_nowe_wyniki wprowadzane były chronologicznie - w przeciwnym razie część wyników może
+się "zgubić" (np. gdy najpierw wprowadziliśmy wyniki z matury z języka polskiego 2015 bez wyników egzaminu
+gimnazjalnego z j. polskiego 2012)*.
+
 ---
 
-#UWAGA
+##UWAGA
 
 Sumaryczne wyniki uczniów z poprzednich egzaminów obliczane są przez funkcję zaladuj_nowe_wyniki,
 tę samą, która wypełnia ten zestaw danych. W związku z tym przetworzenie danych z jednego egzaminu bez
@@ -34,7 +40,7 @@ już w bazie danych w sensownym zakresie lat.
 
 ---
 
-#UWAGA
+##UWAGA
 
 Rodzaje i części egzaminu mogą zmieniać się z czasem. W efekcie porównanie po poprzedniej części egzaminu
 może wybierać uczniów, którzy poprzedni egzamin pisali tylko w niektórych latach (np. część egzaminu gimnazjalnego,

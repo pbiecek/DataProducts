@@ -2,33 +2,29 @@
 % Please edit documentation in R/dataCrunch.R
 \name{zaladuj_nowe_wyniki}
 \alias{zaladuj_nowe_wyniki}
-\title{Pozwala ręcznie umieścić w danych wyniki danego egzaminu.}
+\title{Pozwala umieścić w danych wyniki danego egzaminu.}
 \usage{
-zaladuj_nowe_wyniki(ctxt, p_rok, t_rodzaj = NULL, t_czesc = NULL,
-  l_dane = NULL)
+zaladuj_nowe_wyniki(ctxt, p_rok, t_rodzaj, t_czesc, l_dane)
 }
 \arguments{
 \item{ctxt}{Obiekt klasy DataCrunch, w którym mamy umieścić dane.}
 
-\item{p_rok}{Rok, z którego chcemy pobrać egzaminy.}
+\item{p_rok}{Rok egzaminu.}
 
-\item{t_rodzaj}{Rodzaj egzaminu, do jakiego chcemy się ograniczyć. Domyślnie
-nie filtrujemy po rodzaju egzaminu.}
+\item{t_rodzaj}{Rodzaj egzaminu.}
 
-\item{t_czesc}{Część egzaminu, do jakiej chcemy się ograniczyć. Domyślnie
-nie filtrujemy po części egzaminu.}
+\item{t_czesc}{Część egzaminu.}
 
-\item{l_dane}{Lokalne dane w formie, jak z pobierz_wyniki_egzaminu. Domyślnie dane
-pobierane są z serwera ZPD. Jeśli podany, parametry t_rodzaj i t_czesc również powinny
-być podane.}
+\item{l_dane}{Dane pobrane przez pakiet ZPD funkcją pobierz_wyniki_egzaminu(..., czy_ewd = TRUE).}
 }
 \value{
 Obiekt danych DataCrunch z dodanymi danymi, jeśli dane zostały poprawnie pobrane
-i wprowadzone do bazy. NULL jeśli dane w bazie już są, podano złe argumenty lub nie
-znaleziono żądanych testów na serwerze.
+i wprowadzone do bazy. Niezmieniony obiekt, jeśli dane egzaminu już zostały wprowadzone.
 }
 \description{
 UWAGA: dane, które w bazie już się znajdują zostaną zignorowane. Jeśli chcesz wprowadzić
 je ponownie, użyj funkcji usun_wyniki.
+UWAGA: zalecane jest chronologiczne wprowadzanie danych.
+Patrz vignette(package="ZPD.dataCrunch", topic="wyniki_po_egz.
 }
 

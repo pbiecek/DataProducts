@@ -24,12 +24,12 @@
   return(ctxt)
 }
 
-.zaladuj_nowe_testy <- function(ctxt, p_rok) {
+.zaladuj_testy <- function(ctxt) {
   src = polacz()
   nowe = pobierz_testy(src) %>%
-    filter(rok == p_rok, czy_egzamin == TRUE, dane_ewd == TRUE) %>%
+    filter(czy_egzamin == TRUE, dane_ewd == TRUE) %>%
     filter(rodzaj_egzaminu != "matura poprawkowa") %>% # TODO - jakos uwzgledniac
-    select(id_testu, rodzaj_egzaminu, czesc_egzaminu, rok) %>%
+    select(id_testu, rodzaj_egzaminu, czesc_egzaminu, rok, arkusz) %>%
     rename(id = id_testu) %>%
     collect() %>%
     as.data.frame()
@@ -42,7 +42,7 @@
   src = polacz()
   kryt = pobierz_kryteria_oceny(src) %>%
     select(kryterium, l_punktow,
-           numer_pytania, numer_kryterium, id_pytania, id_wiazki, tresc_pytania, tresc_wiazki) %>%
+           numer_pytania, numer_kryterium, id_pytania, id_wiazki, tresc_pytania, tresc_wiazki, id_testu) %>%
     rename(id = kryterium, max_punktow = l_punktow) %>%
     collect() %>%
     distinct() %>%
@@ -89,27 +89,8 @@ zaladuj_male_dane <- function (ctxt) {
     .przeladuj_kryteria() %>%
     .zaladuj_normy() %>%
     .zaladuj_ostatnie_przystapienia() %>%
-    .zaladuj_uczniow()
-  return(ctxt)
-}
-
-#' Pobiera dane pomocnicze zależne od roku.
-#' 
-#' Część przetwarzanych danych pełni funkcję pomocniczą w przetwarzaniu
-#' wyników egzaminów. Ta funkcja wczytuje je.
-#' 
-#' Dane pobierane w tej funkcji nie zmieniają się, lecz co roku dodawane są
-#' do nich nowe dane. Aby pobrać dane z danego roku, wywołaj funkcję z odpowiednim
-#' parametrem.
-#' 
-#' @param rok Rok, z którego chcemy pobrać dane pomocnicze.
-#' @param ctxt Obiekt klasy DataCrunch, w którym mamy umieścić dane.
-#' @return Obiekt DataCrunch z umieszczonymi nowymi danymi.
-#' @export
-zaladuj_male_dane_rok <- function(ctxt, rok) {
-  ctxt = ctxt %>%
-    .zaladuj_nowe_szkoly(rok) %>%
-    .zaladuj_nowe_testy(rok)
+    .zaladuj_uczniow() %>%
+    .zaladuj_nowe_testy()
   return(ctxt)
 }
 
@@ -161,7 +142,7 @@ zaladuj_male_dane_rok <- function(ctxt, rok) {
     select(rodzaj_egzaminu, czesc_egzaminu) %>%
     distinct()
   
-  # Posortuj uczniow po poprzednich pisanych egzaminach, posumuj procenty
+  # Posortuj uczniow po poprzednich pisanych egzaminach
   for (j in 1:nrow(poprzednie_egzaminy)) {
     egz = poprzednie_egzaminy[j,]
     
@@ -205,76 +186,38 @@ zaladuj_male_dane_rok <- function(ctxt, rok) {
   return(ctxt)
 }
 
-#' Pozwala ręcznie umieścić w danych wyniki danego egzaminu.
+#' Pozwala umieścić w danych wyniki danego egzaminu.
 #' 
 #' UWAGA: dane, które w bazie już się znajdują zostaną zignorowane. Jeśli chcesz wprowadzić
 #' je ponownie, użyj funkcji usun_wyniki.
+#' UWAGA: zalecane jest chronologiczne wprowadzanie danych.
+#' Patrz vignette(package="ZPD.dataCrunch", topic="wyniki_po_egz).
 #' @param ctxt Obiekt klasy DataCrunch, w którym mamy umieścić dane.
-#' @param p_rok Rok, z którego chcemy pobrać egzaminy.
-#' @param t_rodzaj Rodzaj egzaminu, do jakiego chcemy się ograniczyć. Domyślnie
-#' nie filtrujemy po rodzaju egzaminu.
-#' @param t_czesc Część egzaminu, do jakiej chcemy się ograniczyć. Domyślnie
-#' nie filtrujemy po części egzaminu.
-#' @param l_dane Lokalne dane w formie, jak z pobierz_wyniki_egzaminu. Domyślnie dane
-#' pobierane są z serwera ZPD. Jeśli podany, parametry t_rodzaj i t_czesc również powinny
-#' być podane.
+#' @param p_rok Rok egzaminu.
+#' @param t_rodzaj Rodzaj egzaminu.
+#' @param t_czesc Część egzaminu.
+#' @param l_dane Dane pobrane przez pakiet ZPD funkcją pobierz_wyniki_egzaminu(..., czy_ewd = TRUE).
 #' 
 #' @return Obiekt danych DataCrunch z dodanymi danymi, jeśli dane zostały poprawnie pobrane
-#' i wprowadzone do bazy. NULL jeśli dane w bazie już są, podano złe argumenty lub nie
-#' znaleziono żądanych testów na serwerze.
+#' i wprowadzone do bazy. Niezmieniony obiekt, jeśli dane egzaminu już zostały wprowadzone.
 #' @export
-zaladuj_nowe_wyniki <- function(ctxt, p_rok, t_rodzaj = NULL, t_czesc = NULL, l_dane = NULL) {
-  
-  if (!is.null(l_dane) && (is.null(t_rodzaj) || is.null(t_czesc)))
-    return(NULL)
+zaladuj_nowe_wyniki <- function(ctxt, p_rok, t_rodzaj, t_czesc, l_dane) {
   
   src = polacz()
   
-  #Testy z podanego roku
-  testy = pobierz_testy(src) %>%
-    filter(rok == p_rok, czy_egzamin == TRUE, dane_ewd == TRUE) %>%
-    filter(rodzaj_egzaminu != "matura poprawkowa") %>% # TODO - jakos uwzgledniac
-    select(id_testu, rodzaj_egzaminu, czesc_egzaminu, rok)
-  
-  # Dla kazdego typu egzaminu pobierz dane oddzielnie, by zmiescic sie w pamieci
-  testy_iter = testy %>%
-    collect() %>%
-    select(rodzaj_egzaminu, czesc_egzaminu, rok) %>%
-    distinct()
-  if (!is.null(t_rodzaj)) {
-    testy_iter = testy_iter %>% filter(rodzaj_egzaminu == t_rodzaj)
-  }
-  
-  if (!is.null(t_czesc)) {
-    testy_iter = testy_iter %>% filter(czesc_egzaminu == t_czesc)
-  }
-  
-  # Nie znalezlismy danych testow?
-  if (nrow(testy_iter) == 0)
-    return(NULL)
-  
-  for (i in 1:nrow(testy_iter)) {
-    row = testy_iter[i,]
+  row = data.frame()
+  row$rok = p_rok
+  rok$rodzaj_egzaminu = t_rodzaj
+  rok$czesc_egzaminu = t_czesc
     
-    if (nrow(inner_join(row, ctxt@zapisane_testy)) > 0) # Mamy juz ten test
-      next
-    
-    # Wyniki egzaminu
-    if (!is.null(l_dane)) {
-      dane = l_dane %>%
-        collect() %>%
-        select(-rok)
-    } else {
-      dane = pobierz_wyniki_egzaminu(src, row$rodzaj_egzaminu, row$czesc_egzaminu, row$rok, TRUE) %>%
-        collect() %>%
-        select(-rok)
-    }
+  if (nrow(inner_join(row, ctxt@zapisane_testy)) > 0) # Mamy juz ten test
+    return(ctxt)
+  
     ctxt = ctxt %>%
-      .dodaj_sumaryczne_oceny_uczniow(src, dane, row) %>%
-      .dodaj_oceny_po_poprzednich(src, dane, row) %>%
-      .dodaj_oceny_po_plci(dane, row)
+      .dodaj_sumaryczne_oceny_uczniow(src, l_dane, row) %>%
+      .dodaj_oceny_po_poprzednich(src, l_dane, row) %>%
+      .dodaj_oceny_po_plci(l_dane, row)
     ctxt@zapisane_testy <- ctxt@zapisane_testy %>% rbind(as.data.frame(row))
-  }
   return(ctxt)
 }
 
@@ -290,18 +233,4 @@ usun_wyniki <- function(ctxt, p_rok)
   ctxt@oceny_uczniow <- ctxt@oceny_uczniow %>% filter(rok != p_rok)
   ctxt@zapisane_testy <- ctxt@zapisane_testy %>% filter(rok != p_rok)
   return(ctxt)
-}
-
-#' Pobiera dane do wykresów zależne od roku.
-#' 
-#' Dane pobierane w tej funkcji nie zmieniają się, lecz co roku dodawane są
-#' do nich nowe dane. Aby pobrać dane z danego roku, wywołaj funkcję z odpowiednim
-#' parametrem.
-#' 
-#' @param rok Rok, z którego chcemy pobrać dane.
-#' @param ctxt Obiekt klasy DataCrunch, w którym mamy umieścić dane.
-#' @return Obiekt DataCrunch z umieszczonymi nowymi danymi.
-#' @export
-zaladuj_duze_dane_rok <- function(ctxt, rok) {
-  return(.zaladuj_nowe_wyniki(ctxt, rok))
 }

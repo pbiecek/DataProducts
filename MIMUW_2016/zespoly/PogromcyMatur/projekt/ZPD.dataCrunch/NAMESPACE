@@ -2,7 +2,5 @@
 
 export(puste_dane)
 export(usun_wyniki)
-export(zaladuj_duze_dane_rok)
 export(zaladuj_male_dane)
-export(zaladuj_male_dane_rok)
 export(zaladuj_nowe_wyniki)

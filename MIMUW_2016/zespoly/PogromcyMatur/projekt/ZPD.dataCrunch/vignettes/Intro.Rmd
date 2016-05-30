@@ -1,0 +1,23 @@
+---
+title: "Wprowadzenie"
+author: "Igor Kotrasinski"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Wprowadzenie}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Pakiet ZPD.dataCrunch pozwala wygodnie przetwarzać dane o egzaminach do wyświetlenia przez aplikację. Obecnie pozwala on na przedstawienie wyników uczniów w zależności od płci oraz w zależności od wyników poprzednich egzaminów.
+
+#Użycie
+
+Zestaw danych, które gromadzi pakiet reprezentowany jest przez jeden obiekt klasy [DataCrunch](Dane.html). Do wprowadzania danych do tego obiektu służą następujące funkcje:
+
+* puste_dane - tworzy nowy, pusty obiekt DataCrunch.
+* zaladuj_male_dane - pobiera dane pomocnicze niezależne od roku.
+* zaladuj_nowe_wyniki - pozwala wprowadzić i przetworzyć wyniki pojedynczego egzaminu.
+* usun_wyniki - pozwala usunąć wyniki pojedynczego egzaminu.
+
+Aby przetworzyć poprawnie dane, potrzebne są najpierw dane pomocnicze. Przed wprowadzeniem danych za pomocą funkcji zaladuj_nowe_wyniki, pobierz dane pomocnicze za pomocą funkcji zaladuj_male_dane. Dane te należy również na nowo pobrać po każdym roku.

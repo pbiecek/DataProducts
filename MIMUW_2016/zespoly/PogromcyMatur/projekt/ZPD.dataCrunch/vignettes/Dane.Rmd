@@ -11,6 +11,18 @@ vignette: >
 
 Dane, które przetwarza pakiet są powiązane między sobą. W różnych tabelach trzyma się informacje pomocnicze, takie jak skale zrównujące, listy testów i sumaryczne wyniki uczniów, jak i wyniki przezentowane bezpośrednio na wykresach. W związku z tym są oone powiązane w obiekt jednej klasy nazwanej DataCrunch.
 
+#Trzymane dane
+
+Głowne dane trzymane w DataCrunch (przedstawiane na wykresach) to:
+
+* Wyniki egzaminów agregowane po płci.
+* Sumaryczne wyniki egzaminów dla każdego ucznia (potrzebne do obliczania innych danych).
+* Wyniki z każdego egzaminu agregowane po wynikach uczniów z poprzednich egzaminów w bazie.
+
+Dane te wczytać można dla danego egzaminu za pomocą funkcji zaladuj_nowe_wyniki. Informacje o ostatniej z tych grup danuch znajdziesz [tutaj](wyniki_po_egz.html).
+
+#Tabele
+
 Część tabel w DataCrunch używana jest wewnętrznie. Poniżej opisane są tabele, które w zamierzeniu mają być dostępne publicznie:
 
 * [Typy testów](typy_testow.html)

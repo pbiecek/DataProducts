@@ -51,6 +51,7 @@ puste_dane <- function() {
   kryteria$tresc_wiazki <- character(0)
   kryteria$numer_kryterium <- character(0)
   kryteria$max_punktow <- integer(0)
+  kryteria$id_testu <- integer(0)
 
   wyniki_po_egz <- data.frame()
   wyniki_po_egz$rok <- numeric(0)
