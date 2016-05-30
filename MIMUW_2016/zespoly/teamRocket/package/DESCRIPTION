@@ -13,3 +13,5 @@ LazyData: true
 Imports:
     dplyr
 RoxygenNote: 5.0.1
+Suggests: ZPD,
+    devtools
