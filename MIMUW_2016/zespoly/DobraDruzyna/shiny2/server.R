@@ -15,6 +15,7 @@ shinyServer(function(input, output) {
     wskaznik <- arrange(polski_srednia_wydatki, nazwa_gminy)
     
     wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
+    
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
     
     wykres <- plot_ly(wskaznikWybranyRok, x = suma_na_licealiste, y = sredni_wynik_matury, text = paste("gmina: ", nazwa_gminy),
@@ -47,7 +48,15 @@ shinyServer(function(input, output) {
       wykres
     })
   
-  
+  output$liczba_wydatki = renderText({
+    wskaznik <- arrange(polski_srednia_wydatki, nazwa_gminy)
+    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
+    zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
+    gminy_wiecej = filter(wskaznikWybranyRok, suma_na_licealiste > zaznaczonaGmina$suma_na_licealiste)
+    liczba_gmin_wiecej = nrow(gminy_wiecej)
+    liczba_gmin = nrow(wskaznikWybranyRok) - 1
+    liczba_gmin_wiecej/liczba_gmin * 100
+  })
   
   output$wykres_bezrobotni = renderPlotly({
     wskaznik <- arrange(polski_srednia_bezrobocie, nazwa_gminy)
@@ -83,7 +92,17 @@ shinyServer(function(input, output) {
                     label = zaznaczonaGmina$Wartosc), colour = "black", angle = 90, vjust = 1, nudge_x = 1)
   
     wykres
-    })
+  })
+  
+  output$liczba_bezrobotni = renderText({
+    wskaznik <- arrange(polski_srednia_bezrobocie, nazwa_gminy)
+    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
+    zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
+    gminy_wiecej = filter(wskaznikWybranyRok, Wartosc > zaznaczonaGmina$Wartosc)
+    liczba_gmin_wiecej = nrow(gminy_wiecej)
+    liczba_gmin = nrow(wskaznikWybranyRok) - 1
+    liczba_gmin_wiecej/liczba_gmin * 100
+  })
   
   output$wykres_biblioteki = renderPlotly({
     wskaznik <- arrange(polski_srednia_biblioteki, nazwa_gminy)
@@ -122,6 +141,16 @@ shinyServer(function(input, output) {
     
     wykres
     })
+  
+  output$liczba_biblioteki = renderText({
+    wskaznik <- arrange(polski_srednia_biblioteki, nazwa_gminy)
+    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
+    zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
+    gminy_wiecej = filter(wskaznikWybranyRok, Wartosc > zaznaczonaGmina$Wartosc)
+    liczba_gmin_wiecej = nrow(gminy_wiecej)
+    liczba_gmin = nrow(wskaznikWybranyRok) - 1
+    liczba_gmin_wiecej/liczba_gmin * 100
+  })
   
   output$wykres_czytelnicy = renderPlotly({
     wskaznik <- arrange(polski_srednia_czytelnicy, nazwa_gminy)
@@ -162,6 +191,16 @@ shinyServer(function(input, output) {
     wykres
     })
   
+  output$liczba_czytelnicy = renderText({
+    wskaznik <- arrange(polski_srednia_czytelnicy, nazwa_gminy)
+    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
+    zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
+    gminy_wiecej = filter(wskaznikWybranyRok, Wartosc > zaznaczonaGmina$Wartosc)
+    liczba_gmin_wiecej = nrow(gminy_wiecej)
+    liczba_gmin = nrow(wskaznikWybranyRok) - 1
+    liczba_gmin_wiecej/liczba_gmin * 100
+  })
+  
   output$wykres_wypozyczenia = renderPlotly({
     wskaznik <- arrange(polski_srednia_wypozyczenia, nazwa_gminy)
     
@@ -199,5 +238,15 @@ shinyServer(function(input, output) {
     
     wykres
     })
+  
+  output$liczba_wypozyczenia = renderText({
+    wskaznik <- arrange(polski_srednia_wypozyczenia, nazwa_gminy)
+    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
+    zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
+    gminy_wiecej = filter(wskaznikWybranyRok, Wartosc > zaznaczonaGmina$Wartosc)
+    liczba_gmin_wiecej = nrow(gminy_wiecej)
+    liczba_gmin = nrow(wskaznikWybranyRok) - 1
+    liczba_gmin_wiecej/liczba_gmin * 100
+  })
 
 })

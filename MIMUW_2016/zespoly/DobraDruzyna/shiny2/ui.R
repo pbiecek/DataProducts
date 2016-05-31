@@ -51,6 +51,7 @@ shinyUI(fluidPage(
              tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest bezrobocie w wybranej 
                     gminie w porównaniu z innymi polskimi gminami."),
              plotOutput("wykres_bezrobotni2"),
+             textOutput("liczba_bezrobotni"),
              
              h3("Liczba mieszkańców na 1 bibliotekę."),
              h5("Im mniejsza wartość, tym większe zagęszczenie bibliotek w gminie."),
@@ -63,6 +64,7 @@ shinyUI(fluidPage(
              tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest ilość bibliotek względem
                     liczby mieszkańców wybranej gminy w porównaniu z innymi polskimi gminami."),
              plotOutput("wykres_biblioteki2"),
+             textOutput("liczba_biblioteki"),
              
              h3("Liczba czytelników na 1000 mieszkańców."),
              h5("Im większa wartość, tym większe czytelnictwo w gminie."),
@@ -75,6 +77,7 @@ shinyUI(fluidPage(
              tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest liczba czytelników względem
                     liczby mieszkańców wybranej gminy w porównaniu z innymi polskimi gminami."),
              plotOutput("wykres_czytelnicy2"),
+             textOutput("liczba_czytelnicy"),
              
              h3("Liczba wypożyczonych książek na 1 czytelnika."),
              h5("Im większa wartość, tym czytelnicy czytają więcej książek."),
@@ -87,7 +90,7 @@ shinyUI(fluidPage(
              tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest liczba przeczytanych książek
                     na 1 czytelnika w wybranej gminie w porównaniu z innymi polskimi gminami."),
              plotOutput("wykres_wypozyczenia2"),
-             
+             textOutput("liczba_wypozyczenia"),
              
              h3("Suma trzyletnich wydatków na ucznia"),
              h5("Im większa wartość, tym więcej wydano pieniędzy na jednego ucznia."),
@@ -99,7 +102,8 @@ shinyUI(fluidPage(
              
              tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest suma trzyletnich wydatków
                     na 1 ucznia w wybranej gminie w porównaniu z innymi polskimi gminami."),
-             plotOutput("wykres_wydatki2")
+             plotOutput("wykres_wydatki2"),
+             textOutput("liczba_wydatki")
              
            )    
            )
