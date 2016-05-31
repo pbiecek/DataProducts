@@ -3,109 +3,107 @@ library(shiny)
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
   
-  titlePanel("Wyniki egzaminów maturalnych a dane społeczno-ekonomiczne"),
+  tags$head(
+    tags$link(rel = "stylesheet", type = "text/css", href = "header.css")
+  ),
   
-  mainPanel(
-    
-    htmlOutput("listaGmin"),
-    
-    selectInput(inputId = "przedmiot",
-                label = "Wybierz przedmiot",
-                choices = c("Język polski podstawowy" = "polski"),
-                selected = "polski"),
-    
-     h3("Porównanie wyników z matury względem liczby bezrobotnych na 1000 osób w wieku produkcyjnym."), 
-     
-    plotOutput("wykres_bezrobotni"),
-    sliderInput("rok_bezrobotni",
-                "Wybierz rok egzaminu:",
-                sep = "",
-                min = 2012,
-                max = 2014,
-                value = 2012),
-    
-    plotOutput("wykres_bezrobotni2"),
-    sliderInput("rok_bezrobotni2",
-                "Wybierz rok egzaminu:",
-                sep = "",
-                min = 2012,
-                max = 2014,
-                value = 2012),
-    
-    h3("Porównanie wyników z matury względem liczby mieszkańców na 1 bibliotekę."),
-    
-    plotOutput("wykres_biblioteki"),
-    sliderInput("rok_biblioteki",
-                "Wybierz rok egzaminu:",
-                sep = "",
-                min = 2012,
-                max = 2014,
-                value = 2012),
-    
-    plotOutput("wykres_biblioteki2"),
-    sliderInput("rok_biblioteki2",
-                "Wybierz rok egzaminu:",
-                sep = "",
-                min = 2012,
-                max = 2014,
-                value = 2012),
-    
-    h3("Porównanie wyników z matury względem liczby czytelników na 1000 mieszkańców."),
-    
-    plotOutput("wykres_czytelnicy"),
-    sliderInput("rok_czytelnicy",
-                "Wybierz rok egzaminu:",
-                sep = "",
-                min = 2012,
-                max = 2014,
-                value = 2012),
-    
-    plotOutput("wykres_czytelnicy2"),
-    sliderInput("rok_czytelnicy2",
-                "Wybierz rok egzaminu:",
-                sep = "",
-                min = 2012,
-                max = 2014,
-                value = 2012),
-    
-    h3("Porównanie wyników z matury względem liczby wypożyczonych książek na 1 czytelnika."), 
-    
-    plotOutput("wykres_wypozyczenia"),
-    sliderInput("rok_wypozyczenia",
-                "Wybierz rok egzaminu:",
-                sep = "",
-                min = 2012,
-                max = 2014,
-                value = 2012),
-    
-    plotOutput("wykres_wypozyczenia2"),
-    sliderInput("rok_wypozyczenia2",
-                "Wybierz rok egzaminu:",
-                sep = "",
-                min = 2012,
-                max = 2014,
-                value = 2012),
-    
-    
-    h3("Porównanie wyników z matury względem sumy trzyletnich wydatków na ucznia"),
-    
-    plotOutput("wykres_wydatki"),
-    sliderInput("rok_wydatki",
-                "Wybierz rok egzaminu:",
-                sep = "",
-                min = 2012,
-                max = 2014,
-                value = 2012),
-    
-    plotOutput("wykres_wydatki2"),
-    sliderInput("rok_wydatki2",
-                "Wybierz rok egzaminu:",
-                sep = "",
-                min = 2012,
-                max = 2014,
-                value = 2012)
-   
-      )    
+  tags$div(class="header",
+           tags$div(class="header_title",
+                    tags$p("JAK POSZŁA MATURA?")),
+           tags$div(class="slider",
+                    sliderInput("rok", NULL,  sep = "",
+                                min = 2012,
+                                max = 2014,
+                                value = 2012,
+                                width='150px')    
+           ),
+           tags$div(class="select",
+                    selectInput(inputId = "przedmiot",
+                                label = NULL,
+                                width = '200px',
+                                choices = c("Język polski podstawowy" = "polski"),
+                                selected = "polski"))),
+  
+  tags$div(class="con",
+           
+           tags$p(class="subtitle", 
+                  "Aplikacja umożliwia zestawienie wyników matur w danej gminie z czynnikami społeczno-ekonomicznymi
+              oraz porównanie sytuacji wyników tego zestawienia z innymi gminami w Polsce."),
+           
+           mainPanel(
+             
+             tags$div(
+              tags$p(class="select_gmina", "Wybierz gminę"),
+              htmlOutput("listaGmin")),
+             
+             tags$p(class="subtitle", 
+                    "Poniżej znajdują się wykresy, w których wyniki wybranej matury zestawione są z różnymi czynnikami, 
+                    których opisy podane są w tytułach wykresu."),
+             
+             h3("Liczba bezrobotnych na 1000 osób w wieku produkcyjnym."),
+             h5("Im większa wartość, tym większe bezrobocie w gminie."),
+             tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z liczbą bezrobotnych
+                    przypadających na 1000 mieszkańców w danych gminach i pozwala porównać tę relację względem innych
+                    gmin w Polsce. "),
+             plotOutput("wykres_bezrobotni"),
+             
+             tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest bezrobocie w wybranej 
+                    gminie w porównaniu z innymi polskimi gminami."),
+             plotOutput("wykres_bezrobotni2"),
+             
+             h3("Porównanie wyników z matury względem liczby mieszkańców na 1 bibliotekę."),
+             h5("Im mniejsza wartość, tym większe zagęszczenie bibliotek w gminie."),
+             
+             tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z liczbą mieszkańców 
+                    przypadających na jedną bibliotekę w danych gminach i pozwala porównać tę relację względem innych
+                    gmin w Polsce."),
+             plotOutput("wykres_biblioteki"),
+             
+             tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest ilość bibliotek względem
+                    liczby mieszkańców wybranej gminy w porównaniu z innymi polskimi gminami."),
+             plotOutput("wykres_biblioteki2"),
+             
+             h3("Porównanie wyników z matury względem liczby czytelników na 1000 mieszkańców."),
+             h5("Im większa wartość, tym większe czytelnictwo w gminie."),
+             
+             tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z liczbą czytelników
+                    przypadających na 1000 mieszkańców w danych gminach i pozwala porównać tę relację względem innych
+                    gmin w Polsce."),
+             plotOutput("wykres_czytelnicy"),
+             
+             tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest liczba czytelników względem
+                    liczby mieszkańców wybranej gminy w porównaniu z innymi polskimi gminami."),
+             plotOutput("wykres_czytelnicy2"),
+             
+             h3("Porównanie wyników z matury względem liczby wypożyczonych książek na 1 czytelnika."),
+             h5("Im większa wartość, tym czytelnicy czytają więcej książek."),
+             
+             tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z liczbą przeczytanych książek
+                    na 1 czytelnika w danych gminach i pozwala porównać tę relację względem innych
+                    gmin w Polsce."),
+             plotOutput("wykres_wypozyczenia"),
+             
+             tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest liczba przeczytanych książek
+                    na 1 czytelnika w wybranej gminie w porównaniu z innymi polskimi gminami."),
+             plotOutput("wykres_wypozyczenia2"),
+             
+             
+             h3("Porównanie wyników z matury względem sumy trzyletnich wydatków na ucznia"),
+             h5("Im większa wartość, tym więcej wydano pieniędzy na jednego ucznia."),
+             
+             tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z sumą trzyletnich wydatków
+                    na 1 ucznia w danych gminach i pozwala porównać tę relację względem innych
+                    gmin w Polsce."),
+             plotOutput("wykres_wydatki"),
+             
+             tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest suma trzyletnich wydatków
+                    na 1 ucznia w wybranej gminie w porównaniu z innymi polskimi gminami."),
+             plotOutput("wykres_wydatki2")
+             
+           )    
+           )
+  
+  
     )
   )
   

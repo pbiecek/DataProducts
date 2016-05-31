@@ -8,13 +8,13 @@ shinyServer(function(input, output) {
   output$listaGmin <- renderUI({ 
     wskaznik <- arrange(polski_srednia_wydatki, nazwa_gminy)
     
-    selectInput("gmina", "Wybierz gminę", wskaznik$nazwa_gminy, selected = "Radom")
+    selectInput("gmina", NULL, wskaznik$nazwa_gminy, selected = "Radom", width='100%')
   })
   
   output$wykres_wydatki = renderPlot({
     wskaznik <- arrange(polski_srednia_wydatki, nazwa_gminy)
     
-    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok_wydatki)
+    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
     
       wykres <- ggplot(wskaznikWybranyRok, aes(suma_na_licealiste, sredni_wynik_matury)) +
@@ -31,7 +31,7 @@ shinyServer(function(input, output) {
   
   output$wykres_wydatki2 = renderPlot({
     wskaznik <- arrange(polski_srednia_wydatki, nazwa_gminy)
-    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok_wydatki2)
+    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
     
     baza <- ggplot(wskaznikWybranyRok, aes(suma_na_licealiste)) +
@@ -53,7 +53,7 @@ shinyServer(function(input, output) {
   output$wykres_bezrobotni = renderPlot({
     wskaznik <- arrange(polski_srednia_bezrobocie, nazwa_gminy)
     
-    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok_bezrobotni)
+    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
     
     
@@ -71,7 +71,7 @@ shinyServer(function(input, output) {
   
   output$wykres_bezrobotni2 = renderPlot({
     wskaznik <- arrange(polski_srednia_bezrobocie, nazwa_gminy)
-    wskaznikWybranyRok <- filter(bezrobocie_bez_dupl, Rok == input$rok_bezrobotni2)
+    wskaznikWybranyRok <- filter(bezrobocie_bez_dupl, Rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, Nazwa == input$gmina)
     
     baza <- ggplot(wskaznikWybranyRok, aes(Wartosc)) +
@@ -90,7 +90,7 @@ shinyServer(function(input, output) {
   output$wykres_biblioteki = renderPlot({
     wskaznik <- arrange(polski_srednia_biblioteki, nazwa_gminy)
     
-    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok_biblioteki)
+    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
 
       wykres <- ggplot(wskaznikWybranyRok, aes(Wartosc, sredni_wynik_matury)) +
@@ -107,7 +107,7 @@ shinyServer(function(input, output) {
   
   output$wykres_biblioteki2 = renderPlot({
     wskaznik <- arrange(polski_srednia_biblioteki, nazwa_gminy)
-    wskaznikWybranyRok <- filter(ludnosc_na_biblioteke_bez_dupl, Rok == input$rok_biblioteki2)
+    wskaznikWybranyRok <- filter(ludnosc_na_biblioteke_bez_dupl, Rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, Nazwa == input$gmina)
     
     baza <- ggplot(wskaznikWybranyRok, aes(Wartosc)) +
@@ -127,7 +127,7 @@ shinyServer(function(input, output) {
   output$wykres_czytelnicy = renderPlot({
     wskaznik <- arrange(polski_srednia_czytelnicy, nazwa_gminy)
     
-    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok_czytelnicy)
+    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
     
   
@@ -145,7 +145,7 @@ shinyServer(function(input, output) {
   
   output$wykres_czytelnicy2 = renderPlot({
     wskaznik <- arrange(polski_srednia_czytelnicy, nazwa_gminy)
-    wskaznikWybranyRok <- filter(czytelnicy_bez_dupl, Rok == input$rok_czytelnicy2)
+    wskaznikWybranyRok <- filter(czytelnicy_bez_dupl, Rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, Nazwa == input$gmina)
     
     baza <- ggplot(wskaznikWybranyRok, aes(Wartosc)) +
@@ -166,7 +166,7 @@ shinyServer(function(input, output) {
   output$wykres_wypozyczenia = renderPlot({
     wskaznik <- arrange(polski_srednia_wypozyczenia, nazwa_gminy)
     
-    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok_wypozyczenia)
+    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
    
       wykres <- ggplot(wskaznikWybranyRok, aes(Wartosc, sredni_wynik_matury)) +
@@ -185,7 +185,7 @@ shinyServer(function(input, output) {
   output$wykres_wypozyczenia2 = renderPlot({
     wskaznik <- arrange(polski_srednia_wypozyczenia, nazwa_gminy)
     
-    wskaznikWybranyRok <- filter(wypozyczenia_bez_dupl, Rok == input$rok_wypozyczenia2)
+    wskaznikWybranyRok <- filter(wypozyczenia_bez_dupl, Rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, Nazwa == input$gmina)
     
     baza <- ggplot(wskaznikWybranyRok, aes(Wartosc)) +
