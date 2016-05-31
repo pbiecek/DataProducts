@@ -1,21 +1,16 @@
 # Tworzenie nowej tabeli na zależność wynik procentowy uzyskany przez procent uczniow.
-generuj.tabele.pp <- function(dane, nazwa_kolumny) {
-  d <- data.frame(wynik_procentowy=numeric(0), procent_osob=numeric(0))
-  for(i in 0:100)
-  {
-    procent <- 100 * nrow(dane[dane$nazwa_kolumny == i,]) / nrow(dane) 
-    d[nrow(d)+1, ] <- c(i, procent)
-  }
+generuj_tabele_pp <- function(dane, nazwa_kolumny) {
+  x <- hist(dane[[nazwa_kolumny]], breaks=100, plot=FALSE)
+  d <- data_frame(wynik_procentowy = x$mids, procent_osob = 100 * x$counts / nrow(dane))
   return(d)
 }
 
-
-# Generuj wykres liniowy na podstawie otrzymanych danych.
-generuj.wykres <- function(dane, nazwa_kolumny, szkola_id, opis) {
+# Generuj wykres liniowy.
+generuj_wykres <- function(dane, nazwa_kolumny, szkola_id, opis) {
   dane_szkola <- filter(dane, id_szkoly==szkola_id)
   dane_gmina <- filter(dane_licz, gmina_szkoly==dane_szkola[1,]$gmina_szkoly)
   
-  # Tworzenie nowych tabel na zależność wynik procentowy uzyskany przez procent uczniow.
+  # Tworzenie nowej tabeli na zależność wynik procentowy uzyskany przez procent uczniow.
   dane_procentowe <- generuj_tabele_pp(dane, nazwa_kolumny)
   dane_procentowe_szkola <- generuj_tabele_pp(dane_szkola, nazwa_kolumny)
   dane_procentowe_gmina <- generuj_tabele_pp(dane_gmina, nazwa_kolumny)
