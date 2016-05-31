@@ -13,7 +13,8 @@ LazyData: true
 Imports:
     dplyr,
     ggplot2,
-    shiny
+    shiny,
+    zoo
 Suggests:
     ZPD
 RoxygenNote: 5.0.1
