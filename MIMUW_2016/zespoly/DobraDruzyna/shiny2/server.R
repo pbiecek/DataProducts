@@ -1,7 +1,7 @@
 library(shiny)
 library(dplyr)
 library(ggplot2)
-
+library(plotly)
 
 shinyServer(function(input, output) { 
   
@@ -11,20 +11,19 @@ shinyServer(function(input, output) {
     selectInput("gmina", NULL, wskaznik$nazwa_gminy, selected = "Radom", width='100%')
   })
   
-  output$wykres_wydatki = renderPlot({
+  output$wykres_wydatki = renderPlotly({
     wskaznik <- arrange(polski_srednia_wydatki, nazwa_gminy)
     
     wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
     
-      wykres <- ggplot(wskaznikWybranyRok, aes(suma_na_licealiste, sredni_wynik_matury)) +
-        xlab("Suma trzyletnich wydatków na jednego ucznia")
+    wykres <- plot_ly(wskaznikWybranyRok, x = suma_na_licealiste, y = sredni_wynik_matury, text = paste("gmina: ", nazwa_gminy),
+                   mode = "markers", marker = list(color = "lightblue"))
     
-    wykres <- wykres + geom_point(colour = "#87B4FF") +
-      geom_point(data = zaznaczonaGmina, colour = "#D55E00", size = 5) +
-      geom_text(data = zaznaczonaGmina, label = input$gmina, vjust = 2,
-                colour = "#D55E00", size = 7) +
-      ylab("Średni wynik matury")
+    wykres <- layout(wykres, 
+                     xaxis = list(title = "Suma trzyletnich wydatków na ucznia"),
+                     yaxis = list(title = "Średni wynik z matury"),
+                     annotations = list(x = zaznaczonaGmina$Wartosc, y = zaznaczonaGmina$sredni_wynik_matury, text = "Twoja gmina", showarrow = T))
     
     wykres
   })
@@ -50,21 +49,20 @@ shinyServer(function(input, output) {
   
   
   
-  output$wykres_bezrobotni = renderPlot({
+  output$wykres_bezrobotni = renderPlotly({
     wskaznik <- arrange(polski_srednia_bezrobocie, nazwa_gminy)
     
     wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
     
+    wykres <- plot_ly(wskaznikWybranyRok, x = Wartosc, y = sredni_wynik_matury, text = paste("gmina: ", nazwa_gminy),
+                      mode = "markers", marker = list(color = "lightblue"))
     
-    wykres <- ggplot(wskaznikWybranyRok, aes(Wartosc, sredni_wynik_matury)) +
-        xlab("Liczba bezrobotnych na 1000 osób w wieku produkcyjnym")
-    
-    wykres <- wykres + geom_point(colour = "#87B4FF") +
-      geom_point(data = zaznaczonaGmina, colour = "#D55E00", size = 5) +
-      geom_text(data = zaznaczonaGmina, label = input$gmina, vjust = 2,
-                colour = "#D55E00", size = 7) +
-      ylab("Średni wynik matury")
+    wykres <- layout(wykres, 
+                     xaxis = list(title = "Liczba bezrobotnych na 1000 osób w wieku produkcyjnym"),
+                     yaxis = list(title = "Średni wynik z matury"),
+                     annotations = list(x = zaznaczonaGmina$Wartosc, y = zaznaczonaGmina$sredni_wynik_matury,
+                                        text = "Twoja gmina", showarrow = T))
     
     wykres
   })
@@ -87,21 +85,22 @@ shinyServer(function(input, output) {
     wykres
     })
   
-  output$wykres_biblioteki = renderPlot({
+  output$wykres_biblioteki = renderPlotly({
     wskaznik <- arrange(polski_srednia_biblioteki, nazwa_gminy)
     
     wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
 
-      wykres <- ggplot(wskaznikWybranyRok, aes(Wartosc, sredni_wynik_matury)) +
-        xlab("Liczba mieszkańców na 1 bibliotekę")
-   
-    wykres <- wykres + geom_point(colour = "#87B4FF") +
-      geom_point(data = zaznaczonaGmina, colour = "#D55E00", size = 5) +
-      geom_text(data = zaznaczonaGmina, label = input$gmina, vjust = 2,
-                colour = "#D55E00", size = 7) +
-      ylab("Średni wynik matury")
+    wykres <- plot_ly(wskaznikWybranyRok, x = Wartosc, y = sredni_wynik_matury, text = paste("gmina: ", nazwa_gminy),
+                      mode = "markers", marker = list(color = "lightblue"))
     
+    wykres <- layout(wykres, 
+                     xaxis = list(title = "Liczba mieszkańców na 1 bibliotekę"),
+                     yaxis = list(title = "Średni wynik z matury"),
+                     annotations = list(x = zaznaczonaGmina$Wartosc, y = zaznaczonaGmina$sredni_wynik_matury,
+                                        text = "Twoja gmina", showarrow = T))
+    
+
     wykres
   })
   
@@ -124,21 +123,21 @@ shinyServer(function(input, output) {
     wykres
     })
   
-  output$wykres_czytelnicy = renderPlot({
+  output$wykres_czytelnicy = renderPlotly({
     wskaznik <- arrange(polski_srednia_czytelnicy, nazwa_gminy)
     
     wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
     
   
-      wykres <- ggplot(wskaznikWybranyRok, aes(Wartosc, sredni_wynik_matury)) +
-        xlab("Liczba czytelników na 1000 mieszkańców")
+    wykres <- plot_ly(wskaznikWybranyRok, x = Wartosc, y = sredni_wynik_matury, text = paste("gmina: ", nazwa_gminy),
+                      mode = "markers", marker = list(color = "lightblue"))
     
-    wykres <- wykres + geom_point(colour = "#87B4FF") +
-      geom_point(data = zaznaczonaGmina, colour = "#D55E00", size = 5) +
-      geom_text(data = zaznaczonaGmina, label = input$gmina, vjust = 2,
-                colour = "#D55E00", size = 7) +
-      ylab("Średni wynik matury")
+    wykres <- layout(wykres, 
+                     xaxis = list(title = "Liczba czytelników bibliotek na 1000 mieszkańców"),
+                     yaxis = list(title = "Średni wynik z matury"),
+                     annotations = list(x = zaznaczonaGmina$Wartosc, y = zaznaczonaGmina$sredni_wynik_matury,
+                                        text = "Twoja gmina", showarrow = T))
     
     wykres
   })
@@ -163,21 +162,20 @@ shinyServer(function(input, output) {
     wykres
     })
   
-  output$wykres_wypozyczenia = renderPlot({
+  output$wykres_wypozyczenia = renderPlotly({
     wskaznik <- arrange(polski_srednia_wypozyczenia, nazwa_gminy)
     
     wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
    
-      wykres <- ggplot(wskaznikWybranyRok, aes(Wartosc, sredni_wynik_matury)) +
-        xlab("Liczba wypożyczonych książek na 1 czytelnika")
-  
+    wykres <- plot_ly(wskaznikWybranyRok, x = Wartosc, y = sredni_wynik_matury, text = paste("gmina: ", nazwa_gminy),
+                      mode = "markers", marker = list(color = "lightblue"))
     
-    wykres <- wykres + geom_point(colour = "#87B4FF") +
-      geom_point(data = zaznaczonaGmina, colour = "#D55E00", size = 5) +
-      geom_text(data = zaznaczonaGmina, label = input$gmina, vjust = 2,
-                colour = "#D55E00", size = 7) +
-      ylab("Średni wynik matury")
+    wykres <- layout(wykres, 
+                     xaxis = list(title = "Liczba wypożyczeń na 1 czytelnika"),
+                     yaxis = list(title = "Średni wynik z matury"),
+                     annotations = list(x = zaznaczonaGmina$Wartosc, y = zaznaczonaGmina$sredni_wynik_matury,
+                                        text = "Twoja gmina", showarrow = T))
     
     wykres
   })

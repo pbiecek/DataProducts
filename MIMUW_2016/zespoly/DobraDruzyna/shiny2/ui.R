@@ -1,4 +1,5 @@
 library(shiny)
+library(plotly)
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(
@@ -45,7 +46,7 @@ shinyUI(fluidPage(
              tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z liczbą bezrobotnych
                     przypadających na 1000 mieszkańców w danych gminach i pozwala porównać tę relację względem innych
                     gmin w Polsce. "),
-             plotOutput("wykres_bezrobotni"),
+             plotlyOutput("wykres_bezrobotni"),
              
              tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest bezrobocie w wybranej 
                     gminie w porównaniu z innymi polskimi gminami."),
@@ -57,7 +58,7 @@ shinyUI(fluidPage(
              tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z liczbą mieszkańców 
                     przypadających na jedną bibliotekę w danych gminach i pozwala porównać tę relację względem innych
                     gmin w Polsce."),
-             plotOutput("wykres_biblioteki"),
+             plotlyOutput("wykres_biblioteki"),
              
              tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest ilość bibliotek względem
                     liczby mieszkańców wybranej gminy w porównaniu z innymi polskimi gminami."),
@@ -69,7 +70,7 @@ shinyUI(fluidPage(
              tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z liczbą czytelników
                     przypadających na 1000 mieszkańców w danych gminach i pozwala porównać tę relację względem innych
                     gmin w Polsce."),
-             plotOutput("wykres_czytelnicy"),
+             plotlyOutput("wykres_czytelnicy"),
              
              tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest liczba czytelników względem
                     liczby mieszkańców wybranej gminy w porównaniu z innymi polskimi gminami."),
@@ -81,7 +82,7 @@ shinyUI(fluidPage(
              tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z liczbą przeczytanych książek
                     na 1 czytelnika w danych gminach i pozwala porównać tę relację względem innych
                     gmin w Polsce."),
-             plotOutput("wykres_wypozyczenia"),
+             plotlyOutput("wykres_wypozyczenia"),
              
              tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest liczba przeczytanych książek
                     na 1 czytelnika w wybranej gminie w porównaniu z innymi polskimi gminami."),
@@ -94,7 +95,7 @@ shinyUI(fluidPage(
              tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z sumą trzyletnich wydatków
                     na 1 ucznia w danych gminach i pozwala porównać tę relację względem innych
                     gmin w Polsce."),
-             plotOutput("wykres_wydatki"),
+             plotlyOutput("wykres_wydatki"),
              
              tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest suma trzyletnich wydatków
                     na 1 ucznia w wybranej gminie w porównaniu z innymi polskimi gminami."),
