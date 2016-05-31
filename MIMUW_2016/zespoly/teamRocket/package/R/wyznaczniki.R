@@ -14,7 +14,7 @@ uw.matematyka <- list(skrot = "UW_mat", formula =
 
 #' Krotka zawierająca opis funkcji wyliczjącej punkty przy rekrutacji na informatykę UW
 uw.informatyka <- list(skrot = "UW_inf", formula = 
-                    paste("pmax(m_pol_p*0.6, m_pol_r) * 0.1 + pmax(m_mat_p * 0.6, m_mat_r) * 0.1 + 0.5 * m_mat_r",
+                    paste("pmax(m_pol_p*0.6, m_pol_r) * 0.1 + pmax(m_mat_p * 0.6, m_mat_r) * 0.1 + 0.5 * pmax(m_mat_r,m_inf_r)",
                           " pmax(m_ang_p * 0.6, m_ang_r) * 0.1 + pmax(", all_rozsz, ") * 0.2"),
                   opis = paste("Wynik jaki uczniowie szkoły otrzymaliby podczas rekrutacji na informatykę na MIMUW.",
                                "Nie uwzględnia wyników z innych języków obcych niz angielski")
