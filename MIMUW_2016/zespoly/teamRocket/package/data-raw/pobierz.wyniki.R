@@ -30,9 +30,9 @@ pobierz.pojedynczy <- function(src, ucz, czesc = "err1", poziom = "err2", szk, k
   ZPD::pobierz_wyniki_egzaminu(src, rodzajEgzaminu = "matura",
                                      czescEgzaminu = nazwa.czesci, rokEgzaminu = ktory.rok,
                                      czyEwd = TRUE) %>%
+    collect() %>%
     dplyr::inner_join(szk, by = "id_szkoly") %>%
     dplyr::inner_join(ucz, by = "id_obserwacji") %>%
-    collect() %>%
     mutate_(.dots=setNames(
       list(~(rowSums(.[grepl("^[pk]_[0-9]+$", names(.))], na.rm = TRUE))), nazwa.kolumny)) %>%
     mutate_(.dots=setNames(paste(nazwa.kolumny, "* 100 / max(",nazwa.kolumny,")"),
@@ -55,16 +55,18 @@ pobierz.wyniki <-function(ktory.rok){
     dplyr::select(id_cke, id_obserwacji) %>%
     dplyr::filter(rocznik == ktory.rok-18 |
                   rocznik == ktory.rok-19 |
-                  rocznik == ktory.rok-20) -> uczniowie
+                  rocznik == ktory.rok-20) %>%
+    collect()-> uczniowie
   # lista szkół - jeszcze nie pobrana
   ZPD::pobierz_szkoly(src) %>%
     dplyr::filter(typ_szkoly %in%
                     c("LO", "LOU","LP", "T", "TU", "ZZ")) %>% #Tylko szkoły średnie/zawodowe
     dplyr::filter(rok == ktory.rok) %>%
-    dplyr::select(id_szkoly, nazwa_szkoly, gmina_szkoly) -> szkoly
+    dplyr::select(id_szkoly, nazwa_szkoly, gmina_szkoly) %>%
+    collect() -> szkoly
   
-  # lista.matur = list("wos", "his", "mat", "pol", "ang", "fiz","bio", "che", "inf", "mat", "geo")
-  lista.matur = list("inf") # do szybkich testów!
+  lista.matur = list("wos", "his", "mat", "pol", "ang", "fiz","bio", "che", "inf", "mat", "geo")
+  # lista.matur = list("inf") # do szybkich testów!
   lista.egz = expand.grid(czesc = lista.matur, poziom = list("p", "r"))
   # pobierz wszystkie konieczne wyniki
   wyniki = Map(function(x, y, n) pobierz.pojedynczy(src,uczniowie, czesc = x, poziom = y,
