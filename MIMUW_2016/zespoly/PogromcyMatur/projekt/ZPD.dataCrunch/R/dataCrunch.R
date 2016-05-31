@@ -41,13 +41,22 @@
 .przeladuj_kryteria <- function(ctxt) {
   src = polacz()
   kryt = pobierz_kryteria_oceny(src) %>%
-    select(kryterium, l_punktow,
-           numer_pytania, numer_kryterium, id_pytania, id_wiazki, tresc_pytania, tresc_wiazki, id_testu) %>%
+    select(kryterium, l_punktow, numer_kryterium, id_pytania,
+           id_wiazki, tresc_pytania, tresc_wiazki) %>%
     rename(id = kryterium, max_punktow = l_punktow) %>%
-    collect() %>%
     distinct() %>%
+    collect() %>%
     as.data.frame()
   ctxt@kryteria <- kryt
+  
+  kryt = pobierz_kryteria_oceny(src) %>%
+    select(kryterium, numer_pytania, id_testu) %>%
+    rename(id = kryterium) %>%
+    distinct() %>%
+    collect() %>%
+    as.data.frame()
+  
+  ctxt@kryteria_testy <- kryt
   return(ctxt)
 }
 

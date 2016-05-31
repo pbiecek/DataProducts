@@ -5,6 +5,7 @@ DataCrunch <- setClass(
     typy_testow = "data.frame",
     zapisane_testy = "data.frame",
     kryteria = "data.frame",
+    kryteria_testy = "data.frame",
     normy = "data.frame",
     wyniki_po_egz = "data.frame",
     wyniki_po_plci = "data.frame",
@@ -17,6 +18,7 @@ DataCrunch <- setClass(
     typy_testow = data.frame(),
     zapisane_testy = data.frame(),
     kryteria = data.frame(),
+    kryteria_testy = data.frame(),
     normy = data.frame(),
     wyniki_po_egz = data.frame(),
     wyniki_po_plci = data.frame(),
@@ -44,15 +46,18 @@ puste_dane <- function() {
 
   kryteria <- data.frame()
   kryteria$id <- character(0)
-  kryteria$numer_pytania <- character(0)
   kryteria$id_pytania <- character(0)
   kryteria$id_wiazki <- character(0)
   kryteria$tresc_pytania <- character(0)
   kryteria$tresc_wiazki <- character(0)
   kryteria$numer_kryterium <- character(0)
   kryteria$max_punktow <- integer(0)
-  kryteria$id_testu <- integer(0)
 
+  kryteria_testy <- data.frame()
+  kryteria_testy$id <- character(0)
+  kryteria_testy$numer_pytania <- character(0)
+  kryteria_testy$id_testu <- integer(0)
+  
   wyniki_po_egz <- data.frame()
   wyniki_po_egz$rok <- numeric(0)
   wyniki_po_egz$poprzedni_wynik <- numeric(0)
@@ -105,6 +110,7 @@ puste_dane <- function() {
   c@typy_testow= typy_testow
   c@zapisane_testy = zapisane_testy
   c@kryteria = kryteria
+  c@kryteria_testy = kryteria_testy
   c@normy = normy
   c@wyniki_po_egz = wyniki_po_egz
   c@wyniki_po_plci = wyniki_po_plci
