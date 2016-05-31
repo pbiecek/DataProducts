@@ -4,7 +4,6 @@
 \name{matura.2015}
 \alias{matura.2015}
 \title{Matura results from 2015}
-\format{a data frame with 360432 rows and 16 columns}
 \usage{
 data(matura.2015)
 }

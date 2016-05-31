@@ -1,7 +1,7 @@
 library(shiny)
 
-
-shinyUI(fluidPage(
+#' UI aplikacji shiny
+maturiser.ui <- shinyUI(fluidPage(
   titlePanel("Statystyki szkoły"),
   sidebarLayout(
       sidebarPanel(

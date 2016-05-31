@@ -1,12 +1,15 @@
 library(ggplot2)
+library(shiny)
 
 
-matury <- data.frame(pl.p=c("23", "73", "69"), pl.r = c("0", "64", "0"))
-wyznaczniki <- c(c("a", "A"), c("b", "B"), c("c", "C"))
-ilosc.wyznacznikow <- length(wyznaczniki)
+#matury <- data.frame(pl.p=c("23", "73", "69"), pl.r = c("0", "64", "0"))
+#wyznaczniki <- c(c("a", "A"), c("b", "B"), c("c", "C"))
 
 
-shinyServer(function(input, output) {
+#'Serwer aplikacji shiny
+maturiser.server <- function(matury, wyznaczniki){
+  ilosc.wyznacznikow <- length(wyznaczniki)
+  shinyServer(function(input, output) {
   output$gmina <- renderUI({
     gminy <- c("Kraków", "Puławy")
     selectInput(inputId = "gmina",
@@ -47,4 +50,4 @@ shinyServer(function(input, output) {
       })
     })
   }
-})
+})}

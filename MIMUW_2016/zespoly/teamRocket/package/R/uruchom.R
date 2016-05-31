@@ -8,10 +8,6 @@ library(shiny)
 #'przedstawione na wykresach. typu c("nazwa.kolumny", "opis.wyznacznika")
 #'gdzie nazwa.kolumny to kolumna w tabeli dane
 uruchom <- function(dane, lista.wyznacznikow){
-  shiny::shinyApp(ui = maturiser.ui, server = maturiser.server,
-                  onStart = function(){
-                    matury <- dane
-                    wyznaczniki <- lista.wyznacznikow
-                    #szkoly <- unque(wyniki$id_szkoly, wyniki$nazwa_szkoly)
-                  })
+  shiny::shinyApp(ui = maturiser.ui,
+                  server = maturiser.server(dane, lista.wyznacznikow))
 }
