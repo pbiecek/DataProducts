@@ -37,7 +37,7 @@ pobierz.pojedynczy <- function(src, ucz, czesc = "err1", poziom = "err2", szk, k
       list(~(rowSums(.[grepl("^[pk]_[0-9]+$", names(.))], na.rm = TRUE))), nazwa.kolumny)) %>%
     mutate_(.dots=setNames(paste(nazwa.kolumny, "* 100 / max(",nazwa.kolumny,")"),
                            nazwa.kolumny)) %>%
-    dplyr::select_("gmina_szkoly","id_cke", "id_szkoly", nazwa.kolumny, "nazwa_szkoly")
+    dplyr::select_("id_cke", "id_szkoly", "nazwa_szkoly", "gmina_szkoly", nazwa.kolumny)
 }
 
 
@@ -72,7 +72,7 @@ pobierz.wyniki <-function(ktory.rok){
                lista.egz$czesc, lista.egz$poziom, 1:length(lista.egz$poziom))
   cat("Trwa złączanie. Czekaj...\n")
   wynik = Reduce(function(reszta, nowy){
-    dplyr::full_join(reszta, nowy, by=c("id_cke", "id_szkoly", "gmina_szkoly", "nazwa_szkoly"))
+    dplyr::full_join(reszta, nowy, by=c("id_cke", "id_szkoly", "nazwa_szkoly", "gmina_szkoly"))
     }, wyniki[-1], dplyr::first(wyniki))
   
   nazwa.ramki = paste0("matura.", ktory.rok)

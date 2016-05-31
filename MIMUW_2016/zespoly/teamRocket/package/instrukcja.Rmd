@@ -14,12 +14,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## O pakiecie
 
-Pakiet Maturiser dostarcza narzêdzia do badania osi¹gniêæ uczniów poszczególnych szkó³. Dla wybranej szko³y poka¿e jakie wyniki uzyskali jej uczniowie i porówna je z wynikami uczniów innych szkó³ w gminie jak i w kraju. Wyniki mo¿na porównywaæ ze wzglêdu na ró¿ne kryteria (np. liczba punktów jakie uczniowie szko³y uzyskaliby podczas rekrutacji na dziennikarstwo UW). Aplikacja wyœwietla czytelny histogram przedstawiaj¹cy rozk³ad punktów jakie uczniowie szko³y uzyskali w tym kryterium. W tle ich wyniki s¹ porównywane z osi¹gniêciami uczniów w gminie i w kraju. Mo¿liwe jest definiowanie w³asnych kryteriów porównawczych. Nasza aplikacja dostarcza w tym celu prosty framework.
+Pakiet Maturiser dostarcza narzÄ™dzia do badania osiÄ…gniÄ™Ä‡ uczniÃ³w poszczegÃ³lnych szkÃ³Å‚. Dla wybranej szkoÅ‚y pokaÅ¼e jakie wyniki uzyskali jej uczniowie i porÃ³wna je z wynikami uczniÃ³w innych szkÃ³Å‚ w gminie jak i w kraju. Wyniki moÅ¼na porÃ³wnywaÄ‡ ze wzglÄ™du na rÃ³Å¼ne kryteria (np. liczba punktÃ³w jakie uczniowie szkoÅ‚y uzyskaliby podczas rekrutacji na dziennikarstwo UW). Aplikacja wyÅ›wietla czytelny histogram przedstawiajÄ…cy rozkÅ‚ad punktÃ³w jakie uczniowie szkoÅ‚y uzyskali w tym kryterium. W tle ich wyniki sÄ… porownywane z osiÄ…gniÄ™ciami uczniÃ³w w gminie i w kraju. MoÅ¼liwe jest definiowanie wÅ‚asnych kryteriÃ³w porÃ³wnawczych. Nasza aplikacja dostarcza w tym celu prosty framework.
 
 
 ## Instalacja i pierwsze uruchomienie
+```{r, eval=FALSE}
+library(devtools)
+install_github(repo = "piotrb5e3/DataProducts", ref = "master",
+               subdir ="MIMUW_2016/zespoly/teamRocket/package/")
+```
 
-## Definiowanie w³asnych kryteriów porównawczych
+## Definiowanie wÅ‚asnych kryteriÃ³w porÃ³wnawczych
 
-## Dla u¿ytkownika webservicu - instrukcja
+## Dla uÅ¼ytkownika aplikacji - instrukcja
 
