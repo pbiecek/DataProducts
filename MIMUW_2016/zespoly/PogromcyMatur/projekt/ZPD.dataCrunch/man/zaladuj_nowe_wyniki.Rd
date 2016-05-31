@@ -2,7 +2,8 @@
 % Please edit documentation in R/dataCrunch.R
 \name{zaladuj_nowe_wyniki}
 \alias{zaladuj_nowe_wyniki}
-\title{Pozwala umieścić w danych wyniki danego egzaminu.}
+\title{Umieszcza w danych wyniki danego egzaminu w zależności od sumarycznych wyników
+wszystkich poprzednich.}
 \usage{
 zaladuj_nowe_wyniki(ctxt, p_rok, t_rodzaj, t_czesc, l_dane)
 }
@@ -24,7 +25,9 @@ i wprowadzone do bazy. Niezmieniony obiekt, jeśli dane egzaminu już zostały w
 \description{
 UWAGA: dane, które w bazie już się znajdują zostaną zignorowane. Jeśli chcesz wprowadzić
 je ponownie, użyj funkcji usun_wyniki.
+}
+\details{
 UWAGA: zalecane jest chronologiczne wprowadzanie danych.
-Patrz vignette(package="ZPD.dataCrunch", topic="wyniki_po_egz.
+Patrz vignette(package="ZPD.dataCrunch", topic="wyniki_po_egz").
 }
 

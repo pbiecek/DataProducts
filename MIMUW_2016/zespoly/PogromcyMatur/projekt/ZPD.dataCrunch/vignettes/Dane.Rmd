@@ -13,23 +13,19 @@ Dane, które przetwarza pakiet są powiązane między sobą. W różnych tabelac
 
 #Trzymane dane
 
-Głowne dane trzymane w DataCrunch (przedstawiane na wykresach) to:
+Główne dane trzymane w DataCrunch (przedstawiane na wykresach) to:
 
-* Wyniki egzaminów agregowane po płci.
 * Sumaryczne wyniki egzaminów dla każdego ucznia (potrzebne do obliczania innych danych).
 * Wyniki z każdego egzaminu agregowane po wynikach uczniów z poprzednich egzaminów w bazie.
 
-Dane te wczytać można dla danego egzaminu za pomocą funkcji zaladuj_nowe_wyniki. Informacje o ostatniej z tych grup danuch znajdziesz [tutaj](wyniki_po_egz.html).
+Dane te wczytać można dla danego egzaminu za pomocą funkcji zaladuj_nowe_wyniki i zaladuj_sumaryczne_oceny.
 
 #Tabele
 
 Część tabel w DataCrunch używana jest wewnętrznie. Poniżej opisane są tabele, które w zamierzeniu mają być dostępne publicznie:
 
-* [Typy testów](typy_testow.html)
-* [Zapisane testy](zapisane_testy.html)
-* [Kryteria](kryteria.html)
 * [Wyniki po egzaminach](wyniki_po_egz.html)
-* [Wyniki po płci](wyniki_po_plci.html)
+* [Sumaryczne oceny](oceny_uczniow.html)
 
 Funkcje pobierające i przetwarzające dane przyjmują DataCrunch jako pierwszy argument i zwracają wersję zmodyfikowaną.
 Pustą klasę DataCrunch możesz stworzyć za pomocą funkcji puste_dane.

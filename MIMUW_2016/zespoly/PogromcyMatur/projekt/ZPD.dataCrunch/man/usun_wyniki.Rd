@@ -2,19 +2,23 @@
 % Please edit documentation in R/dataCrunch.R
 \name{usun_wyniki}
 \alias{usun_wyniki}
-\title{Usuwa dane z bazy z danego roku.}
+\title{Usuwa wyniki danego egzaminu w zależności od poprzednich z danych.}
 \usage{
-usun_wyniki(ctxt, p_rok)
+usun_wyniki(ctxt, p_rok, t_rodzaj, t_czesc)
 }
 \arguments{
 \item{ctxt}{Obiekt klasy DataCrunch, z którego mamy usunąć dane.}
 
-\item{p_rok}{Rok, który chcemy usunąć.}
+\item{p_rok}{Rok egzaminu do usunięcia.}
+
+\item{t_rodzaj}{Rodzaj egzaminu do usunięcia.}
+
+\item{t_czesc}{Część egzaminu do usunięcia.}
 }
 \value{
 Obiekt DataCrunch z usuniętymi danymi.
 }
 \description{
-Usuwa dane z bazy z danego roku.
+Usuwa wyniki danego egzaminu w zależności od poprzednich z danych.
 }
 

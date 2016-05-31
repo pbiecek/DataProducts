@@ -4,27 +4,25 @@ DataCrunch <- setClass(
   slots = c(
     typy_testow = "data.frame",
     zapisane_testy = "data.frame",
+    zapisane_testy_oceny = "data.frame",
     kryteria = "data.frame",
     kryteria_testy = "data.frame",
     normy = "data.frame",
     wyniki_po_egz = "data.frame",
-    wyniki_po_plci = "data.frame",
     oceny_uczniow = "data.frame",
-    ostatnie_przystapienia = "data.frame",
-    uczniowie = "data.frame"
+    ostatnie_przystapienia = "data.frame"
   ),
   
   prototype = list(
     typy_testow = data.frame(),
     zapisane_testy = data.frame(),
+    zapisane_testy_oceny = data.frame(),
     kryteria = data.frame(),
     kryteria_testy = data.frame(),
     normy = data.frame(),
     wyniki_po_egz = data.frame(),
-    wyniki_po_plci = data.frame(),
     oceny_uczniow = data.frame(),
-    ostatnie_przystapienia = data.frame(),
-    uczniowie = data.frame()
+    ostatnie_przystapienia = data.frame()
   )
 )
 
@@ -43,6 +41,11 @@ puste_dane <- function() {
   zapisane_testy$rok <- integer(0)
   zapisane_testy$rodzaj_egzaminu <- character(0)
   zapisane_testy$czesc_egzaminu <- character(0)
+  
+  zapisane_testy_oceny <- data.frame()
+  zapisane_testy_oceny$rok <- integer(0)
+  zapisane_testy_oceny$rodzaj_egzaminu <- character(0)
+  zapisane_testy_oceny$czesc_egzaminu <- character(0)
 
   kryteria <- data.frame()
   kryteria$id <- character(0)
@@ -69,18 +72,10 @@ puste_dane <- function() {
   wyniki_po_egz$id_kryterium <- numeric(0)
   wyniki_po_egz$wynik <- numeric(0)
 
-  wyniki_po_plci <- data.frame()
-  wyniki_po_plci$rok <- numeric(0)
-  wyniki_po_plci$rodzaj_egzaminu <- character(0)
-  wyniki_po_plci$czesc_egzaminu <- character(0)
-  wyniki_po_plci$plec <- character(0)
-  wyniki_po_plci$id_kryterium <- numeric(0)
-  wyniki_po_plci$wynik <- numeric(0)
-
   # Tabele pomocnicze
   oceny_uczniow <- data.frame()
   oceny_uczniow$id_testu <- integer(0)
-  oceny_uczniow$id_szkoly <- integer(0)
+  oceny_uczniow$rok <- integer(0)
   oceny_uczniow$rodzaj_egzaminu <- character(0)
   oceny_uczniow$czesc_egzaminu <- character(0)
   oceny_uczniow$id_obserwacji <- integer(0)
@@ -102,21 +97,16 @@ puste_dane <- function() {
   ostatnie_przystapienia$rodzaj_egzaminu <- character(0)
   ostatnie_przystapienia$rok <- integer(0)
   
-  uczniowie <- data.frame()
-  uczniowie$id_obserwacji <- integer(0)
-  uczniowie$plec <- character(0)
-  
   c = DataCrunch()
   c@typy_testow= typy_testow
   c@zapisane_testy = zapisane_testy
+  c@zapisane_testy_oceny = zapisane_testy_oceny
   c@kryteria = kryteria
   c@kryteria_testy = kryteria_testy
   c@normy = normy
   c@wyniki_po_egz = wyniki_po_egz
-  c@wyniki_po_plci = wyniki_po_plci
   c@oceny_uczniow = oceny_uczniow
   c@ostatnie_przystapienia = ostatnie_przystapienia
-  c@uczniowie = uczniowie
   
   return(c)
 }

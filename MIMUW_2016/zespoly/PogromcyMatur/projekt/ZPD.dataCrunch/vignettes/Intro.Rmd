@@ -9,7 +9,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Pakiet ZPD.dataCrunch pozwala wygodnie przetwarzać dane o egzaminach do wyświetlenia przez aplikację. Obecnie pozwala on na przedstawienie wyników uczniów w zależności od płci oraz w zależności od wyników poprzednich egzaminów.
+Pakiet ZPD.dataCrunch pozwala wygodnie przetwarzać dane o egzaminach do wyświetlenia przez aplikację. Obecnie pozwala on na przedstawienie wyników uczniów w zależności od wyników poprzednich egzaminów.
 
 #Użycie
 
@@ -17,7 +17,13 @@ Zestaw danych, które gromadzi pakiet reprezentowany jest przez jeden obiekt kla
 
 * puste_dane - tworzy nowy, pusty obiekt DataCrunch.
 * zaladuj_male_dane - pobiera dane pomocnicze niezależne od roku.
-* zaladuj_nowe_wyniki - pozwala wprowadzić i przetworzyć wyniki pojedynczego egzaminu.
-* usun_wyniki - pozwala usunąć wyniki pojedynczego egzaminu.
+* zaladuj_sumaryczne_oceny - wprowadza do danych sumaryczne wyniki z egzaminu każdego ucznia.
+* zaladuj_nowe_wyniki - Oblicza wyniki z egzaminu względem wszystkich wcześniejszych, ktorych sumaryczne wyniki uczniów są w bazie.
+* usun_wyniki - pozwala usunąć wyniki względne pojedynczego egzaminu.
+* usun_sumaryczne_oceny - pozwala usunąć sumaryczne wyniki pojedynczego egzaminu.
 
 Aby przetworzyć poprawnie dane, potrzebne są najpierw dane pomocnicze. Przed wprowadzeniem danych za pomocą funkcji zaladuj_nowe_wyniki, pobierz dane pomocnicze za pomocą funkcji zaladuj_male_dane. Dane te należy również na nowo pobrać po każdym roku.
+
+Drugim krokiem jest obliczenie sumarycznych wyników z egzaminów, względem których będziemy chcieli prezentować wyniki. Służy do tego funkcja zaladuj_sumaryczne_oceny.
+
+Końcowy krok to załadowanie egzaminów, których szczegółowe wyniki chcemy poznać za pomocą funkcji zaladuj_nowe_wyniki.

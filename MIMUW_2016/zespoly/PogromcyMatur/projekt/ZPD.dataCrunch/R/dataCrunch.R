@@ -1,29 +1,3 @@
-.przeladuj_regiony <- function(ctxt) {
-  src = polacz()
-  reg = pobierz_szkoly(src) %>%
-    select(gmina_szkoly, powiat_szkoly, wojewodztwo_szkoly) %>%
-    distinct() %>%
-    rename(gmina = gmina_szkoly, powiat = powiat_szkoly, wojewodztwo = wojewodztwo_szkoly) %>%
-    collect() %>%
-    as.data.frame()
-  ctxt@regiony <- reg
-  return(ctxt)
-}
-
-.zaladuj_nowe_szkoly <- function(ctxt, p_rok) {
-  src = polacz()
-  nowe = pobierz_szkoly(src) %>%
-    filter(rok == p_rok) %>%
-    select(id_szkoly, gmina_szkoly, powiat_szkoly, wojewodztwo_szkoly, nazwa_szkoly, typ_szkoly, rok) %>%
-    rename(id = id_szkoly, gmina = gmina_szkoly, powiat = powiat_szkoly, wojewodztwo = wojewodztwo_szkoly,
-           nazwa = nazwa_szkoly, typ = typ_szkoly) %>%
-    collect() %>%
-    as.data.frame()
-  ctxt@szkoly <- rbind(ctxt@szkoly, nowe)
-  ctxt@szkoly <- ctxt@szkoly %>% distinct()
-  return(ctxt)
-}
-
 .zaladuj_testy <- function(ctxt) {
   src = polacz()
   nowe = pobierz_testy(src) %>%
@@ -73,14 +47,6 @@
   return(ctxt)
 }
 
-.zaladuj_uczniow <- function(ctxt) {
-  src = polacz()
-  ctxt@uczniowie <- pobierz_uczniow(src) %>%
-    select(id_obserwacji, plec) %>%
-    as.data.frame()
-  return(ctxt)
-}
-
 #' Pobiera dane pomocnicze niezależne od roku.
 #' 
 #' Część przetwarzanych danych pełni funkcję pomocniczą w przetwarzaniu
@@ -94,11 +60,9 @@
 #' @export
 zaladuj_male_dane <- function (ctxt) {
   ctxt = ctxt %>%
-    .przeladuj_regiony() %>%
     .przeladuj_kryteria() %>%
     .zaladuj_normy() %>%
     .zaladuj_ostatnie_przystapienia() %>%
-    .zaladuj_uczniow() %>%
     .zaladuj_nowe_testy()
   return(ctxt)
 }
@@ -127,7 +91,7 @@ zaladuj_male_dane <- function (ctxt) {
   sumy = rowSums(dane %>% select(starts_with("k_")))
   nowe_oceny_uczniow <- dane %>%
     mutate(wynik = sumy) %>%
-    select(id_obserwacji, id_testu, id_szkoly, wynik) %>%
+    select(id_obserwacji, id_testu, wynik) %>%
     inner_join(ctxt@normy, by = c("id_testu" = "id_testu", "wynik" = "wartosc")) %>%
     select(-wynik) %>%
     rename(wynik=wartosc_zr) %>%
@@ -179,27 +143,12 @@ zaladuj_male_dane <- function (ctxt) {
   return(ctxt)
 }
 
-.dodaj_oceny_po_plci <- function(ctxt, dane, row) {
-  nowe = ctxt@uczniowie %>%
-    select(id_obserwacji, plec) %>%
-    filter(!is.na(plec)) %>% # Niektorzy uczniowie nie maja informacji o plci
-    inner_join(dane)
-  nowe = nowe %>%
-    group_by(plec) %>%
-    summarise_each(funs(mean(., na.rm = TRUE)),
-                   starts_with("k_"))
-  nowe = nowe %>%
-    gather(id_kryterium, wynik, starts_with("k_"), na.rm = TRUE)
-  nowe = nowe %>%
-    mutate(rodzaj_egzaminu = row$rodzaj_egzaminu, czesc_egzaminu = row$czesc_egzaminu, rok = row$rok)
-  ctxt@wyniki_po_plci <- ctxt@wyniki_po_plci %>% rbind(as.data.frame(nowe))
-  return(ctxt)
-}
-
-#' Pozwala umieścić w danych wyniki danego egzaminu.
+#' Umieszcza w danych wyniki danego egzaminu w zależności od sumarycznych wyników
+#' wszystkich poprzednich.
 #' 
 #' UWAGA: dane, które w bazie już się znajdują zostaną zignorowane. Jeśli chcesz wprowadzić
 #' je ponownie, użyj funkcji usun_wyniki.
+#' 
 #' UWAGA: zalecane jest chronologiczne wprowadzanie danych.
 #' Patrz vignette(package="ZPD.dataCrunch", topic="wyniki_po_egz").
 #' @param ctxt Obiekt klasy DataCrunch, w którym mamy umieścić dane.
@@ -225,23 +174,75 @@ zaladuj_nowe_wyniki <- function(ctxt, p_rok, t_rodzaj, t_czesc, l_dane) {
     return(ctxt)
   
     ctxt = ctxt %>%
-      .dodaj_sumaryczne_oceny_uczniow(src, l_dane, row) %>%
-      .dodaj_oceny_po_poprzednich(src, l_dane, row) %>%
-      .dodaj_oceny_po_plci(l_dane, row)
+      .dodaj_oceny_po_poprzednich(src, l_dane, row)
     ctxt@zapisane_testy <- ctxt@zapisane_testy %>% rbind(as.data.frame(row))
   return(ctxt)
 }
 
-#' Usuwa dane z bazy z danego roku.
-#' @param p_rok Rok, który chcemy usunąć.
+#' Umieszcza w danych sumaryczne wyniki z danego egzaminu. Te wyniki będą używane do
+#' generowania wyników z egzaminów względem tego egzaminu.
+#' 
+#' UWAGA: dane, które w bazie już się znajdują zostaną zignorowane. Jeśli chcesz wprowadzić
+#' je ponownie, użyj funkcji usun_sumaryczne_oceny.
+#' 
+#' @param ctxt Obiekt klasy DataCrunch, w którym mamy umieścić dane.
+#' @param p_rok Rok egzaminu.
+#' @param t_rodzaj Rodzaj egzaminu.
+#' @param t_czesc Część egzaminu.
+#' @param l_dane Dane pobrane przez pakiet ZPD funkcją pobierz_wyniki_egzaminu(..., czy_ewd = TRUE).
+#' 
+#' @return Obiekt danych DataCrunch z dodanymi danymi, jeśli dane zostały poprawnie pobrane
+#' i wprowadzone do bazy. Niezmieniony obiekt, jeśli dane egzaminu już zostały wprowadzone.
+#' @export
+zaladuj_sumaryczne_oceny <- function(ctxt, p_rok, t_rodzaj, t_czesc, l_dane) {
+  
+  src = polacz()
+  
+  row = data.frame(
+    rok = p_rok,
+    rodzaj_egzaminu = t_rodzaj,
+    czesc_egzaminu = t_czesc,
+    stringsAsFactors = FALSE)
+  
+  if (nrow(inner_join(row, ctxt@zapisane_testy_oceny)) > 0) # Mamy juz ten test
+    return(ctxt)
+  
+  ctxt = ctxt %>%
+    .dodaj_sumaryczne_oceny_uczniow(src, l_dane, row)
+  ctxt@zapisane_testy_oceny <- ctxt@zapisane_testy_oceny %>% rbind(as.data.frame(row))
+  return(ctxt)
+}
+
+#' Usuwa wyniki danego egzaminu w zależności od poprzednich z danych.
+#' @param p_rok Rok egzaminu do usunięcia.
+#' @param t_rodzaj Rodzaj egzaminu do usunięcia.
+#' @param t_czesc Część egzaminu do usunięcia.
 #' @param ctxt Obiekt klasy DataCrunch, z którego mamy usunąć dane.
 #' @return Obiekt DataCrunch z usuniętymi danymi.
 #' @export
-usun_wyniki <- function(ctxt, p_rok)
-{
-  ctxt@wyniki_po_egz <- ctxt@wyniki_po_egz %>% filter(rok != p_rok)
-  ctxt@wyniki_po_plci <- ctxt@wyniki_po_plci %>% filter(rok != p_rok)
-  ctxt@oceny_uczniow <- ctxt@oceny_uczniow %>% filter(rok != p_rok)
-  ctxt@zapisane_testy <- ctxt@zapisane_testy %>% filter(rok != p_rok)
+usun_wyniki <- function(ctxt, p_rok, t_rodzaj, t_czesc) {
+  ctxt@wyniki_po_egz <- ctxt@wyniki_po_egz %>% filter(!(rok == p_rok &&
+                                                        rodzaj_egzaminu == t_rodzaj &&
+                                                        czesc_egzaminu == t_czesc))
+  ctxt@zapisane_testy <- ctxt@zapisane_testy %>% filter(!(rok == p_rok &&
+                                                          rodzaj_egzaminu == t_rodzaj &&
+                                                          czesc_egzaminu == t_czesc))
+  return(ctxt)
+}
+
+#' Usuwa sumaryczne oceny uczniów z danego egzaminu.
+#' @param p_rok Rok egzaminu do usunięcia.
+#' @param t_rodzaj Rodzaj egzaminu do usunięcia.
+#' @param t_czesc Część egzaminu do usunięcia.
+#' @param ctxt Obiekt klasy DataCrunch, z którego mamy usunąć dane.
+#' @return Obiekt DataCrunch z usuniętymi danymi.
+#' @export
+usun_sumaryczne_oceny <- function(ctxt, p_rok, t_rodzaj, t_czesc) {
+  ctxt@oceny_uczniow <- ctxt@oceny_uczniow %>% filter(!(rok == p_rok &&
+                                                          rodzaj_egzaminu == t_rodzaj &&
+                                                          czesc_egzaminu == t_czesc))
+  ctxt@zapisane_testy_oceny <- ctxt@zapisane_testy_oceny %>% filter(!(rok == p_rok &&
+                                                                      rodzaj_egzaminu == t_rodzaj &&
+                                                                      czesc_egzaminu == t_czesc))
   return(ctxt)
 }
