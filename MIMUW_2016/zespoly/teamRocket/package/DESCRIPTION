@@ -1,5 +1,5 @@
 Package: maturiser
-Title: Display matura '15 results
+Title: Wyswietl wyniki matury
 Version: 0.0.0.9000
 Authors@R: c(person("Piotr", "Bakalarski", email = "pb358995@students.mimuw.edu.pl", role = c("aut", "cre")),
              person("Bartek", "Bancerek", email = "bb332063@students.mimuw.edu.pl", role = c("aut")),
@@ -12,6 +12,7 @@ License: What license is it under?
 LazyData: true
 Imports:
     dplyr
+Suggests:
+    ZPD
 RoxygenNote: 5.0.1
-Suggests: ZPD,
-    devtools
+
