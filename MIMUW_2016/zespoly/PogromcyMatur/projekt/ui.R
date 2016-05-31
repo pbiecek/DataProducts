@@ -14,6 +14,7 @@ shinyUI(pageWithSidebar(
     
   sidebarPanel(
       uiOutput("egz_wybor"),
+      uiOutput("arkusz_wybor"),
       uiOutput("egz_wybor_poprz"),
       selectInput("poziom", label = "Grupuj po:", list(
         "kryteriach oceny" = "kry",

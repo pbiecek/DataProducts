@@ -69,34 +69,80 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
-dane_poprzedni <- function(nr, poziom = "kry") {
+dane_poprzedni <- function(nr, poziom = "kry", nr_arkusza) {
   egz_p = egzaminy_poprz[nr,]
   
   wyniki_egz = dane@wyniki_po_egz %>%
-    inner_join(egz_p)
+    inner_join(egz_p) %>%
+    inner_join(dane@kryteria, by = c("id_kryterium" = "id"))
+  
+  if (length(nr_arkusza) != 0 && nr_arkusza != 0) {
+    ark = dane@typy_testow[nr_arkusza,]
+    wyniki_egz = wyniki_egz %>%
+      inner_join(dane@kryteria_testy, by = c("id_kryterium" = "id")) %>%
+      inner_join(ark, by = c("id_testu" = "id"))
+      return(dane_poprzedni_arkusz(wyniki_egz, poziom))
+  } else {
+    return(dane_poprzedni_wszystko(wyniki_egz, poziom))
+  }
+}
+
+dane_poprzedni_wszystko <- function(wyniki_egz, poziom) {
   if (poziom == "pyt") {
     wyniki_egz = wyniki_egz %>%
-      inner_join(dane@kryteria, by = c("id_kryterium" = "id")) %>%
       group_by(poprzedni_wynik, id_pytania, liczba) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
       rename(id = id_pytania)
     n_poziom <- "id pytania"
   } else if (poziom == "wia") {
     wyniki_egz = wyniki_egz %>%
-      inner_join(dane@kryteria, by = c("id_kryterium" = "id")) %>%
       group_by(poprzedni_wynik, id_wiazki, liczba) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
       rename(id = id_wiazki)
     n_poziom <- "id wiązki"
   } else {
     wyniki_egz = wyniki_egz %>%
-      inner_join(dane@kryteria, by = c("id_kryterium" = "id")) %>%
       rename(id = id_kryterium)
     n_poziom <- "id kryterium"
   }
   
   wyniki_egz$wynik = wyniki_egz$wynik / wyniki_egz$max_punktow
   wyniki_egz$id_factor = factor(wyniki_egz$id)
+  return(list(wyniki_egz, n_poziom))
+}
+
+dane_poprzedni_arkusz <- function(wyniki_egz, poziom) {
+  wyniki_egz <- wyniki_egz %>%
+    arrange(numer_pytania)
+  
+  if (poziom == "kry") {
+    wyniki_egz = wyniki_egz %>%
+      rename(id = id_kryterium)
+    n_poziom <- "numer kryterium"
+    wyniki_egz$id_factor = apply(wyniki_egz, 1, function(x) {
+        if(x["numer_kryterium"] == "")
+          x["numer_pytania"]
+        else
+          paste(x["numer_pytania"], x["numer_kryterium"], sep=":")
+      }) %>%
+      factor()
+  } else if (poziom == "pyt") {
+    wyniki_egz = wyniki_egz %>%
+      group_by(poprzedni_wynik, id_pytania, liczba, numer_pytania) %>%
+      summarise_each(funs(sum), wynik, max_punktow) %>%
+      rename(id = id_pytania)
+    n_poziom <- "numer pytania"
+    wyniki_egz$id_factor = factor(wyniki_egz$numer_pytania)
+  } else if (poziom == "wia") { # Nie mamy numerow wiazek, wiec korzystamy z uporzadkowania
+    wyniki_egz = wyniki_egz %>%
+      group_by(poprzedni_wynik, id_wiazki, liczba) %>%
+      summarise_each(funs(sum), wynik, max_punktow) %>%
+      rename(id = id_wiazki)
+    n_poziom <- "numer wiązki"
+    wyniki_egz$id_factor = factor(wyniki_egz %>% group_by(id) %>% group_indices(id))
+  }
+  
+  wyniki_egz$wynik = wyniki_egz$wynik / wyniki_egz$max_punktow
   return(list(wyniki_egz, n_poziom))
 }
 
@@ -107,15 +153,15 @@ dane_poprzedni_jedno <- function(poprzednie, p_id) {
 rysuj_wykres_poprzedni <- function(dane, nazwa_x) {
   ggplot(dane, aes(x = id_factor, y = wynik)) +
     geom_point(aes(color = poprzedni_wynik, size = liczba)) +
-    labs(x = nazwa_x, y = "poprzedni wynik") +
-    ylim(0, 1)
+    labs(x = nazwa_x, y = "wynik", color = "Poprzedni wynik", size = "Liczba uczniów z poprzednim wynikiem") +
+    scale_y_continuous(limits = c(0, 1), labels = scales::percent)
 }
 
 rysuj_wykres_poprzedni_jedno <- function(dane, nazwa) {
   ggplot(dane, aes(x = poprzedni_wynik, y = wynik)) +
   geom_point(aes(size = liczba)) +
-  labs(x = "poprzedni wynik", y = "wynik", title = nazwa) +
-  ylim(0, 1)
+  labs(x = "poprzedni", y = "wynik", title = nazwa, size = "Liczba uczniów z poprzednim wynikiem") +
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent)
 }
 
 shinyServer(function(input, output) {
@@ -146,10 +192,22 @@ shinyServer(function(input, output) {
                 choices = poprz_nazwy)
   })
   
-  observeEvent(list(input$nr_poprzedni, input$poziom), {
-    d <- dane_poprzedni(input$nr_poprzedni, input$poziom)
+  output$arkusz_wybor <- renderUI({
+    egz_o <- egzaminy[input$egzamin_nr,]
+    ark <- dane@typy_testow
+    ark$nr <- 1:nrow(ark) 
+    ark <- ark %>% inner_join(egz_o)
+    
+    ark_nazwy <- c(0, as.list(ark$nr))
+    names(ark_nazwy) <- c("Wszystkie", as.list(ark$arkusz))
+    selectInput("nr_arkusza", label = "Arkusz:",
+                choices = ark_nazwy)
+  })
+  
+  observeEvent(list(input$nr_poprzedni, input$poziom, input$nr_arkusza), {
+    d <- dane_poprzedni(input$nr_poprzedni, input$poziom, input$nr_arkusza)
     poprzedni_data <<- d[[1]]
-    poprzedni_poziom <<- input$poziom
+    poprzedni_poziom <<- d[[2]]
     output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(d[[1]], d[[2]]))
   })
   
