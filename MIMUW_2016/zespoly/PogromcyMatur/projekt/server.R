@@ -70,7 +70,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
 }
 
 numer_kryterium <- function(nr_kryterium, nr_pytania) {
-  if(nr_kryterium == "")
+  if(is.na(nr_kryterium) || nr_kryterium == "")
     nr_pytania
   else
     paste(nr_pytania, nr_kryterium, sep=":")
@@ -129,24 +129,26 @@ dane_poprzedni_arkusz <- function(wyniki_egz, poziom) {
     wyniki_egz$id_factor = apply(wyniki_egz, 1, function(x) {
         numer_kryterium(x["numer_kryterium"], x["numer_pytania"])
       }) %>%
-      factor()
+      as.character()
   } else if (poziom == "pyt") {
     wyniki_egz = wyniki_egz %>%
       group_by(poprzedni_wynik, id_pytania, liczba, numer_pytania) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
       rename(id = id_pytania)
     n_poziom <- "numer pytania"
-    wyniki_egz$id_factor = factor(wyniki_egz$numer_pytania)
+    wyniki_egz$id_factor = as.character(wyniki_egz$numer_pytania)
   } else if (poziom == "wia") { # FIXME - jak dobrze zrobic numery wiazek?
     wyniki_egz = wyniki_egz %>%
       group_by(poprzedni_wynik, id_wiazki, liczba) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
       rename(id = id_wiazki)
     n_poziom <- "numer wiązki"
-    wyniki_egz$id_factor = factor(wyniki_egz$id)
+    wyniki_egz$id_factor = as.character(wyniki_egz$id)
   }
   
   wyniki_egz$wynik = wyniki_egz$wynik / wyniki_egz$max_punktow
+  nry = wyniki_egz %>% select(id_factor) %>% distinct()
+  wyniki_egz$id_factor <- factor(wyniki_egz$id_factor, levels=gtools::mixedsort(nry$id_factor))
   return(list(wyniki_egz, n_poziom))
 }
 
@@ -158,14 +160,16 @@ rysuj_wykres_poprzedni <- function(dane, nazwa_x) {
   ggplot(dane, aes(x = id_factor, y = wynik)) +
     geom_point(aes(color = poprzedni_wynik, size = liczba)) +
     labs(x = nazwa_x, y = "wynik", color = "Poprzedni wynik", size = "Liczba uczniów z poprzednim wynikiem") +
-    scale_y_continuous(limits = c(0, 1), labels = scales::percent)
+    scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1))
 }
 
 rysuj_wykres_poprzedni_jedno <- function(dane, nazwa) {
   ggplot(dane, aes(x = poprzedni_wynik, y = wynik)) +
   geom_point(aes(size = liczba)) +
   labs(x = "poprzedni", y = "wynik", title = nazwa, size = "Liczba uczniów z poprzednim wynikiem") +
-  scale_y_continuous(limits = c(0, 1), labels = scales::percent)
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))  
 }
 
 arkusze_zawierajace <- function(n_id, poziom)
