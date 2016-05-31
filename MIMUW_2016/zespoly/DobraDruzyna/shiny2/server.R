@@ -23,7 +23,7 @@ shinyServer(function(input, output) {
     wykres <- layout(wykres, 
                      xaxis = list(title = "Suma trzyletnich wydatków na ucznia"),
                      yaxis = list(title = "Średni wynik z matury"),
-                     annotations = list(x = zaznaczonaGmina$Wartosc, y = zaznaczonaGmina$sredni_wynik_matury, text = "Twoja gmina", showarrow = T))
+                     annotations = list(x = zaznaczonaGmina$suma_na_licealiste, y = zaznaczonaGmina$sredni_wynik_matury, text = "Twoja gmina", showarrow = T))
     
     wykres
   })
