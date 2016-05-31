@@ -30,7 +30,8 @@ shinyUI(pageWithSidebar(
         "Wpływ wcześniejszych etapów edukacji",
         value = "poprzednie",
         plotOutput("poprz_plot", click="poprz_click"),
-        plotOutput("poprz_plot_jedno")
+        plotOutput("poprz_plot_jedno"),
+        htmlOutput("arkusze_zawierajace")
       )
     )
   )

@@ -69,6 +69,13 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   }
 }
 
+numer_kryterium <- function(nr_kryterium, nr_pytania) {
+  if(nr_kryterium == "")
+    nr_pytania
+  else
+    paste(nr_pytania, nr_kryterium, sep=":")
+}
+
 dane_poprzedni <- function(nr, poziom = "kry", nr_arkusza) {
   egz_p = egzaminy_poprz[nr,]
   
@@ -120,10 +127,7 @@ dane_poprzedni_arkusz <- function(wyniki_egz, poziom) {
       rename(id = id_kryterium)
     n_poziom <- "numer kryterium"
     wyniki_egz$id_factor = apply(wyniki_egz, 1, function(x) {
-        if(x["numer_kryterium"] == "")
-          x["numer_pytania"]
-        else
-          paste(x["numer_pytania"], x["numer_kryterium"], sep=":")
+        numer_kryterium(x["numer_kryterium"], x["numer_pytania"])
       }) %>%
       factor()
   } else if (poziom == "pyt") {
@@ -162,6 +166,50 @@ rysuj_wykres_poprzedni_jedno <- function(dane, nazwa) {
   geom_point(aes(size = liczba)) +
   labs(x = "poprzedni", y = "wynik", title = nazwa, size = "Liczba uczniów z poprzednim wynikiem") +
   scale_y_continuous(limits = c(0, 1), labels = scales::percent)
+}
+
+arkusze_zawierajace <- function(n_id, poziom)
+{
+  if (poziom == "kry") {
+    arkusze <- dane@kryteria %>%
+      filter(id == n_id)
+  } else if (poziom == "pyt") {
+    arkusze <- dane@kryteria %>%
+      filter(id_pytania == n_id)
+  } else {
+    arkusze <- dane@kryteria %>%
+      filter(id_wiazki == n_id)
+  }
+  arkusze <- arkusze %>%
+    inner_join(dane@kryteria_testy) %>%
+    inner_join(dane@typy_testow, by = c("id_testu" = "id")) %>%
+    distinct(id_testu)
+  View(arkusze)
+  wynik <- arkusze %>% select(arkusz) %>% rename(arkusze = arkusz)
+  
+  if (poziom == "kry") {
+    wynik$numery = apply(arkusze, 1, function(x){
+        numer_kryterium(x["numer_kryterium"], x["numer_pytania"])
+      })
+  } else if (poziom == "pyt") {
+    wynik$numery = arkusze$numer_pytania
+  } else {
+    wynik$numery = arkusze$id_wiazki
+  }
+  return(wynik)
+}
+
+arkusz_linia <- function(arkusz, czesc) {
+  paste(arkusz, " [", czesc, "]", "<br/>", sep = "")
+}
+
+tekst_arkuszy <- function(dane) {
+  linie <- apply(dane, 1, function(x) {
+    arkusz_linia(x["arkusze"], x["numery"])
+    }) %>% as.data.frame()
+  r <- apply(linie, 2, paste, collapse="")
+  r <-paste("Element występuje w testach:<br/>", r)
+  renderUI(HTML(r))
 }
 
 shinyServer(function(input, output) {
@@ -218,5 +266,6 @@ shinyServer(function(input, output) {
     
     poprzedni_data_jedno <<- dane_poprzedni_jedno(poprzedni_data, dane$id)
     output$poprz_plot_jedno <- renderPlot(rysuj_wykres_poprzedni_jedno(poprzedni_data_jedno, poprzedni_poziom))
+    output$arkusze_zawierajace <- tekst_arkuszy(arkusze_zawierajace(dane$id, input$poziom))
     })
 })
