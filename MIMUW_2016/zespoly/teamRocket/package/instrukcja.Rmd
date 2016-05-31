@@ -14,13 +14,12 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## O pakiecie
 
-Pakiet maturiser dostarcza narzÄ™dzia do przedstawiania wynikÃ³w egzaminu maturalnego
-## Including Plots
+Pakiet Maturiser dostarcza narzêdzia do badania osi¹gniêæ uczniów poszczególnych szkó³. Dla wybranej szko³y poka¿e jakie wyniki uzyskali jej uczniowie i porówna je z wynikami uczniów innych szkó³ w gminie jak i w kraju. Wyniki mo¿na porównywaæ ze wzglêdu na ró¿ne kryteria (np. liczba punktów jakie uczniowie szko³y uzyskaliby podczas rekrutacji na dziennikarstwo UW). Aplikacja wyœwietla czytelny histogram przedstawiaj¹cy rozk³ad punktów jakie uczniowie szko³y uzyskali w tym kryterium. W tle ich wyniki s¹ porównywane z osi¹gniêciami uczniów w gminie i w kraju. Mo¿liwe jest definiowanie w³asnych kryteriów porównawczych. Nasza aplikacja dostarcza w tym celu prosty framework.
 
-You can also embed plots, for example:
 
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
+## Instalacja i pierwsze uruchomienie
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Definiowanie w³asnych kryteriów porównawczych
+
+## Dla u¿ytkownika webservicu - instrukcja
+
