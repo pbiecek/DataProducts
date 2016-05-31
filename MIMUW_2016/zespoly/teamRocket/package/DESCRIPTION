@@ -1,5 +1,5 @@
 Package: maturiser
-Title: Wyświetl wyniki matury
+Title: Wyswietl wyniki matury
 Version: 0.0.0.9000
 Authors@R: c(person("Piotr", "Bakalarski", email = "pb358995@students.mimuw.edu.pl", role = c("aut", "cre")),
              person("Bartek", "Bancerek", email = "bb332063@students.mimuw.edu.pl", role = c("aut")),
