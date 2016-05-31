@@ -51,7 +51,7 @@ shinyUI(fluidPage(
                     gminie w porównaniu z innymi polskimi gminami."),
              plotOutput("wykres_bezrobotni2"),
              
-             h3("Porównanie wyników z matury względem liczby mieszkańców na 1 bibliotekę."),
+             h3("Liczba mieszkańców na 1 bibliotekę."),
              h5("Im mniejsza wartość, tym większe zagęszczenie bibliotek w gminie."),
              
              tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z liczbą mieszkańców 
@@ -63,7 +63,7 @@ shinyUI(fluidPage(
                     liczby mieszkańców wybranej gminy w porównaniu z innymi polskimi gminami."),
              plotOutput("wykres_biblioteki2"),
              
-             h3("Porównanie wyników z matury względem liczby czytelników na 1000 mieszkańców."),
+             h3("Liczba czytelników na 1000 mieszkańców."),
              h5("Im większa wartość, tym większe czytelnictwo w gminie."),
              
              tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z liczbą czytelników
@@ -75,7 +75,7 @@ shinyUI(fluidPage(
                     liczby mieszkańców wybranej gminy w porównaniu z innymi polskimi gminami."),
              plotOutput("wykres_czytelnicy2"),
              
-             h3("Porównanie wyników z matury względem liczby wypożyczonych książek na 1 czytelnika."),
+             h3("Liczba wypożyczonych książek na 1 czytelnika."),
              h5("Im większa wartość, tym czytelnicy czytają więcej książek."),
              
              tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z liczbą przeczytanych książek
@@ -88,7 +88,7 @@ shinyUI(fluidPage(
              plotOutput("wykres_wypozyczenia2"),
              
              
-             h3("Porównanie wyników z matury względem sumy trzyletnich wydatków na ucznia"),
+             h3("Suma trzyletnich wydatków na ucznia"),
              h5("Im większa wartość, tym więcej wydano pieniędzy na jednego ucznia."),
              
              tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z sumą trzyletnich wydatków
