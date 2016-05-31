@@ -133,13 +133,13 @@ dane_poprzedni_arkusz <- function(wyniki_egz, poziom) {
       rename(id = id_pytania)
     n_poziom <- "numer pytania"
     wyniki_egz$id_factor = factor(wyniki_egz$numer_pytania)
-  } else if (poziom == "wia") { # Nie mamy numerow wiazek, wiec korzystamy z uporzadkowania
+  } else if (poziom == "wia") { # FIXME - jak dobrze zrobic numery wiazek?
     wyniki_egz = wyniki_egz %>%
       group_by(poprzedni_wynik, id_wiazki, liczba) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
       rename(id = id_wiazki)
     n_poziom <- "numer wiązki"
-    wyniki_egz$id_factor = factor(wyniki_egz %>% group_by(id) %>% group_indices(id))
+    wyniki_egz$id_factor = factor(wyniki_egz$id)
   }
   
   wyniki_egz$wynik = wyniki_egz$wynik / wyniki_egz$max_punktow
