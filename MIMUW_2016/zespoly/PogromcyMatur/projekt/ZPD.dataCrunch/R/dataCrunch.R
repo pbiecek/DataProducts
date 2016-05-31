@@ -154,7 +154,8 @@ zaladuj_male_dane <- function (ctxt) {
   # Posortuj uczniow po poprzednich pisanych egzaminach
   for (j in 1:nrow(poprzednie_egzaminy)) {
     egz = poprzednie_egzaminy[j,]
-    
+
+    # Wybierz uczniów, którzy pisali ten poprzedni egzamin
     szer = poprzednie_oceny %>%
       inner_join(egz) %>%
       rename(rodzaj_poprzedni=rodzaj_egzaminu, czesc_poprzedni=czesc_egzaminu) %>%
@@ -163,14 +164,14 @@ zaladuj_male_dane <- function (ctxt) {
       arrange(wynik) %>%
       rename(poprzedni_wynik = wynik)
     
+    # Zagreguj wyniki tych uczniow po liczbie punktow w poprzednim egzaminie
     szer = szer %>%
-      group_by(poprzedni_wynik, rodzaj_poprzedni, czesc_poprzedni) %>%
-      mutate(liczba = n()) %>%
-      mutate_each(funs(mean(., na.rm = TRUE)),
-                  starts_with("k_")) %>%
-      select(poprzedni_wynik, rodzaj_poprzedni, czesc_poprzedni, starts_with("k_"), liczba) %>%
-      distinct() %>%
+      select(poprzedni_wynik, rodzaj_poprzedni, czesc_poprzedni, starts_with("k_")) %>%
       gather(id_kryterium, wynik, starts_with("k_"), na.rm = TRUE) %>%
+      group_by(poprzedni_wynik, rodzaj_poprzedni, czesc_poprzedni, id_kryterium) %>%
+      mutate(wynik = mean(wynik)) %>%
+      mutate(liczba = n()) %>%
+      distinct() %>%
       mutate(rodzaj_egzaminu = row$rodzaj_egzaminu, czesc_egzaminu = row$czesc_egzaminu, rok = row$rok)
     
     ctxt@wyniki_po_egz <- ctxt@wyniki_po_egz %>% rbind(as.data.frame(szer))
@@ -200,7 +201,7 @@ zaladuj_male_dane <- function (ctxt) {
 #' UWAGA: dane, które w bazie już się znajdują zostaną zignorowane. Jeśli chcesz wprowadzić
 #' je ponownie, użyj funkcji usun_wyniki.
 #' UWAGA: zalecane jest chronologiczne wprowadzanie danych.
-#' Patrz vignette(package="ZPD.dataCrunch", topic="wyniki_po_egz).
+#' Patrz vignette(package="ZPD.dataCrunch", topic="wyniki_po_egz").
 #' @param ctxt Obiekt klasy DataCrunch, w którym mamy umieścić dane.
 #' @param p_rok Rok egzaminu.
 #' @param t_rodzaj Rodzaj egzaminu.
@@ -214,10 +215,11 @@ zaladuj_nowe_wyniki <- function(ctxt, p_rok, t_rodzaj, t_czesc, l_dane) {
   
   src = polacz()
   
-  row = data.frame()
-  row$rok = p_rok
-  rok$rodzaj_egzaminu = t_rodzaj
-  rok$czesc_egzaminu = t_czesc
+  row = data.frame(
+    rok = p_rok,
+    rodzaj_egzaminu = t_rodzaj,
+    czesc_egzaminu = t_czesc,
+    stringsAsFactors = FALSE)
     
   if (nrow(inner_join(row, ctxt@zapisane_testy)) > 0) # Mamy juz ten test
     return(ctxt)
