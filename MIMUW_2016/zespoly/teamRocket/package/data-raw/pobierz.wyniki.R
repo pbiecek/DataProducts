@@ -37,7 +37,7 @@ pobierz.pojedynczy <- function(src, ucz, czesc = "err1", poziom = "err2", szk, k
       list(~(rowSums(.[grepl("^[pk]_[0-9]+$", names(.))], na.rm = TRUE))), nazwa.kolumny)) %>%
     mutate_(.dots=setNames(paste(nazwa.kolumny, "* 100 / max(",nazwa.kolumny,")"),
                            nazwa.kolumny)) %>%
-    dplyr::select_("gmina_szkoly","id_cke", "id_szkoly", nazwa.kolumny)
+    dplyr::select_("gmina_szkoly","id_cke", "id_szkoly", nazwa.kolumny, "nazwa_szkoly")
 }
 
 
@@ -61,10 +61,10 @@ pobierz.wyniki <-function(ktory.rok){
     dplyr::filter(typ_szkoly %in%
                     c("LO", "LOU","LP", "T", "TU", "ZZ")) %>% #Tylko szkoły średnie/zawodowe
     dplyr::filter(rok == ktory.rok) %>%
-    dplyr::select(id_szkoly, nazwa_szkoly, gmina_szkoly, powiat_szkoly, miejscowosc) -> szkoly
+    dplyr::select(id_szkoly, nazwa_szkoly, gmina_szkoly) -> szkoly
   
   # lista.matur = list("wos", "his", "mat", "pol", "ang", "fiz","bio", "che", "inf", "mat", "geo")
-  lista.matur = list("inf", "his") # do szybkich testów!
+  lista.matur = list("inf") # do szybkich testów!
   lista.egz = expand.grid(czesc = lista.matur, poziom = list("p", "r"))
   # pobierz wszystkie konieczne wyniki
   wyniki = Map(function(x, y, n) pobierz.pojedynczy(src,uczniowie, czesc = x, poziom = y,
@@ -72,7 +72,7 @@ pobierz.wyniki <-function(ktory.rok){
                lista.egz$czesc, lista.egz$poziom, 1:length(lista.egz$poziom))
   cat("Trwa złączanie. Czekaj...\n")
   wynik = Reduce(function(reszta, nowy){
-    dplyr::full_join(reszta, nowy, by=c("id_cke", "id_szkoly", "gmina_szkoly"))
+    dplyr::full_join(reszta, nowy, by=c("id_cke", "id_szkoly", "gmina_szkoly", "nazwa_szkoly"))
     }, wyniki[-1], dplyr::first(wyniki))
   
   nazwa.ramki = paste0("matura.", ktory.rok)
