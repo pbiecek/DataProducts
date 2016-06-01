@@ -13,7 +13,7 @@ Dane, które przetwarza pakiet są powiązane między sobą. W różnych tabelac
 takie jak skale zrównujące, listy testów i sumaryczne wyniki uczniów, jak i wyniki przezentowane bezpośrednio
 na wykresach. W związku z tym są one powiązane w obiekt jednej klasy nazwanej DataCrunch.
 
-#Trzymane dane
+##Trzymane dane
 
 Główne dane trzymane w DataCrunch (przedstawiane na wykresach) to:
 
@@ -24,7 +24,7 @@ Główne dane trzymane w DataCrunch (przedstawiane na wykresach) to:
 Dane te wczytać można dla danego egzaminu za pomocą funkcji zaladuj_nowe_wyniki i zaladuj_sumaryczne_oceny
 oraz usunąć z nich używając funkcji usun_wyniki i usun_sumaryczne_oceny.
 
-#Tabele
+##Tabele
 
 Część tabel w DataCrunch używana jest wewnętrznie. Poniżej opisane są tabele, które mogą zainteresować
 wprowadzającego dane:

@@ -12,7 +12,7 @@ vignette: >
 Pakiet ZPD.dataCrunch pozwala wygodnie przetwarzać dane o egzaminach do wyświetlenia przez aplikację. Pozwala on
 na przedstawienie wyników uczniów w zależności od wyników poprzednich egzaminów.
 
-#Użycie
+##Użycie
 
 Zestaw danych, które gromadzi pakiet reprezentowany jest przez jeden obiekt klasy [DataCrunch](Dane.html).
 Do wprowadzania danych do tego obiektu służą następujące funkcje:
