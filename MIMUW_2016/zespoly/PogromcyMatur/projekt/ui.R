@@ -23,7 +23,10 @@ interface_help <- tags$html(
     tags$li("Arkusz egzaminu który ma zostać rozpatrzony. Ten sam egzamin może posiadać różne arkusze,
             na przykład wersje dla dyslektyków lub \"stare\"/\"nowe\" matury. Sprawdzić, który z nich cię
             interesuje możesz np. na stronie", tags$a(href="http://zpd.ibe.edu.pl/doku.php?id=bazatestypytania", "arkusze"),
-            "lub wybierając arkusz i wchodząc w link do jego treści."),
+            "lub wybierając arkusz i wchodząc w link do jego treści.", tags$br(), "Miej na uwadze, że jeśli wybierzesz
+            wszystkie arkusze do przedstawienia, to wszystkie przedstawiane elementy będą oznaczone na wykresie
+            przez swoje identyfikatory. Jeśli wybierzesz konkretny arkusz, elementy otrzymają numery zgodne z
+            numeracją w arkuszu (nie tyczy się to wiązek pytań, gdyż te nie mają numerów w arkuszach)."),
     tags$li("Poprzedni egzamin - czyli ten, z którym będziemy porównywać wyniki."),
     tags$li("Jak bardzo szczegółowy ma być wykres. Pytania egzaminacyjne podzielone są na:", 
       tags$ul(
