@@ -86,7 +86,7 @@ shinyUI(pageWithSidebar(
         interface_help
       ),
       tabPanel(
-        "Wpływ wcześniejszych etapów edukacji",
+        "Wykresy",
         value = "poprzednie",
         glowny_wykres_header,
         htmlOutput("linki_do_arkusza"),
@@ -94,6 +94,10 @@ shinyUI(pageWithSidebar(
         wykres_kryterium_header,
         plotOutput("poprz_plot_jedno"),
         htmlOutput("arkusze_zawierajace")
-      )
+      ),
+      tabPanel(
+        "Tabele",
+        dataTableOutput("poprz_tabela")
+        )
     ))
 ))

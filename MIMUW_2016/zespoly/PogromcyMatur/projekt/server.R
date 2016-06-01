@@ -232,6 +232,11 @@ shinyServer(function(input, output) {
     szer = max(szer, PX_MIN)
     output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(d[[1]], d[[2]]), width = szer)
     
+    output$poprz_tabela <- renderDataTable(poprzedni_data %>%
+      select(id_factor, wynik, poprzedni_wynik, liczba) %>%
+      rename(`id elementu` = id_factor, `poprzedni wynik` = poprzedni_wynik, `liczba uczniów` = liczba) %>%
+      arrange(`id elementu`))
+    
     if(!is.null(input$nr_arkusza) && input$nr_arkusza != 0) {
       output$linki_do_arkusza <- renderUI(list(
         tags$a(href = generuj_link(dane@typy_testow[input$nr_arkusza,]$arkusz, 0), "[Test]"),
