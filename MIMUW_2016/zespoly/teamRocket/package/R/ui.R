@@ -2,7 +2,7 @@
 
 #' UI aplikacji shiny
 maturiser.ui <- shiny::shinyUI(shiny::fluidPage(
-  shiny::titlePanel("Wyniki matur"),
+  shiny::titlePanel("Maturiser"),
   shiny::sidebarLayout(
       shiny::sidebarPanel(
           shiny::htmlOutput("gmina"),
