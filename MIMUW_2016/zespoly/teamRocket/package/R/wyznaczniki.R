@@ -5,6 +5,7 @@ all_rozsz <- "m_bio_r, m_che_r, m_fiz_r, m_geo_r, m_his_r, m_inf_r, m_ang_r, m_p
 all_podst <- "m_bio_p, m_che_p, m_fiz_p, m_geo_p, m_his_p, m_inf_p, m_ang_p, m_pol_p, m_mat_p, m_wos_p"
 
 #' Krotka zawierająca opis funkcji wyliczjącej punkty przy rekrutacji na matematyke UW
+#' @export
 uw.matematyka <- list(skrot = "uw_mat", formula = 
                 paste("pmax(m_pol_p*0.6, m_pol_r) * 0.1 + pmax(m_mat_p * 0.6 * 0.1, m_mat_r * 0.6) +",
                 " pmax(m_ang_p * 0.6, m_ang_r) * 0.1 + pmax(", all_rozsz, ") * 0.2"),
@@ -13,6 +14,7 @@ uw.matematyka <- list(skrot = "uw_mat", formula =
                 )
 
 #' Krotka zawierająca opis funkcji wyliczjącej punkty przy rekrutacji na informatykę UW
+#' @export
 uw.informatyka <- list(skrot = "uw_inf", formula = 
                     paste("pmax(m_pol_p*0.6, m_pol_r) * 0.1 + pmax(m_mat_p * 0.6, m_mat_r) * 0.1 + 0.5 * pmax(m_mat_r,m_inf_r) +",
                           " pmax(m_ang_p * 0.6, m_ang_r) * 0.1 + pmax(", all_rozsz, ") * 0.2"),
@@ -21,11 +23,13 @@ uw.informatyka <- list(skrot = "uw_inf", formula =
 )
 
 #' Krotka zawierająca opis funkcji wyliczjącej czy osoba zdała maturę
+#' @export
 zdawalnosc <- list(skrot = "zdawalnosc", formula = "ifelse(m_mat_p >= 30 &  m_pol_p >= 30 & m_ang_p >= 30, 1, 0)",
                    opis = paste("Uczniowie którzy zdali maturę (oznaczeni jako 1) i ci którzy nie zdali (oznaczeni jako 0)",
                                 "Nie uwzględnia wyników z innych języków obcych niz angielski"))
 
 #' Krotka zawierająca opis funkcji wyliczjącej punkty przy rekrutacji na dziennikarstwo UW
+#' @export
 uw.dziennikarstwo <- list(skrot = "uw_dzien", formula = paste("pmax(m_pol_p * 0.6, m_pol_r) * 0.3 + ",
                   "pmax(m_mat_p * 0.6, m_mat_r) * 0.05 + pmax(m_ang_p * 0.6, m_ang_r) * 0.2 + ",
                   "pmax(0.6 * pmax(m_his_p, m_wos_p, m_geo_p, m_inf_p), pmax(m_his_r, m_wos_r, m_geo_r, m_inf_r)) * 0.45"),
@@ -33,6 +37,7 @@ uw.dziennikarstwo <- list(skrot = "uw_dzien", formula = paste("pmax(m_pol_p * 0.
                   "Nie uwzględnia wyników z innych języków obcych niz angielski"))
 
 #' Krotka zawierająca opis funkcji wyliczjącej punkty przy rekrutacji na PRAWO UW
+#' @export
 uw.prawo <- list(skrot = "uw_prawo", formula = paste("pmax(m_pol_p * 0.6, m_pol_r) * 0.15 +",
                   "pmax(m_mat_p * 0.6, m_mat_r) * 0.05 + pmax(m_ang_p * 0.6, m_ang_r) * 0.1",
                   " + (m_his_r + m_wos_r + m_geo_r - pmin(m_his_r, m_wos_r, m_geo_r)) * 0.35"),

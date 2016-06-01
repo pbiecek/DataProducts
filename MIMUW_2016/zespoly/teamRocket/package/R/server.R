@@ -1,22 +1,28 @@
-library(ggplot2)
-library(shiny)
-library(dplyr)
+#library(ggplot2)
+#library(shiny)
+#library(dplyr)
 
 pobierz.nazwy.gmin <- function(ramka) {
   sort(ramka$gmina_szkoly)
 }
 
-pobierz.nazwy.szkol <- function(ramka, gmina) {
-  matury.dla.gmin <- matury %>% filter(gmina_szkoly == gmina)
-  sort(matury.dla.gmin$nazwa_szkoly)
+pobierz.szkoly <- function(ramka) {
+  ramka %>% dplyr::select(id_szkoly, nazwa_szkoly, gmina_szkoly) %>%
+    dplyr::distinct(id_szkoly) %>% dplyr::arrange(nazwa_szkoly)
 }
 
-pobierz.id.szkoly <- function(ramka, szkola) {
-  wiersz <- ramka %>% filter(nazwa_szkoly == szkola) %>% head(1)
+szkoly.z.gminy <- function(lista.szkol, gmina) {
+  lista.szkol %>%
+    sort(dplyr::filter(nazwa_gminy == gmina)$nazwa_szkoly)
+}
+
+pobierz.id.szkoly <- function(lista.szkol, szkola) {
+  wiersz <- ramka %>% dplyr::filter(nazwa_szkoly == szkola) %>% utils::head(1)
   wiersz$id_szkoly
 }
 
 pobierz.opisy.wyznacznikow <- function(wyznaczniki) {
+  opisy <- NULL
   for (w in wyznaczniki)
     opisy <- c(opisy, w[[2]])
   opisy
@@ -30,46 +36,45 @@ pobierz.wyznacznik <- function(wyznaczniki, opis) {
 
 #'Serwer aplikacji shiny
 maturiser.server <- function(matury, wyznaczniki) {
-
-  # do testow
-  #wyznaczniki <- list(
-  #  c("m_inf_p", "Informatyka - podstawa"),
-  #  c("m_inf_r", "Informatyka - rozszerzenie")
-  #)
-
   ilosc.wyznacznikow <- length(wyznaczniki)
+  gminy <- pobierz.nazwy.gmin(matury)
+  szkoly <- pobierz.szkoly(matury)
+  opisy.wyznacznikow <- pobierz.opisy.wyznacznikow(wyznaczniki)
   
-  shinyServer(function(input, output) {
-    output$gmina <- renderUI({
-      gminy <- pobierz.nazwy.gmin(matury)
-      selectInput(inputId = "gmina",
+  shiny::shinyServer(function(input, output) {
+
+    output$gmina <- shiny::renderUI({
+      shiny::selectInput(inputId = "gmina",
                   label = "Wybierz gminę",
                   choices = gminy,
-                  selected = "")
+                  selected = dplyr::first(gminy))
     })
   
-    output$szkola <- renderUI({
-      szkoly <- pobierz.nazwy.szkol(matury, input$gmina)
-      selectInput(inputId = "szkola", 
+    if(is.null(input$gmina))
+      input$gmina <- dplyr::first(gminy)
+      
+    szk.gm <- szkoly.z.gminy(szkoly, input$gmina)
+    output$szkola <- shiny::renderUI({
+      shiny::selectInput(inputId = "szkola", 
                   label = "Wybierz szkołę",
-                  choices = szkoly,
-                  selected = "")
+                  choices = szk.gm,
+                  selected = dplyr::first(szk.gm))
     })
     
-    output$wyznacznik <- renderUI({
-      opisy.wyznacznikow <- pobierz.opisy.wyznacznikow(wyznaczniki)
-      selectInput(inputId = "wyznacznik", 
+    output$wyznacznik <- shiny::renderUI({
+      shiny::selectInput(inputId = "wyznacznik", 
                   label = "Wybierz wyznacznik",
                   choices = opisy.wyznacznikow,
                   width = "100%",
-                  selected = "")
+                  selected = dplyr::first(opisy.wyznacznikow))
     })
-    
-    output$wykres <- renderPlot(
-      maturiser:::generuj.wykres(matury,
-                                 pobierz.wyznacznik(wyznaczniki, input$wyznacznik),
-                                 pobierz.id.szkoly(matury, input$szkola),
-                                 input$wyznacznik)
+    if(is.null(input$wyznacznik))
+      input$wyznacznik <- dplyr::first(opisy.wyznacznikow)
+    output$wykres <- shiny::renderPlot(
+      generuj.wykres(matury,
+                     pobierz.wyznacznik(wyznaczniki, input$wyznacznik),
+                     pobierz.id.szkoly(matury, input$szkola),
+                     input$wyznacznik)
     )
   
     # output$wykresy <- renderUI({

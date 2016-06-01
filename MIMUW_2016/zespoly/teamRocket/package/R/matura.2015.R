@@ -7,3 +7,6 @@
 #' @name matura.2015
 #' @usage data(matura.2015)
 NULL
+
+#'@importFrom dplyr %>%
+NULL

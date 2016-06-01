@@ -1,16 +1,16 @@
-library(shiny)
+# library(shiny)
 
 #' UI aplikacji shiny
-maturiser.ui <- shinyUI(fluidPage(
-  titlePanel("Wyniki matur"),
-  sidebarLayout(
-      sidebarPanel(
-          htmlOutput("gmina"),
-          htmlOutput("szkola")
+maturiser.ui <- shiny::shinyUI(shiny::fluidPage(
+  shiny::titlePanel("Wyniki matur"),
+  shiny::sidebarLayout(
+      shiny::sidebarPanel(
+          shiny::htmlOutput("gmina"),
+          shiny::htmlOutput("szkola")
       ),
-      mainPanel(
-          htmlOutput("wyznacznik"),
-          plotOutput("wykres")
+      shiny::mainPanel(
+          shiny::htmlOutput("wyznacznik"),
+          shiny::plotOutput("wykres")
           #htmlOutput("wykresy")
       )
     )

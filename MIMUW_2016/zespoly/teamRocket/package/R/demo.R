@@ -1,6 +1,8 @@
 #' Wyświetl przykładową aplikację wykonaną przy pomocy
 #' frameworku maturiser
+#' @export
 demo <- function() {
+  utils::data(matura.2015)
   #lista dodatkowych wyznaczników do dodania do danych
   kolumny <- list(
     c(uw.matematyka$skrot, uw.matematyka$formula),
