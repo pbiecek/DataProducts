@@ -12,6 +12,6 @@
 #' y <- dodaj.kolumny(x, l)
 dodaj.kolumny <- function(ramka, lista.funkcji){
   Reduce(function(df, funkcja)
-    dplyr::mutate_(table, .dots=setNames(funkcja[2], funkcja[1])),
+    dplyr::mutate_(df, .dots=setNames(funkcja[2], funkcja[1])),
     lista.funkcji, ramka)
 }
