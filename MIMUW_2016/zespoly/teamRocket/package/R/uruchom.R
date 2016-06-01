@@ -1,5 +1,3 @@
-library(shiny)
-
 #'Uruchom aplikację shiny dla konkretynych danych i wyznaczników
 #'@param dane tabela zawierajaca wyniki matur i wartości
 #'wyznaczników dla poszczególnych uczniów. dla każdego ucznia jest

@@ -65,7 +65,7 @@ pobierz.wyniki <-function(ktory.rok){
     dplyr::select(id_szkoly, nazwa_szkoly, gmina_szkoly) %>%
     collect() -> szkoly
   
-  lista.matur = list("wos", "his", "mat", "pol", "ang", "fiz","bio", "che", "inf", "mat", "geo")
+  lista.matur = list("wos", "his", "mat", "pol", "ang", "fiz","bio", "che", "inf", "geo")
   # lista.matur = list("inf") # do szybkich testów!
   lista.egz = expand.grid(czesc = lista.matur, poziom = list("p", "r"))
   # pobierz wszystkie konieczne wyniki
