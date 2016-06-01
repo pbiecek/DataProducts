@@ -15,7 +15,7 @@ library(corrplot)
 
 source("./pobierz_pytania.R")
 
-load("./data.RData")
+load("./dane.RData")
 
 PX_PER_EXAM_PART <<- 45
 PX_MIN <<- 200
