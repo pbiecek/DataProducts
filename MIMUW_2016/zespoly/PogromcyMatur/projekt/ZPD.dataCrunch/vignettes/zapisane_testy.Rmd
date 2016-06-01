@@ -1,0 +1,26 @@
+---
+title: "Zapisane testy"
+author: "Igor Kotrasinski"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{zapisane_testy}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+*data\@zapisane\_testy*
+
+*data\@zapisane\_testy\_oceny*
+
+Informacje o tym, które testy są załadowane w danych. W *zapisane\_testy* trzymane są informacje
+o testach wprowadzonych funkcją zaladuj_nowe_wyniki. W *zapisane\_testy\_oceny* trzymane są
+informacje o testach wprowadzonych funkcją zaladuj_sumaryczne_oceny.
+
+---
+
+Kolumny obu tabel to:
+
+* rok. Rok egzaminu.
+* rodzaj_egzaminu. Rodzaj egzaminu.
+* czesc_egzaminu. Część egzaminu.

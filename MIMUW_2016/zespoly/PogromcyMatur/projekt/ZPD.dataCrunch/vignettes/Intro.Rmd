@@ -1,0 +1,35 @@
+---
+title: "Wprowadzenie"
+author: "Igor Kotrasinski"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Wprowadzenie}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Pakiet ZPD.dataCrunch pozwala wygodnie przetwarzać dane o egzaminach do wyświetlenia przez aplikację. Pozwala on
+na przedstawienie wyników uczniów w zależności od wyników poprzednich egzaminów.
+
+##Użycie
+
+Zestaw danych, które gromadzi pakiet reprezentowany jest przez jeden obiekt klasy [DataCrunch](Dane.html).
+Do wprowadzania danych do tego obiektu służą następujące funkcje:
+
+* puste_dane - tworzy nowy, pusty obiekt DataCrunch.
+* zaladuj_male_dane - pobiera dane pomocnicze.
+* zaladuj_sumaryczne_oceny - wprowadza do danych sumaryczne wyniki z egzaminu każdego ucznia.
+* zaladuj_nowe_wyniki - Oblicza wyniki z egzaminu względem wszystkich wcześniejszych,
+ktorych sumaryczne wyniki uczniów są w bazie.
+* usun_wyniki - pozwala usunąć względne wyniki pojedynczego egzaminu.
+* usun_sumaryczne_oceny - pozwala usunąć sumaryczne oceny uczniów z pojedynczego egzaminu.
+
+Aby przetworzyć poprawnie dane, potrzebne są najpierw dane pomocnicze. Przed wprowadzeniem danych za pomocą
+funkcji zaladuj_nowe_wyniki, pobierz dane pomocnicze za pomocą funkcji zaladuj_male_dane. Dane te należy
+również na nowo pobrać po każdym roku.
+
+Drugim krokiem jest obliczenie sumarycznych wyników z egzaminów, względem których będziemy chcieli prezentować
+wyniki. Służy do tego funkcja zaladuj_sumaryczne_oceny.
+
+Końcowy krok to załadowanie egzaminów, których szczegółowe wyniki chcemy poznać za pomocą funkcji zaladuj_nowe_wyniki.

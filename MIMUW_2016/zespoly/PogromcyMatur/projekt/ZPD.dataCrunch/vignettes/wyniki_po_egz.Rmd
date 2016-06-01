@@ -1,0 +1,49 @@
+---
+title: "Wyniki po egzaminie"
+author: "Igor Kotrasinski"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{wyniki_po_egz}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+*data\@wyniki\_po\_egzaminie*
+
+Wyniki z egzaminu w zależności od poprzednich egzaminów.
+
+Dane te pozwalają porównać szczegółowe wyniki uczniów z egzaminu w zależności
+od sumarycznych wyników poprzednich egzaminów.
+
+Dane obliczane są następująco:
+Dla danego egzaminu wraz z rokiem ściągane są wyniki wszystkich uczniów, którzy pisali
+ten egzamin. Następnie dla danego rodzaju i typu poprzedniego egzaminu wybierani są uczniowie,
+którzy pisali wcześniej taki egzamin i wybierane są ich ostatnie wyniki z tego egzaminu. Wyniki
+te są normowane i agregowane po wyniku punktowym z poprzedniego egzaminu.
+
+Obliczenia te wykonywane są przez funkcję zaladuj_nowe_wyniki.
+
+---
+
+##UWAGA
+
+Rodzaje i części egzaminu mogą zmieniać się z czasem. W efekcie porównanie po poprzedniej części egzaminu
+może wybierać uczniów, którzy poprzedni egzamin pisali tylko w niektórych latach (np. część egzaminu gimnazjalnego,
+która występowała tylko do 2010 roku wykorzystana do wyliczenia wyników z matury z 2014 roku przedstawi wyniki tylko
+uczniów, którzy pisali egzamin gimnazjalny co najmniej 4 lata przed maturą). Zwróć na to szczególną uwagę
+przedstawiając wyniki z liceów i techników.
+
+---
+
+Kolumny to:
+
+* rok. Rok przedstawianego egzaminu.
+* rodzaj_egzaminu. Rodzaj przedstawianego egzaminu.
+* czesc_egzaminu. Część przedstawianego egzaminu.
+* id_kryterium. ID kryterium.
+* wynik. Średni wynik z danego kryterium.
+* rodzaj_poprzedni. Rodzaj poprzedniego egzaminu.
+* czesc_poprzedni. Część poprzedniego egzaminu.
+* poprzedni_wynik. Sumaryczny wynik z poprzedniego egzaminu.
+* liczba. Liczba uczniów, która uzyskała dany wynik z poprzedniego egazminu.
