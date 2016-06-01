@@ -9,7 +9,9 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-Dane, które przetwarza pakiet są powiązane między sobą. W różnych tabelach trzyma się informacje pomocnicze, takie jak skale zrównujące, listy testów i sumaryczne wyniki uczniów, jak i wyniki przezentowane bezpośrednio na wykresach. W związku z tym są oone powiązane w obiekt jednej klasy nazwanej DataCrunch.
+Dane, które przetwarza pakiet są powiązane między sobą. W różnych tabelach trzyma się informacje pomocnicze,
+takie jak skale zrównujące, listy testów i sumaryczne wyniki uczniów, jak i wyniki przezentowane bezpośrednio
+na wykresach. W związku z tym są one powiązane w obiekt jednej klasy nazwanej DataCrunch.
 
 #Trzymane dane
 
@@ -17,15 +19,19 @@ Główne dane trzymane w DataCrunch (przedstawiane na wykresach) to:
 
 * Sumaryczne wyniki egzaminów dla każdego ucznia (potrzebne do obliczania innych danych).
 * Wyniki z każdego egzaminu agregowane po wynikach uczniów z poprzednich egzaminów w bazie.
+* Informacje o tym, które egzaminy zostały wczytane do jednej z powyższych tabel.
 
-Dane te wczytać można dla danego egzaminu za pomocą funkcji zaladuj_nowe_wyniki i zaladuj_sumaryczne_oceny.
+Dane te wczytać można dla danego egzaminu za pomocą funkcji zaladuj_nowe_wyniki i zaladuj_sumaryczne_oceny
+oraz usunąć z nich używając funkcji usun_wyniki i usun_sumaryczne_oceny.
 
 #Tabele
 
-Część tabel w DataCrunch używana jest wewnętrznie. Poniżej opisane są tabele, które w zamierzeniu mają być dostępne publicznie:
+Część tabel w DataCrunch używana jest wewnętrznie. Poniżej opisane są tabele, które mogą zainteresować
+wprowadzającego dane:
 
 * [Wyniki po egzaminach](wyniki_po_egz.html)
 * [Sumaryczne oceny](oceny_uczniow.html)
+* [Załadowane egzaminy](zapisane_testy.html)
 
 Funkcje pobierające i przetwarzające dane przyjmują DataCrunch jako pierwszy argument i zwracają wersję zmodyfikowaną.
 Pustą klasę DataCrunch możesz stworzyć za pomocą funkcji puste_dane.

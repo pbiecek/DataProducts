@@ -1,0 +1,44 @@
+---
+title: "Wprowadzenie"
+author: "Igor Kotrasinski"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Wprowadzenie}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Podczas analizy wyników egzaminów można chcieć znaleźć odpowiedzi na pytania w rodzaju:
+
+* Które części egzaminu wypadły dużo lepiej uczniom dobrym, a które wypadły podobnie niezależnie od poziomu ucznia?
+* Czy któreś części egzaminu mocno różnicują uczniów lepszych lub słabszych?
+* Czy poziom ucznia z innego przedmiotu wpływa w szczególny sposób na jego osiągi z pewnych części egzaminu?
+
+Powyższe pytania sprowadzają się do jednego problemu - przedstawienia wyników uczniów z egzaminu
+w zależności od tego, jak wypadli w egzaminach na poprzednich etapach edukacji. Dostarczone narzędzie
+pozwala rozwiązać ten problem. Narzędzie składa się z dwóch części - pakietu, który pozwala dane pobierać
+i przetwarzać oraz aplikacji, która je wyświetla na wykresach i w tabelach.
+
+##Opis przetwarzania danych
+
+Aby określic, jak elementy testu poszły uczniom o różnym poziomie, można wykonać następujące kroki:
+
+* Wybrać egzamin, który chcemy przedstawiać oraz egzamin, według którego będziemy oceniać, którzy uczniowie są lepsi, a którzy gorsi.
+* Posortować wyniki uczniów z egzaminu po wynikach, jakie osiągnęli z poprzedniego testu.
+* Zagregować te dane po poprzednim wyniku, jaki uzyskali uczniowie.
+* Zależność poprzedniego wyniku uczniów od średniego wyniku, jaki uzyskali z egzaminu dla każdego kryterium przedstawić na wykresie.
+
+Problemem przetwarzania danych zajmuje się pakiet, zaś ich wyświetlania aplikacja Shiny.
+
+## Pakiet
+
+Pakiet ZPD.dataCrunch pozwala wygodnie przetwarzać dane o egzaminach do wyświetlenia przez aplikację.
+Dostarczony jest w postaci źródłowej w katalogu ZPD.dataCrunch. Szczegółową dokumentację znajdziesz
+wpisując w sesji R *vignette(package = "ZPD.dataCrunch", topic="Intro")*. Pakiet używa własnej klasy
+DataCrunch do przechowywania załadowanych danych.
+
+##Aplikacja
+
+Aplikacja Shiny udostępniona jest w głównym katalogu. Oczekuje ona danych do przedstawienia w obiekcie
+"dane" klasy DataCrunch w pliku Dane.RData. Szczegółowa dokumentacja znajduje się w aplikacji.

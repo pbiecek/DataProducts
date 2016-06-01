@@ -42,7 +42,7 @@ Kolumny to:
 * rodzaj_egzaminu. Rodzaj przedstawianego egzaminu.
 * czesc_egzaminu. Część przedstawianego egzaminu.
 * id_kryterium. ID kryterium.
-* wynik Średni wynik z danego kryterium.
+* wynik. Średni wynik z danego kryterium.
 * rodzaj_poprzedni. Rodzaj poprzedniego egzaminu.
 * czesc_poprzedni. Część poprzedniego egzaminu.
 * poprzedni_wynik. Sumaryczny wynik z poprzedniego egzaminu.
