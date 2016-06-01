@@ -40,7 +40,8 @@ uw.dziennikarstwo <- list(skrot = "uw_dzien", formula = paste("pmax(m_pol_p * 0.
 #' @export
 uw.prawo <- list(skrot = "uw_prawo", formula = paste("pmax(m_pol_p * 0.6, m_pol_r, na.rm = TRUE) * 0.15 +",
                   "pmax(m_mat_p * 0.6, m_mat_r, na.rm = TRUE) * 0.05 + pmax(m_ang_p * 0.6, m_ang_r, na.rm = TRUE) * 0.1",
-                  " + (m_his_r + m_wos_r + m_geo_r - pmin(m_his_r, m_wos_r, m_geo_r, na.rm = TRUE)) * 0.35"),
+                  " + (pmax(0, m_his_r, na.rm = TRUE) + pmax(0, m_wos_r, na.rm = TRUE) + pmax(0, m_geo_r, na.rm = TRUE) -",
+                  "ifelse(!anyNA(c(m_his_r, m_wos_r, m_geo_r)), pmin(m_his_r, m_wos_r, m_geo_r), 0)) * 0.35"),
               opis = paste("Wynik jaki uczniowie szkoły otrzymaliby podczas rekrutacji na Prawo UW.",
               "Nie uwzględnia wyników z innych języków obcych niz angielski ani wyników z języka łacińskiego i filozofii"))
 
