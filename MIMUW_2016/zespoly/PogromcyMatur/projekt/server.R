@@ -188,7 +188,6 @@ arkusze_zawierajace <- function(n_id, poziom)
     inner_join(dane@kryteria_testy) %>%
     inner_join(dane@typy_testow, by = c("id_testu" = "id")) %>%
     distinct(id_testu)
-  View(arkusze)
   wynik <- arkusze %>% select(arkusz) %>% rename(arkusze = arkusz)
   
   if (poziom == "kry") {
