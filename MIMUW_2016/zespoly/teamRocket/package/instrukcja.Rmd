@@ -28,3 +28,4 @@ install_github(repo = "piotrb5e3/DataProducts", ref = "master",
 
 ## Dla użytkownika aplikacji - instrukcja
 
+Obsługa aplikacji jest niezwykle prosta! W panelu bocznym wybierz gminę oraz interesującą Cię szkołę. Następnie wybierz wyznacznik - kryterium, ze względu na które chcesz porównać wyniki maturalne uczniów wybranej placówki. Możliwe jest filtrowanie gmin/szkół/wyznaczników poprzez wpisywanie części nazw w polach wyboru. Przed Twoimi oczami ukaże się piękny histogram - wykres przedstawiający liczbę uczniów, dla których wyznacznik ma wartość przedstawioną na osi x.
