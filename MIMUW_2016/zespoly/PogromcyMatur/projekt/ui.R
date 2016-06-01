@@ -16,7 +16,7 @@ modalHelp <- function(name, header = "[?]", content = "Pomoc niedostępna.") {
 
 interface_help <- tags$html(
   tags$div("Korzystasz z narzędzia służącego do wizualizacji zależności pomiędzy wynikami 
-           osiągniętymi przez uczniów na poprzednim szczeblu edukacji, a wynikami egzaminu."),
+           osiągniętymi przez uczniów na poprzednim szczeblu edukacji a wynikami egzaminu."),
   tags$div("Na początku możesz wybrać:"),
   tags$ul(
     tags$li("Egzamin którym jesteś zainteresowany."),
@@ -25,18 +25,18 @@ interface_help <- tags$html(
             interesuje możesz np. na stronie", tags$a(href="http://zpd.ibe.edu.pl/doku.php?id=bazatestypytania", "arkusze"),
             "lub wybierając arkusz i wchodząc w link do jego treści."),
     tags$li("Poprzedni egzamin - czyli ten, z którym będziemy porównywać wyniki."),
-    tags$li("Jak bardzo szczegółowy ma być wykres. Pytania egzaminacyjne podzielone są na:" 
-            , tags$ul(
-              tags$li("Kryteria ocen - najbardziej atomiczne cząstki oceny. Może to być np. pojedyncze
-                      pytanie zamknięte, lub ocena za interpunkcję w wypracowaniu."),
-              tags$li("Pytania - jedno pytanie składa się z jednego lub większej liczby kryterium oceny.
-                      Odpowiadają rzeczywistym pytaniom występującym na arkuszach."),
-              tags$li("Wiązki pytań - pytania są czasami, choć nie zawsze, podzielone na tematyczne grupy
-                      nazywane wiązkami pytań.")
-              )
-              )
+    tags$li("Jak bardzo szczegółowy ma być wykres. Pytania egzaminacyjne podzielone są na:", 
+      tags$ul(
+      tags$li("Kryteria ocen - najbardziej atomowe cząstki oceny. Może to być np. pojedyncze
+              pytanie zamknięte, lub ocena za interpunkcję w wypracowaniu."),
+      tags$li("Pytania - jedno pytanie składa się z jednego lub większej liczby kryterium oceny.
+              Odpowiadają rzeczywistym pytaniom występującym na arkuszach."),
+      tags$li("Wiązki pytań - pytania są czasami, choć nie zawsze, podzielone na tematyczne grupy
+              nazywane wiązkami pytań.")
+      )
     )
   )
+)
 
 glowny_wykres_help <- tags$html(
   tags$div("Na tym wykresie przedstawione są wyniki poszczególnych kryteriów / pytań / wiązek pytań z wybranego egzaminu."),
