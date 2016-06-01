@@ -23,9 +23,9 @@ shinyUI(pageWithSidebar(
       uiOutput("arkusz_wybor"),
       uiOutput("egz_wybor_poprz"),
       selectInput("poziom", label = "Grupuj po:", list(
-        "kryteriach oceny" = "kry",
+        "wiązkach pytań" = "wia",
         "pytaniach" = "pyt",
-        "wiązkach pytań" = "wia"
+        "kryteriach oceny" = "kry"
         )
       ),
       modalHelp("help_but", "Interfejs użytkownika", "Some helpful informations!")
@@ -38,6 +38,7 @@ shinyUI(pageWithSidebar(
         value = "poprzednie",
         plotOutput("poprz_plot", click="poprz_click"),
         modalHelp("help_but_main", "Wykresy"),
+        htmlOutput("link_do_arkusza"),
         htmlOutput("link_do_klucza"),
         plotOutput("poprz_plot_jedno"),
         htmlOutput("arkusze_zawierajace")
