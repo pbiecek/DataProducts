@@ -15,8 +15,9 @@ library(corrplot)
 
 source("./pobierz_pytania.R")
 
-### Żeby nie ładowało się pół wieku.
-# load("./data.RData")
+load("./data.RData")
+
+PX_PER_EXAM_PART <<- 45
 
 egzaminy <<- dane@zapisane_testy
 egzaminy_poprz <<- dane@wyniki_po_egz %>%
@@ -52,14 +53,16 @@ dane_poprzedni <- function(nr, poziom = "kry", nr_arkusza) {
 dane_poprzedni_wszystko <- function(wyniki_egz, poziom) {
   if (poziom == "pyt") {
     wyniki_egz = wyniki_egz %>%
-      group_by(poprzedni_wynik, id_pytania, liczba) %>%
+      group_by(poprzedni_wynik, liczba, id_pytania) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
+      ungroup() %>%
       rename(id = id_pytania)
     n_poziom <- "id pytania"
   } else if (poziom == "wia") {
     wyniki_egz = wyniki_egz %>%
-      group_by(poprzedni_wynik, id_wiazki, liczba) %>%
+      group_by(poprzedni_wynik, liczba, id_wiazki) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
+      ungroup() %>%
       rename(id = id_wiazki)
     n_poziom <- "id wiązki"
   } else {
@@ -87,15 +90,17 @@ dane_poprzedni_arkusz <- function(wyniki_egz, poziom) {
       as.character()
   } else if (poziom == "pyt") {
     wyniki_egz = wyniki_egz %>%
-      group_by(poprzedni_wynik, id_pytania, liczba, numer_pytania) %>%
+      group_by(poprzedni_wynik, liczba, numer_pytania, id_pytania) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
+      ungroup() %>%
       rename(id = id_pytania)
     n_poziom <- "numer pytania"
     wyniki_egz$id_factor = as.character(wyniki_egz$numer_pytania)
   } else if (poziom == "wia") { # FIXME - jak dobrze zrobic numery wiazek?
     wyniki_egz = wyniki_egz %>%
-      group_by(poprzedni_wynik, id_wiazki, liczba) %>%
+      group_by(poprzedni_wynik, liczba, id_wiazki) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
+      ungroup() %>%
       rename(id = id_wiazki)
     n_poziom <- "numer wiązki"
     wyniki_egz$id_factor = as.character(wyniki_egz$id)
@@ -113,7 +118,7 @@ dane_poprzedni_jedno <- function(poprzednie, p_id) {
 
 rysuj_wykres_poprzedni <- function(dane, nazwa_x) {
   ggplot(dane, aes(x = id_factor, y = wynik)) +
-    geom_violin(aes(color = poprzedni_wynik, size = liczba)) +
+    geom_violin() +
     labs(x = nazwa_x, y = "wynik", color = "Poprzedni wynik", size = "Liczba uczniów z poprzednim wynikiem") +
     scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
@@ -124,7 +129,7 @@ rysuj_wykres_poprzedni_jedno <- function(dane, nazwa) {
   geom_point(aes(size = liczba)) +
   labs(x = "poprzedni", y = "wynik", title = nazwa, size = "Liczba uczniów z poprzednim wynikiem") +
   scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))  
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 }
 
 arkusze_zawierajace <- function(n_id, poziom)
@@ -143,7 +148,6 @@ arkusze_zawierajace <- function(n_id, poziom)
     inner_join(dane@kryteria_testy) %>%
     inner_join(dane@typy_testow, by = c("id_testu" = "id")) %>%
     distinct(id_testu)
-  View(arkusze)
   wynik <- arkusze %>% select(arkusz) %>% rename(arkusze = arkusz)
   
   if (poziom == "kry") {
@@ -220,7 +224,10 @@ shinyServer(function(input, output) {
     d <- dane_poprzedni(input$nr_poprzedni, input$poziom, input$nr_arkusza)
     poprzedni_data <<- d[[1]]
     poprzedni_poziom <<- d[[2]]
-    output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(d[[1]], d[[2]]))
+    
+    szer = PX_PER_EXAM_PART * (poprzedni_data %>% select(id) %>% distinct() %>% nrow())
+    output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(d[[1]], d[[2]]), width = szer)
+    
     if(!is.null(input$nr_arkusza) && input$nr_arkusza != 0) {
       output$link_do_arkusza <- renderUI(
         tags$a(href = generuj_link(dane@typy_testow[input$nr_arkusza,]$arkusz, 0), "Test")
@@ -238,7 +245,7 @@ shinyServer(function(input, output) {
   })
   
   observeEvent(input$poprz_click, {
-    dane <- nearPoints(poprzedni_data, xvar="id_factor", yvar="wynik", input$poprz_click, threshold = 15, maxpoints = 1)
+    dane <- nearPoints(poprzedni_data, xvar="id_factor", yvar="wynik", input$poprz_click, threshold = 50, maxpoints = 1)
     if (nrow(dane) == 0)
       return()
     
