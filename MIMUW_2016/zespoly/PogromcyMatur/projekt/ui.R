@@ -7,6 +7,8 @@
 
 library(shiny)
 library(dplyr)
+library(shinyBS)
+
 
 shinyUI(pageWithSidebar(
   
@@ -21,7 +23,8 @@ shinyUI(pageWithSidebar(
         "pytaniach" = "pyt",
         "wiązkach pytań" = "wia"
         )
-      )
+      ),
+      actionButton("help_but", "Help")
     ),
   mainPanel(
     tabsetPanel(
@@ -30,9 +33,12 @@ shinyUI(pageWithSidebar(
         "Wpływ wcześniejszych etapów edukacji",
         value = "poprzednie",
         plotOutput("poprz_plot", click="poprz_click"),
+        htmlOutput("link_do_arkusza"),
+        htmlOutput("link_do_klucza"),
         plotOutput("poprz_plot_jedno"),
         htmlOutput("arkusze_zawierajace")
       )
-    )
+    ),
+    bsModal("help_modal", "Interfejs użytkownika", "help_but", tags$div("Some helpful info!"))
   )
 ))
