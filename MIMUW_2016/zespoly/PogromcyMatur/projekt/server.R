@@ -18,6 +18,7 @@ source("./pobierz_pytania.R")
 load("./data.RData")
 
 PX_PER_EXAM_PART <<- 45
+PX_MIN <<- 200
 
 egzaminy <<- dane@zapisane_testy
 egzaminy_poprz <<- dane@wyniki_po_egz %>%
@@ -120,16 +121,14 @@ rysuj_wykres_poprzedni <- function(dane, nazwa_x) {
   ggplot(dane, aes(x = id_factor, y = wynik)) +
     geom_violin() +
     labs(x = nazwa_x, y = "wynik", color = "Poprzedni wynik", size = "Liczba uczniów z poprzednim wynikiem") +
-    scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    scale_y_continuous(limits = c(0, 1), labels = scales::percent)
 }
 
 rysuj_wykres_poprzedni_jedno <- function(dane, nazwa) {
   ggplot(dane, aes(x = poprzedni_wynik, y = wynik)) +
   geom_point(aes(size = liczba)) +
   labs(x = "poprzedni", y = "wynik", title = nazwa, size = "Liczba uczniów z poprzednim wynikiem") +
-  scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+  scale_y_continuous(limits = c(0, 1), labels = scales::percent)
 }
 
 arkusze_zawierajace <- function(n_id, poziom)
@@ -226,6 +225,7 @@ shinyServer(function(input, output) {
     poprzedni_poziom <<- d[[2]]
     
     szer = PX_PER_EXAM_PART * (poprzedni_data %>% select(id) %>% distinct() %>% nrow())
+    szer = max(szer, PX_MIN)
     output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(d[[1]], d[[2]]), width = szer)
     
     if(!is.null(input$nr_arkusza) && input$nr_arkusza != 0) {
