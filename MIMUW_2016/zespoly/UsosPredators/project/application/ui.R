@@ -21,6 +21,24 @@ shinyUI(navbarPage(
     )
   ),
 
+  tabPanel("Ankiety",
+    sidebarLayout(
+      sidebarPanel(
+        tags$label(class="control-label", "Wybierz przedmiot:"),
+        htmlOutput("surveySubject"),
+
+        tags$label(class="control-label", "Wybierz prowadzącego:"),
+        htmlOutput("surveyLecturer")
+
+        #tags$label(class="control-label", "Wybierz lata:"),
+        #htmlOutput("surveyYears")
+      ),
+      mainPanel(
+        plotOutput("surveyPlot")
+      )
+    )
+  ),
+
   tabPanel("Tendencje",
      sidebarLayout(
        sidebarPanel(
@@ -53,5 +71,5 @@ shinyUI(navbarPage(
       )
     )
   )
-  
+
 ))

@@ -4,6 +4,7 @@ library(shiny)
 library(scales)
 
 oceny <- tbl_df(read.csv("../../data/oceny.txt", sep=";", dec=","))
+ankiety <- tbl_df(read.csv("../../data/ankiety.txt", sep=";", dec=","))
 database <- read.csv("../../data/database.txt", sep=";", dec=",")
 
 subjectNames <- c("Matematyka dyskretna",
@@ -15,6 +16,7 @@ subjectNames <- c("Matematyka dyskretna",
                   "Indywidualny projekt programistyczny")
 
 estimators <- c("Średnia", "Mediana", "Wariancja", "Zaliczenie")
+#estimators <- c("Średnia", "Mediana", "Wariancja")
 
 
 # UI
@@ -29,7 +31,7 @@ legendTextUI <- element_text(size=16, margin=margin(b=20, unit="pt"))
 
 
 shinyServer(function(input, output) {
-  
+
   # FIRST TAB
   output$lecturerSubject <- renderUI({
     selectInput("lecturerSubject", "", sort(subjectNames))
@@ -38,7 +40,7 @@ shinyServer(function(input, output) {
   selectedSubject <- reactive({
     data <- dplyr:::filter(database, NAZWA == input$lecturerSubject)
   })
-  
+
   lecturers <- reactive({
     data <- selectedSubject()
     temp <- data[grepl("*WYK$", data$TZAJ_KOD_1),]
@@ -50,13 +52,13 @@ shinyServer(function(input, output) {
     lecturerData <- selectedSubject()
     lecturers <- lecturers()
     lv <- c(t(lecturers))
-    
+
     lecturerData <- dplyr:::filter(lecturerData, OCENA_WARTOSC != "", PRAC_ID_1 %in% lv) %>% dplyr:::select(PRAC_ID_1, OCENA_WARTOSC)
-    
+
     dFMatrix <- matrix(nrow = 0, ncol = nrow(lecturers))
 
     grades = c('2', '3', '3,5', '4', '4,5', '5')
-    
+
     for (i in grades) {
       temp <- c()
       for (w in lecturers$PRAC_ID_1) {
@@ -64,42 +66,107 @@ shinyServer(function(input, output) {
       }
       dFMatrix <- rbind(dFMatrix, temp)
     }
-    
+
     rownames(dFMatrix) <- grades
     colnames(dFMatrix) <- c(t(lecturers))
-    
+
     df <- as.data.frame(dFMatrix)
     df$Oceny <- row.names(df)
 
     library(reshape2)
     df.molten <- melt(df, value.name="Rozkład", variable.name="Wykładowcy", na.rm=TRUE)
     library(ggplot2)
-    
-    plot <- ggplot(data = df.molten, aes(x=Wykładowcy, fill=Oceny)) + 
+
+    plot <- ggplot(data = df.molten, aes(x=Wykładowcy, fill=Oceny, width = 0.5)) +
       geom_bar(data = subset(df.molten, Oceny %in% c("2")),
                aes(y = -Rozkład), position="stack", stat="identity") +
-      geom_bar(data = subset(df.molten, !Oceny %in% c("2")), 
-               aes(y = Rozkład), position="stack", stat="identity") + 
-      scale_y_continuous(breaks = NULL) +
+      geom_bar(data = subset(df.molten, !Oceny %in% c("2")),
+               aes(y = Rozkład), position="stack", stat="identity") +
       geom_hline(aes(yintercept = 0)) +
-      labs(x = "Id wykładowcy", y = "Rozkład ocen") + 
+      labs(x = "Id wykładowcy", y = "Rozkład ocen") +
       ggtitle("Wyniki egzaminów względem wykładowcy") +
       theme(plot.title=plotTitleUI, plot.margin=plotMarginUI,
             axis.text=axisTextUI,
             axis.title.x=axisTitleXUI,
             axis.title.y=axisTitleYUI,
             legend.title=legendTitleUI,
-            legend.key.width=unit(3,"line"), legend.key.height=unit(2,"line"))
-    
+            legend.key.width=unit(3,"line"), legend.key.height=unit(2,"line")) +
+      guides(fill = guide_legend(reverse=TRUE))
+
     for (i in 1:(ncol(df)-1)) {
       plot <- plot +
-        annotate("text", x = i, y = (sum(df[,i]) - df[1,i]) + 2, label = sum(df[,i]), size = 10)
+        annotate("text", x = i, y = (sum(df[,i]) - df[1,i]) + 10, label = sum(df[,i]), size = 10)
     }
-    
+
     plot
   })
 
-  # SECOND TAB
+  # ANKIETY TAB
+  output$surveySubject <- renderUI({
+    selectInput("surveySubject", "", sort(subjectNames))
+  })
+
+  selectedSurveySubject <- reactive({
+    data <- dplyr:::filter(ankiety, PRZ_NAZWA == input$surveySubject)
+    data
+  })
+
+  output$surveyLecturer <- renderUI({
+    data <- selectedSurveySubject()
+    data <- dplyr:::group_by(data, PROWADZACY)
+    data <- dplyr:::distinct(data, PROWADZACY)
+    
+    selectInput("surveyLecturer", "", as.matrix(data$PROWADZACY))
+  })
+
+  selectedSurveyLecturer <- reactive({
+    data <- selectedSurveySubject()
+    data <- dplyr:::filter(data, PROWADZACY == input$surveyLecturer)
+    data <- dplyr:::group_by(data, PROWADZACY)
+    data
+  })
+
+  #output$surveyYears <- renderUI({
+    #selectInput("surveyYears", "", sort(c(seq(2000, 2015, 1))), multiple = TRUE)
+  #})
+
+  selectedSurveyYears <- reactive({
+    data <- selectedSurveyLecturer()
+
+    data$CDYD_KOD <- gsub("Z", "", as.character(data$CDYD_KOD))
+    data$CDYD_KOD <- gsub("L", "", as.character(data$CDYD_KOD))
+    data$CDYD_KOD <- as.numeric(data$CDYD_KOD)
+
+    years <- input$surveyYears
+    data <- dplyr:::filter(data, CDYD_KOD %in% years)
+
+    data
+  })
+
+  output$surveyPlot = renderPlot({
+    data <- selectedSurveyLecturer()
+    data <- dplyr:::filter(data, TRESC_PYTANIA == "Ogólna ocena prowadzącego te zajęcia")
+    data <- dplyr:::select(data, CDYD_KOD, WARTOSC_ODPOWIEDZI, LICZBA_ODPOWIEDZI)
+    data$CDYD_KOD <- gsub("Z", "", as.character(data$CDYD_KOD))
+    data$CDYD_KOD <- gsub("L", "", as.character(data$CDYD_KOD))
+    
+    ggplot(data, aes(CDYD_KOD, LICZBA_ODPOWIEDZI, width = 0.5)) +   
+      geom_bar(aes(fill = factor(sort(WARTOSC_ODPOWIEDZI))), position = "stack", stat="identity") +
+      ggtitle("Ogólna ocena zajęć prowadzącego") +
+      xlab("Lata") + 
+      ylab("Liczba odpowiedzi") +
+      guides(fill = guide_legend(reverse=TRUE)) + 
+      theme(plot.title=plotTitleUI, plot.margin=plotMarginUI,
+            axis.text=axisTextUI,
+            axis.title.x=axisTitleXUI,
+            axis.title.y=axisTitleYUI,
+            legend.title=legendTitleUI,
+            legend.key.width=unit(3,"line"), legend.key.height=unit(2,"line")) +
+      scale_fill_brewer(palette="Spectral", name = "Oceny")
+  })
+
+
+  # TRENDINGS TAB
   output$trendSubjectsGroup <- renderUI({
     selectInput("trendSubjectsGroup", "", sort(subjectNames), multiple = TRUE)
   })
@@ -145,7 +212,7 @@ shinyServer(function(input, output) {
 
     if (estimator == "Zaliczenie") {
       pos <- position_dodge(width=0.9)
-      yearsTrendData <- yearsTrendData %>% summarise(count=n(), niezal=sum(ifelse(as.numeric(OCENA) > 2, 0, 1)))
+      yearsTrendData <- yearsTrendData %>% summarise(count=n(), niezal=sum(ifelse(as.numeric(as.character(OCENA)) > 2, 0, 1), na.rm = TRUE))
       pl <- ggplot(data=yearsTrendData, aes(x=CDYD_KOD, weight=niezal, y=count, ymin=niezal, ymax=niezal, fill=as.factor(PRZ_NAZWA))) +
         geom_bar(aes(group = PRZ_NAZWA), size=2, position=pos, stat="identity") +
         geom_errorbar(aes(y=niezal), linetype="dashed", position=pos) +
@@ -163,11 +230,11 @@ shinyServer(function(input, output) {
       pl
     } else {
       if (estimator == "Średnia") {
-        yearsTrendData <- yearsTrendData %>% summarise(srednia=mean(as.numeric(OCENA)))
+        yearsTrendData <- yearsTrendData %>% summarise(srednia=mean(as.numeric(as.character(OCENA)), na.rm = TRUE))
       } else if (estimator == "Mediana") {
-        yearsTrendData <- yearsTrendData %>% summarise(srednia=median(as.numeric(OCENA)))
+        yearsTrendData <- yearsTrendData %>% summarise(srednia=median(as.numeric(as.character(OCENA)), na.rm = TRUE))
       } else if (estimator == "Wariancja") {
-        yearsTrendData <- yearsTrendData %>% summarise(srednia=var(as.numeric(OCENA)))
+        yearsTrendData <- yearsTrendData %>% summarise(srednia=var(as.numeric(as.character(OCENA)), na.rm = TRUE))
       }
 
       ggplot(data=yearsTrendData, aes(x=CDYD_KOD, y=srednia, colour = as.factor(PRZ_NAZWA))) +
@@ -221,13 +288,13 @@ shinyServer(function(input, output) {
       #group_by(CDYD_KOD) %>%
       #summarise()
       #mutate(PCT=n/sum(n))
-    
+
     years <- dplyr:::group_by(yearsData, CDYD_KOD) %>% summarise()
-    
+
     dFMatrix <- matrix(nrow = 0, ncol = nrow(years))
-    
+
     grades = c('2', '3', '3,5', '4', '4,5', '5')
-    
+
     for (i in grades) {
       temp <- c()
       for (w in years$CDYD_KOD) {
@@ -236,44 +303,44 @@ shinyServer(function(input, output) {
       }
       dFMatrix <- rbind(dFMatrix, temp)
     }
-    
+
     rownames(dFMatrix) <- grades
     colnames(dFMatrix) <- c(t(years))
-    
+
     df <- as.data.frame(dFMatrix)
     df$Oceny <- row.names(df)
-    
-    
-    
+
+
+
     library(reshape2)
     df.molten <- melt(df, value.name="Rozkład", variable.name="Lata", na.rm=TRUE)
     library(ggplot2)
-    
+
     print(df.molten)
-    
-    plot <- ggplot(data = df.molten, aes(x=Lata, fill=Oceny)) + 
+
+    plot <- ggplot(data = df.molten, aes(x=Lata, fill=Oceny)) +
       geom_bar(data = subset(df.molten, Oceny %in% c('2')),
                aes(y = -Rozkład), position="stack", stat="identity") +
-      geom_bar(data = subset(df.molten, !Oceny %in% c('2')), 
-               aes(y = Rozkład), position="stack", stat="identity") + 
-      scale_y_continuous(breaks = NULL) +
+      geom_bar(data = subset(df.molten, !Oceny %in% c('2')),
+               aes(y = Rozkład), position="stack", stat="identity") +
       geom_hline(aes(yintercept = 0)) +
-      labs(x = "Lata", y = "Rozkład ocen") + 
+      labs(x = "Lata", y = "Rozkład ocen") +
       ggtitle("Wyniki egzaminów względem lat") +
       theme(plot.title=plotTitleUI, plot.margin=plotMarginUI,
             axis.text=axisTextUI,
             axis.title.x=axisTitleXUI,
             axis.title.y=axisTitleYUI,
             legend.title=legendTitleUI,
-            legend.key.width=unit(3,"line"), legend.key.height=unit(2,"line"))
-    
+            legend.key.width=unit(3,"line"), legend.key.height=unit(2,"line")) +
+      guides(fill = guide_legend(reverse=TRUE))
+
     for (i in 1:(ncol(df)-1)) {
       plot <- plot +
-        annotate("text", x = i, y = (sum(df[,i]) - df[1,i]) + 2, label = sum(df[,i]), size = 10)
+        annotate("text", x = i, y = (sum(df[,i]) - df[1,i]) + 10, label = sum(df[,i]), size = 10)
     }
-    
-    plot
-    
-  })
 
+    plot
+
+  })
+  
 })
