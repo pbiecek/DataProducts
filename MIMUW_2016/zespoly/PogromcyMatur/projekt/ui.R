@@ -9,6 +9,10 @@ library(shiny)
 library(dplyr)
 library(shinyBS)
 
+modalHelp <- function(name, header = "Help", content = "Pomoc niedostępna.") {
+  tags$html(actionButton(name, "Help"),
+            bsModal(paste(c("window",name), collapse="_"), header, name, tags$div(content)))
+}
 
 shinyUI(pageWithSidebar(
   
@@ -24,7 +28,7 @@ shinyUI(pageWithSidebar(
         "wiązkach pytań" = "wia"
         )
       ),
-      actionButton("help_but", "Help")
+      modalHelp("help_but", "Interfejs użytkownika", "Some helpful informations!")
     ),
   mainPanel(
     tabsetPanel(
@@ -33,12 +37,10 @@ shinyUI(pageWithSidebar(
         "Wpływ wcześniejszych etapów edukacji",
         value = "poprzednie",
         plotOutput("poprz_plot", click="poprz_click"),
-        htmlOutput("link_do_arkusza"),
+        modalHelp("help_but_main", "Wykresy"),
         htmlOutput("link_do_klucza"),
         plotOutput("poprz_plot_jedno"),
         htmlOutput("arkusze_zawierajace")
       )
-    ),
-    bsModal("help_modal", "Interfejs użytkownika", "help_but", tags$div("Some helpful info!"))
-  )
+    ))
 ))
