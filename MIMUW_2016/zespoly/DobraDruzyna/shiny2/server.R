@@ -74,9 +74,16 @@ shinyServer(function(input, output) {
   })
   
   output$wykres_bezrobotni2 = renderPlotly({
-    wykres <- plot_ly(filter(bezrobocie, teryt==input$gmina), x = rok, y = Wartosc)
+    wskaznik <- merge(x = bezrobocie, y = ewd, by = c("rok", "teryt"))
+    
+    wykres <- plot_ly(filter(wskaznik, teryt==input$gmina), x = rok, y = Wartosc, 
+                      mode = "markers+lines", color = EWD, colors = "RdYlGn",
+                      marker = list(size = 18),
+                      line = list(color = "grey"))
+                      
     wykres <- layout(wykres,
                      yaxis = list(title = "Bezrobocie"))
+    
     wykres
   })
   
@@ -111,9 +118,16 @@ shinyServer(function(input, output) {
   })
   
   output$wykres_biblioteki2 = renderPlotly({
-    wykres <- plot_ly(filter(biblioteki, teryt==input$gmina), x = rok, y = Wartosc)
+    wskaznik <- merge(x = biblioteki, y = ewd, by = c("rok", "teryt"))
+    
+    wykres <- plot_ly(filter(wskaznik, teryt==input$gmina), x = rok, y = Wartosc, 
+                      mode = "markers+lines", color = EWD, colors = "RdYlGn",
+                      marker = list(size = 18),
+                      line = list(color = "grey"))
+    
     wykres <- layout(wykres,
-                     yaxis = list(title = "Liczba mieszkańców na 1 bibliotekę"))
+                     yaxis = list(title = "Liczba mieszkańców na bibliotekę"))
+    
     wykres
   })
   
@@ -148,9 +162,16 @@ shinyServer(function(input, output) {
   })
   
   output$wykres_czytelnicy2 = renderPlotly({
-    wykres <- plot_ly(filter(czytelnicy, teryt==input$gmina), x = rok, y = Wartosc)
+    wskaznik <- merge(x = czytelnicy, y = ewd, by = c("rok", "teryt"))
+    
+    wykres <- plot_ly(filter(wskaznik, teryt==input$gmina), x = rok, y = Wartosc, 
+                      mode = "markers+lines", color = EWD, colors = "RdYlGn",
+                      marker = list(size = 18),
+                      line = list(color = "grey"))
+    
     wykres <- layout(wykres,
-                     yaxis = list(title = "Liczba czytelników bibliotek na 1000 mieszkańców"))
+                     yaxis = list(title = "Liczba czytelników na 1000 mieszkańców"))
+    
     wykres
   })
   
@@ -184,9 +205,16 @@ shinyServer(function(input, output) {
   })
   
   output$wykres_wypozyczenia2 = renderPlotly({
-    wykres <- plot_ly(filter(wypozyczenia, teryt==input$gmina), x = rok, y = Wartosc)
+    wskaznik <- merge(x = wypozyczenia, y = ewd, by = c("rok", "teryt"))
+    
+    wykres <- plot_ly(filter(wskaznik, teryt==input$gmina), x = rok, y = Wartosc, 
+                      mode = "markers+lines", color = EWD, colors = "RdYlGn",
+                      marker = list(size = 18),
+                      line = list(color = "grey"))
+    
     wykres <- layout(wykres,
                      yaxis = list(title = "Liczba wypożyczeń na 1 czytelnika"))
+    
     wykres
   })
   
@@ -199,9 +227,16 @@ shinyServer(function(input, output) {
   })
   
   output$wykres_matury = renderPlotly({
-    wykres <- plot_ly(filter(polski, teryt==input$gmina), x = rok, y = srednia_gminy)
+    wskaznik <- merge(x = polski, y = ewd, by = c("rok", "teryt"))
+    
+    wykres <- plot_ly(filter(wskaznik, teryt==input$gmina), x = rok, y = srednia_gminy, 
+                      mode = "markers+lines", color = EWD, colors = "RdYlGn",
+                      marker = list(size = 18),
+                      line = list(color = "grey"))
+    
     wykres <- layout(wykres,
                      yaxis = list(title = "Średni wynik matury"))
+    
     wykres
   })
 })
