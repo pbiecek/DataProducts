@@ -16,7 +16,7 @@ modalHelp <- function(name, header = "Help", content = "Pomoc niedostępna.") {
 
 shinyUI(pageWithSidebar(
   
-  headerPanel("Trzecia iteracja"),
+  headerPanel("Czwarta, finalna iteracja"),
     
   sidebarPanel(
       uiOutput("egz_wybor"),
@@ -24,8 +24,8 @@ shinyUI(pageWithSidebar(
       uiOutput("egz_wybor_poprz"),
       selectInput("poziom", label = "Grupuj po:", list(
         "wiązkach pytań" = "wia",
-        "pytaniach" = "pyt",
-        "kryteriach oceny" = "kry"
+        "kryteriach oceny" = "kry",
+        "pytaniach" = "pyt"
         )
       ),
       modalHelp("help_but", "Interfejs użytkownika", "Some helpful informations!")
@@ -37,9 +37,11 @@ shinyUI(pageWithSidebar(
         "Wpływ wcześniejszych etapów edukacji",
         value = "poprzednie",
         plotOutput("poprz_plot", click="poprz_click"),
-        modalHelp("help_but_main", "Wykresy"),
-        htmlOutput("link_do_arkusza"),
-        htmlOutput("link_do_klucza"),
+        splitLayout(
+          modalHelp("help_but_main", "Wykresy"),
+          htmlOutput("link_do_arkusza"),
+          htmlOutput("link_do_klucza")
+        ),
         plotOutput("poprz_plot_jedno"),
         htmlOutput("arkusze_zawierajace")
       )
