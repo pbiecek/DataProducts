@@ -17,6 +17,8 @@ source("./pobierz_pytania.R")
 
 load("./data.RData")
 
+PX_PER_EXAM_PART <<- 45
+
 egzaminy <<- dane@zapisane_testy
 egzaminy_poprz <<- dane@wyniki_po_egz %>%
   select(rok, rodzaj_egzaminu, czesc_egzaminu, rodzaj_poprzedni, czesc_poprzedni) %>%
@@ -169,7 +171,7 @@ rysuj_wykres_poprzedni_jedno <- function(dane, nazwa) {
   geom_point(aes(size = liczba)) +
   labs(x = "poprzedni", y = "wynik", title = nazwa, size = "Liczba uczniów z poprzednim wynikiem") +
   scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1))  
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
 }
 
 arkusze_zawierajace <- function(n_id, poziom)
@@ -259,11 +261,12 @@ shinyServer(function(input, output) {
     d <- dane_poprzedni(input$nr_poprzedni, input$poziom, input$nr_arkusza)
     poprzedni_data <<- d[[1]]
     poprzedni_poziom <<- d[[2]]
-    output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(d[[1]], d[[2]]))
+    szer = PX_PER_EXAM_PART * (poprzedni_data %>% select(id_factor) %>% distinct() %>% nrow())
+    output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(d[[1]], d[[2]]), width = szer)
   })
   
   observeEvent(input$poprz_click, {
-    dane <- nearPoints(poprzedni_data, xvar="id_factor", yvar="wynik", input$poprz_click, threshold = 15, maxpoints = 1)
+    dane <- nearPoints(poprzedni_data, xvar="id_factor", yvar="wynik", input$poprz_click, threshold = 50, maxpoints = 1)
     if (nrow(dane) == 0)
       return()
     
