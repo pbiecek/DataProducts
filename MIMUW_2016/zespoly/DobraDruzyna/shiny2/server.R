@@ -39,9 +39,16 @@ shinyServer(function(input, output) {
   })
   
   output$wykres_wydatki2 = renderPlotly({
-    wykres <- plot_ly(filter(wydatki_na_licea, teryt==input$gmina), x = rok, y = Wartosc)
+    wskaznik <- merge(x = wydatki_na_licea, y = ewd, by = c("rok", "teryt"))
+    
+    wykres <- plot_ly(filter(wskaznik, teryt==input$gmina), x = rok, y = Wartosc, 
+                      mode = "markers+lines", color = EWD, colors = "RdYlGn",
+                      marker = list(size = 18),
+                      line = list(color = "grey"))
+    
     wykres <- layout(wykres,
-                     yaxis = list(title = "Suma trzyletnich wydatków na ucznia"))
+                     yaxis = list(title = "Suma trzyletnich wydatków na ucznia."))
+    
     wykres
   })
 
