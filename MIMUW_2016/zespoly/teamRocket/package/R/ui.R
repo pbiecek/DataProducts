@@ -10,6 +10,7 @@ maturiser.ui <- shiny::shinyUI(shiny::fluidPage(
       ),
       shiny::mainPanel(
           shiny::htmlOutput("wyznacznik"),
+          shiny::htmlOutput("instrukcja"),
           shiny::plotOutput("wykres")
           #htmlOutput("wykresy")
       )
