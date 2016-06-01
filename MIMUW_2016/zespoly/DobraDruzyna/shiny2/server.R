@@ -18,35 +18,37 @@ shinyServer(function(input, output) {
   
   output$wykres_wydatki = renderPlotly({
     wskaznik <- reactive({
-      arrange(merge(polski, bezrobocie), gmina_szkoly)
+      data <- merge(polski, wydatki_na_licea)
+      merge(x = data, y = ewd, by = c("rok", "teryt"))
     })
     
-    wskaznikWybranyRok <- filter(wskaznik, rok == input$rok)
+    wskaznikWybranyRok <- filter(wskaznik(), rok == input$rok)
     
-    zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
+    zaznaczonaGmina <- subset(wskaznikWybranyRok, teryt == input$gmina)
     
-    wykres <- plot_ly(wskaznikWybranyRok, x = suma_na_licealiste, y = sredni_wynik_matury, text = paste("gmina: ", nazwa_gminy),
-                   mode = "markers", marker = list(color = "lightblue"))
+    wykres <- plot_ly(wskaznikWybranyRok, x = Wartosc, y = srednia_gminy, text = paste("gmina: ", gmina_szkoly),
+                   mode = "markers", color = EWD, colors = "RdYlGn")
     
     wykres <- layout(wykres, 
                      xaxis = list(title = "Suma trzyletnich wydatków na ucznia"),
                      yaxis = list(title = "Średni wynik z matury"),
-                     annotations = list(x = zaznaczonaGmina$suma_na_licealiste, y = zaznaczonaGmina$sredni_wynik_matury, text = "Twoja gmina", showarrow = T))
+                     annotations = list(x = zaznaczonaGmina$Wartosc, y = zaznaczonaGmina$srednia_gminy,
+                                        text = "Wybrana gmina", showarrow = T))
     
     wykres
   })
   
   output$wykres_wydatki2 = renderPlotly({
-    wykres <- plot_ly(filter(polski_srednia_wydatki, nazwa_gminy==zaznaczonaGmina$nazwa_gminy), x = rok, y = suma_na_licealiste)
+    wykres <- plot_ly(filter(wydatki_na_licea, teryt==input$gmina), x = rok, y = Wartosc)
     wykres <- layout(wykres,
                      yaxis = list(title = "Suma trzyletnich wydatków na ucznia"))
     wykres
   })
 
   output$liczba_wydatki = renderText({
-    wskaznikWybranyRok <- filter(polski_srednia_wydatki, rok == input$rok)
-    zaznaczonaGmina <- subset(wskaznikWybranyRok, nazwa_gminy == input$gmina)
-    gminy_wiecej <- filter(wskaznikWybranyRok, suma_na_licealiste > zaznaczonaGmina$suma_na_licealiste)
+    wskaznikWybranyRok <- filter(wydatki_na_licea, rok == input$rok)
+    zaznaczonaGmina <- subset(wskaznikWybranyRok, teryt == input$gmina)
+    gminy_wiecej <- filter(wskaznikWybranyRok, Wartosc > zaznaczonaGmina$Wartosc)
     
     nrow(gminy_wiecej)/(nrow(wskaznikWybranyRok) - 1) * 100
     
@@ -111,7 +113,7 @@ shinyServer(function(input, output) {
                      xaxis = list(title = "Liczba mieszkańców na 1 bibliotekę"),
                      yaxis = list(title = "Średni wynik z matury"),
                      annotations = list(x = zaznaczonaGmina$Wartosc, y = zaznaczonaGmina$srednia_gminy,
-                                        text = "Twoja gmina", showarrow = T))
+                                        text = "Wybrana gmina", showarrow = T))
     
 
     wykres
@@ -156,7 +158,7 @@ shinyServer(function(input, output) {
                      xaxis = list(title = "Liczba czytelników bibliotek na 1000 mieszkańców"),
                      yaxis = list(title = "Średni wynik z matury"),
                      annotations = list(x = zaznaczonaGmina$Wartosc, y = zaznaczonaGmina$srednia_gminy,
-                                        text = "Twoja gmina", showarrow = T))
+                                        text = "Wybrana gmina", showarrow = T))
     
     wykres
   })
@@ -199,7 +201,7 @@ shinyServer(function(input, output) {
                      xaxis = list(title = "Liczba wypożyczeń na 1 czytelnika"),
                      yaxis = list(title = "Średni wynik z matury"),
                      annotations = list(x = zaznaczonaGmina$Wartosc, y = zaznaczonaGmina$srednia_gminy,
-                                        text = "Twoja gmina", showarrow = T))
+                                        text = "Wybrana gmina", showarrow = T))
     
     wykres
   })
