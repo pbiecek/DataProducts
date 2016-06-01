@@ -132,6 +132,7 @@ $(document).ready(function () {
 </ul></li>
 <li><a href="#dla-uzytkownika-aplikacji---instrukcja">Dla użytkownika aplikacji - instrukcja</a></li>
 <li><a href="#definiowanie-wasnych-kryteriow-porownawczych">Definiowanie własnych kryteriów porównawczych</a></li>
+<li><a href="#uzywanie-innych-danych-i-aktualizacja">Używanie innych danych i aktualizacja</a></li>
 </ul>
 </div>
 
@@ -191,7 +192,7 @@ data(matura.2015)</code></pre>
 </ol>
 <pre class="r"><code>skrot &lt;- &quot;suma_mat&quot;</code></pre>
 <ol start="2" style="list-style-type: decimal">
-<li>Formuły opisującej wartość wyznacznika - m_mat_p i m_mat_r to nazwy kolumn w zbiorze danych. Listę nazw wszystkich kolumn można uzyskać ze strony pomocy ?matura.2015. Kolumny zawierające wyniki egzaminów maturalnych mają nazwy jak zdefiniowane przez <a href="http://zpd.ibe.edu.pl/doku.php?id=czesci_egzaminu">ZPD IBE</a> prefiksy. na.rm jest konieczne, aby wartość ta wyliczała się także dla uczniów, którzy pisali tylko jeden z egzaminów (wtedy za wynik z drugiego bierzemy 0).</li>
+<li>Formuły opisującej wartość wyznacznika - <code>m_mat_p</code> i <code>m_mat_r</code> to nazwy kolumn w zbiorze danych. Listę nazw wszystkich kolumn można uzyskać ze strony pomocy ?matura.2015. Kolumny zawierające wyniki egzaminów maturalnych mają nazwy jak zdefiniowane przez <a href="http://zpd.ibe.edu.pl/doku.php?id=czesci_egzaminu">ZPD IBE</a> prefiksy. na.rm jest konieczne, aby wartość ta wyliczała się także dla uczniów, którzy pisali tylko jeden z egzaminów (wtedy za wynik z drugiego bierzemy 0).</li>
 </ol>
 <pre class="r"><code>formula &lt;- &quot;pmax(m_mat_p, 0, na.rm = TRUE) + pmax(m_mat_r, 0, na.rm = TRUE)&quot;</code></pre>
 <ol start="3" style="list-style-type: decimal">
@@ -208,6 +209,16 @@ data(matura.2015)</code></pre>
 )
 uruchom(dane, warte.uwagi)</code></pre>
 <p>Ładowanie się aplikacji może chwilę potrwać.</p>
+</div>
+<div id="uzywanie-innych-danych-i-aktualizacja" class="section level2">
+<h2>Używanie innych danych i aktualizacja</h2>
+<p>Pakiet dostarcza zbiór danych matura.2015 zawierający wyniki matur z 2015 roku.</p>
+<p>Funkcja <code>uruchom</code> może otrzymać właściwie dowolny zestaw danych. Należy tylko zadbać, aby zawierał on sensowne kolumny <code>id_szkoly</code>, <code>nazwa_szkoly</code> i <code>nazwa_gminy</code>.</p>
+<p>Aby pobrać dane z <a href="http://zpd.ibe.edu.pl/doku.php?id=czesci_egzaminu">ZPD IBE</a> potrzebny jest pakiet ZPD. Instalacja:</p>
+<pre class="r"><code>install.packages('devtools') # potrzbne tylko gdy nie jest jeszcze zainstalowany
+devtools::install_github('zozlak/ZPD')</code></pre>
+<p>Skrypt pobierający znajduje się w pliku pobierz.wyniki.R w katalogu data-raw w pakiecie. Aby go użyć należy zasourceować ten plik na przyklad w RStudio lub konsoli R po czym wywołać funkcję <code>pobierz.wyniki(rok)</code>. Na przykład tak:</p>
+<pre class="r"><code>pobierz.wyniki(2015)</code></pre>
 </div>
 
 
