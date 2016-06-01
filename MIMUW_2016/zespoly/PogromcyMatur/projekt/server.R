@@ -26,6 +26,11 @@ egzaminy_poprz <<- dane@wyniki_po_egz %>%
   distinct()
 egzaminy_poprz$nr <<- 1:nrow(egzaminy_poprz)
 
+generuj_link <- function(arkusz, klucz) {
+  return(paste(c("http://zpd.ibe.edu.pl/pobierzTresc.php?arkusz=", arkusz, "&typ=pdf&klucz=",klucz)
+               , collapse = ''))
+}
+
 numer_kryterium <- function(nr_kryterium, nr_pytania) {
   if(is.na(nr_kryterium) || nr_kryterium == "")
     nr_pytania
@@ -177,10 +182,6 @@ tekst_arkuszy <- function(dane) {
   renderUI(HTML(r))
 }
 
-generuj_link <- function(arkusz, klucz) {
-  return(paste(c("http://zpd.ibe.edu.pl/pobierzTresc.php?arkusz=", arkusz, "&typ=pdf&klucz=",klucz)
-               , collapse = ''))
-}
 
 shinyServer(function(input, output) {
   
@@ -232,18 +233,12 @@ shinyServer(function(input, output) {
     output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(d[[1]], d[[2]]), width = szer)
     
     if(!is.null(input$nr_arkusza) && input$nr_arkusza != 0) {
-      output$link_do_arkusza <- renderUI(
-        tags$a(href = generuj_link(dane@typy_testow[input$nr_arkusza,]$arkusz, 0), "Test")
-      )
+      output$linki_do_arkusza <- renderUI(list(
+        tags$a(href = generuj_link(dane@typy_testow[input$nr_arkusza,]$arkusz, 0), "[Test]"),
+        tags$a(href = generuj_link(dane@typy_testow[input$nr_arkusza,]$arkusz, 1), "[Klucz]")
+      ))
     } else {
       output$link_do_arkusza <- renderUI(tags$div(""))
-    }
-    if(!is.null(input$nr_arkusza) && input$nr_arkusza != 0) {
-      output$link_do_klucza <- renderUI(
-        tags$a(href = generuj_link(dane@typy_testow[input$nr_arkusza,]$arkusz, 1), "Klucz")
-      )
-    } else {
-      output$link_do_klucza <- renderUI(tags$div(""))
     }
   })
   

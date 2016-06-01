@@ -49,7 +49,7 @@ glowny_wykres_help <- tags$html(
   tags$div("Z częściami egzaminu z wykresem szerokim u dołu słabi i średni uczniowie poradzili sobie zatem tak samo słabo, a
            różnica pojawiła się dla lepszych uczniów. Z częściami egzaminu szerokimi u góry gorzej poradzili sobie tylko słabsi
            uczniowie, zaś uczniowie średni i lepsi poradzili sobie z nimi tak samo dobrze."),
-  tags$div("Aby zapoznać się ze szczegółowym wykresem danej części egzminu, kliknij na jej wykres.")
+  tags$div("Aby zapoznać się ze szczegółowym wykresem danej części egzaminu, kliknij na jej wykres.")
   )
 
 wykres_header <- function(nazwa, pomoc) {
@@ -89,12 +89,8 @@ shinyUI(pageWithSidebar(
         "Wpływ wcześniejszych etapów edukacji",
         value = "poprzednie",
         glowny_wykres_header,
+        htmlOutput("linki_do_arkusza"),
         plotOutput("poprz_plot", click="poprz_click"),
-        splitLayout(
-          style = "border: 1px solid silver;",
-          htmlOutput("link_do_arkusza"),
-          htmlOutput("link_do_klucza")
-        ),
         wykres_kryterium_header,
         plotOutput("poprz_plot_jedno"),
         htmlOutput("arkusze_zawierajace")
