@@ -113,7 +113,7 @@ dane_poprzedni_jedno <- function(poprzednie, p_id) {
 
 rysuj_wykres_poprzedni <- function(dane, nazwa_x) {
   ggplot(dane, aes(x = id_factor, y = wynik)) +
-    geom_point(aes(color = poprzedni_wynik, size = liczba)) +
+    geom_violin(aes(color = poprzedni_wynik, size = liczba)) +
     labs(x = nazwa_x, y = "wynik", color = "Poprzedni wynik", size = "Liczba uczniów z poprzednim wynikiem") +
     scale_y_continuous(limits = c(0, 1), labels = scales::percent) +
     theme(axis.text.x = element_text(angle = 90, hjust = 1))
