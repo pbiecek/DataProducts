@@ -2,14 +2,9 @@
 % Please edit documentation in R/dodaj.kolumny.R
 \name{dodaj.kolumny}
 \alias{dodaj.kolumny}
-\title{Dodaj nowe kolumny do data.frame'a}
+\title{Dodaj nowe kolumny do zbioru danych}
 \usage{
-x <- dplyr::data_frame(a=1:5, b=a+7)
-l <- list(
-  c("col_1", "a + b"),
-  c("col_2_name", ~pmax(a*a, a*b - a*a))
-)
-y <- dodaj.kolumny(ramka = x, lista.funkcji = l)
+dodaj.kolumny(ramka, lista.funkcji)
 }
 \arguments{
 \item{ramka}{data.frame do którego należy dodać nowe kolumny}
@@ -21,6 +16,16 @@ y <- dodaj.kolumny(ramka = x, lista.funkcji = l)
 ramka wraz z dodanymi nowymi kolumnami
 }
 \description{
-Dodaj nowe kolumny do data.frame'a
+Dodaj nowe kolumny do zbioru danych
+}
+\examples{
+{
+x <- dplyr::data_frame(a=1:5, b=a+7)
+l <- list(
+  c("col_1", "a + b"),
+  c("col_2_name", ~pmax(a*a, a*b - a*a))
+)
+y <- dodaj.kolumny(ramka = x, lista.funkcji = l)
+}
 }
 

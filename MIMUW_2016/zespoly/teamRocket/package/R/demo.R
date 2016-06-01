@@ -30,5 +30,4 @@ demo <- function() {
   ramka <- dodaj.kolumny(matura.2015, kolumny) 
   # uruchom aplikację
   uruchom(ramka, fajne.kolumny)
-  
 }

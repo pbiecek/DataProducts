@@ -3,13 +3,13 @@
 \docType{data}
 \name{zdawalnosc}
 \alias{zdawalnosc}
-\title{Krotka zawierająca opis funkcji wyliczjącej czy osoba zdała maturę}
+\title{Krotka zawierająca opis funkcji wyliczającej czy osoba zdała maturę}
 \format{An object of class \code{list} of length 3.}
 \usage{
 zdawalnosc
 }
 \description{
-Krotka zawierająca opis funkcji wyliczjącej czy osoba zdała maturę
+Krotka zawierająca opis funkcji wyliczającej czy osoba zdała maturę
 }
 \keyword{datasets}
 

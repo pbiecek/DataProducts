@@ -3,13 +3,13 @@
 \docType{data}
 \name{uw.dziennikarstwo}
 \alias{uw.dziennikarstwo}
-\title{Krotka zawierająca opis funkcji wyliczjącej punkty przy rekrutacji na dziennikarstwo UW}
+\title{Krotka zawierająca opis funkcji wyliczającej punkty przy rekrutacji na dziennikarstwo na UW}
 \format{An object of class \code{list} of length 3.}
 \usage{
 uw.dziennikarstwo
 }
 \description{
-Krotka zawierająca opis funkcji wyliczjącej punkty przy rekrutacji na dziennikarstwo UW
+Krotka zawierająca opis funkcji wyliczającej punkty przy rekrutacji na dziennikarstwo na UW
 }
 \keyword{datasets}
 

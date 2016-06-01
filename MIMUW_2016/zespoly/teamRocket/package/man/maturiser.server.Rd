@@ -6,6 +6,12 @@
 \usage{
 maturiser.server(matury, wyznaczniki)
 }
+\arguments{
+\item{matury}{tabela zawierająca wyniki matur i wyliczonych wyznaczników}
+
+\item{wyznaczniki}{lista par postaci ("nazwa_kolumny", "opis_wyznacznika")
+Wymienione wyznaczniki zostaną przedstawione w aplikacji}
+}
 \description{
 Serwer aplikacji shiny
 }

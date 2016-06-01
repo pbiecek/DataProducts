@@ -9,9 +9,9 @@ uruchom(dane, lista.wyznacznikow)
 \arguments{
 \item{dane}{tabela zawierajaca wyniki matur i wartości
 wyznaczników dla poszczególnych uczniów. dla każdego ucznia jest
-też id jego szkoły, skrót nazwy gminy i nazwa szkoły}
+też id jego szkoły, skrót nazwy gminy i nazwa szkoły (patrz ?matura.2015)}
 
-\item{lista.wyznaczników}{lista wyznaczników które mają być
+\item{lista.wyznacznikow}{lista wyznaczników które mają być
 przedstawione na wykresach. typu c("nazwa.kolumny", "opis.wyznacznika")
 gdzie nazwa.kolumny to kolumna w tabeli dane}
 }

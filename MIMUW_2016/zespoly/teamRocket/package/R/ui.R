@@ -1,5 +1,3 @@
-# library(shiny)
-
 #' UI aplikacji shiny
 maturiser.ui <- shiny::shinyUI(shiny::fluidPage(
   shiny::titlePanel("Maturiser"),

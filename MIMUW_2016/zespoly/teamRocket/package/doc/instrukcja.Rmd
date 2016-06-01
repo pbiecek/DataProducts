@@ -90,19 +90,15 @@ Powinna być unikalna, nie powinna zawierać spacji ani polskich znaków
 ```{r, eval=FALSE}
 skrot <- "suma_mat"
 ```
-2. Formuły opisująca wartość wyznacznika.
-m_mat_p i m_mat_r to nazwy kolumn w bazie danych
-Listę wszystkich kolumn można uzyskać ze strony pomocy ?matura.2015
-Kolumny używają takich samych nazw jak zdefiniowane w
-http://zpd.ibe.edu.pl/doku.php?id=czesci_egzaminu
+2. Formuły opisującej wartość wyznacznika - m_mat_p i m_mat_r to nazwy kolumn w zbiorze danych. Listę nazw wszystkich kolumn można uzyskać ze strony pomocy ?matura.2015.
+Kolumny zawierające wyniki egzaminów maturalnych mają nazwy jak zdefiniowane przez
+[ZPD IBE](http://zpd.ibe.edu.pl/doku.php?id=czesci_egzaminu)
 prefiksy. na.rm jest konieczne, aby wartość ta wyliczała się także dla uczniów,
-którzy pisali tylko jeden z egzaminów (wtedy za wynik z drugiego bierzemy 0)
+którzy pisali tylko jeden z egzaminów (wtedy za wynik z drugiego bierzemy 0).
 ```{r, eval=FALSE}
 formula <- "pmax(m_mat_p, 0, na.rm = TRUE) + pmax(m_mat_r, 0, na.rm = TRUE)"
 ```
-3. Opisową nazwę wyznacznika
-Będzie ona wyświetlona w aplikacji na liście wyboru wyznacznika,
-oraz jako tytuł wykresu
+3. Opisową nazwę wyznacznika - będzie ona wyświetlona w aplikacji na liście wyboru wyznacznika, oraz jako tytuł wykresu.
 ```{r, eval=FALSE}
 opis <- "Suma wyniku z matur z matematyki"
 ```
@@ -120,3 +116,4 @@ warte.uwagi <- list(
 )
 uruchom(dane, warte.uwagi)
 ```
+Ładowanie się aplikacji może chwilę potrwać.

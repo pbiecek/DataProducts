@@ -10,8 +10,17 @@ generuj.wykres(dane, nazwa.kolumny, szkola_id, opis)
 \item{dane}{tabela z której generować wykres}
 
 \item{nazwa.kolumny}{nazwa kolumny}
+
+\item{szkola_id}{id szkoły dla której ma być wygenerowany zestaw danych w ramach tego wykresu}
+
+\item{opis}{nazwa dla danych zawartych w wyszczególnionej kolumnie - tytuł wykresu}
 }
 \description{
 Generuj wykresy porównawcze dla konkretnego współczynnika
+}
+\examples{
+{
+generuj.wykres(matura.2015, "m_mat_r", 24063, "Matura rozszerzona z matematyki")
+}
 }
 

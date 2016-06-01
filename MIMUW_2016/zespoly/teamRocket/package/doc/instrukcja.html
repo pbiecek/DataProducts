@@ -191,11 +191,11 @@ data(matura.2015)</code></pre>
 </ol>
 <pre class="r"><code>skrot &lt;- &quot;suma_mat&quot;</code></pre>
 <ol start="2" style="list-style-type: decimal">
-<li>Formuły opisująca wartość wyznacznika. m_mat_p i m_mat_r to nazwy kolumn w bazie danych Listę wszystkich kolumn można uzyskać ze strony pomocy ?matura.2015 Kolumny używają takich samych nazw jak zdefiniowane w <a href="http://zpd.ibe.edu.pl/doku.php?id=czesci_egzaminu" class="uri">http://zpd.ibe.edu.pl/doku.php?id=czesci_egzaminu</a> prefiksy. na.rm jest konieczne, aby wartość ta wyliczała się także dla uczniów, którzy pisali tylko jeden z egzaminów (wtedy za wynik z drugiego bierzemy 0)</li>
+<li>Formuły opisującej wartość wyznacznika - m_mat_p i m_mat_r to nazwy kolumn w zbiorze danych. Listę nazw wszystkich kolumn można uzyskać ze strony pomocy ?matura.2015. Kolumny zawierające wyniki egzaminów maturalnych mają nazwy jak zdefiniowane przez <a href="http://zpd.ibe.edu.pl/doku.php?id=czesci_egzaminu">ZPD IBE</a> prefiksy. na.rm jest konieczne, aby wartość ta wyliczała się także dla uczniów, którzy pisali tylko jeden z egzaminów (wtedy za wynik z drugiego bierzemy 0).</li>
 </ol>
 <pre class="r"><code>formula &lt;- &quot;pmax(m_mat_p, 0, na.rm = TRUE) + pmax(m_mat_r, 0, na.rm = TRUE)&quot;</code></pre>
 <ol start="3" style="list-style-type: decimal">
-<li>Opisową nazwę wyznacznika Będzie ona wyświetlona w aplikacji na liście wyboru wyznacznika, oraz jako tytuł wykresu</li>
+<li>Opisową nazwę wyznacznika - będzie ona wyświetlona w aplikacji na liście wyboru wyznacznika, oraz jako tytuł wykresu.</li>
 </ol>
 <pre class="r"><code>opis &lt;- &quot;Suma wyniku z matur z matematyki&quot;</code></pre>
 <p>Następnie dodajemy nową kolumnę do tabeli przy użyciu funkcji dodaj.kolumny:</p>
@@ -207,6 +207,7 @@ data(matura.2015)</code></pre>
   c(&quot;m_mat_p&quot;, &quot;Matura podstawowa z matematyki&quot;)
 )
 uruchom(dane, warte.uwagi)</code></pre>
+<p>Ładowanie się aplikacji może chwilę potrwać.</p>
 </div>
 
 

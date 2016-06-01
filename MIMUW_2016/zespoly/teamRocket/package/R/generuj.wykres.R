@@ -1,6 +1,11 @@
 #' Generuj wykresy porównawcze dla konkretnego współczynnika
 #' @param dane tabela z której generować wykres
-#' @param nazwa.kolumny nazwa kolumny 
+#' @param nazwa.kolumny nazwa kolumny
+#' @param szkola_id id szkoły dla której ma być wygenerowany zestaw danych w ramach tego wykresu
+#' @param opis nazwa dla danych zawartych w wyszczególnionej kolumnie - tytuł wykresu
+#' @examples {
+#' generuj.wykres(matura.2015, "m_mat_r", 24063, "Matura rozszerzona z matematyki")
+#' }
 #' @export
 generuj.wykres <- function(dane, nazwa.kolumny, szkola_id, opis) {
   # Odfiltrowywanie danych
