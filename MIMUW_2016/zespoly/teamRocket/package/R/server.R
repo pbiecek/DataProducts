@@ -11,15 +11,14 @@ pobierz.szkoly <- function(ramka) {
     dplyr::distinct(id_szkoly) %>% dplyr::arrange(nazwa_szkoly)
 }
 
-# szkoly.z.gminy <- function(lista.szkol, gmina) {
-#   lista.szkol %>%
-#     sort(dplyr::filter(gmina_szkoly == gmina)$nazwa_szkoly)
-# }
-
 szkoly.z.gminy <- function(lista.szkol, gmina) {
-  matury.dla.gmin <- matury %>% filter(gmina_szkoly == gmina)
-  sort(matury.dla.gmin$nazwa_szkoly)
-}
+      sort(dplyr::filter(lista.szkol, gmina_szkoly == gmina)$nazwa_szkoly)
+ }
+
+#szkoly.z.gminy <- function(lista.szkol, gmina) {
+#  matury.dla.gmin <- matury %>% filter(gmina_szkoly == gmina)
+#  sort(matury.dla.gmin$nazwa_szkoly)
+#}
 
 pobierz.id.szkoly <- function(lista.szkol, szkola) {
   wiersz <- lista.szkol %>% dplyr::filter(nazwa_szkoly == szkola) %>% utils::head(1)
@@ -72,7 +71,7 @@ maturiser.server <- function(matury, wyznaczniki) {
     })
     
     output$wykres <- shiny::renderPlot(
-      if (input$szkola != "")
+      if (is.null(input$szkola) | input$szkola != "")
         generuj.wykres(matury,
                      pobierz.wyznacznik(wyznaczniki, input$wyznacznik),
                      pobierz.id.szkoly(matury, input$szkola),
@@ -80,7 +79,7 @@ maturiser.server <- function(matury, wyznaczniki) {
     )
     
     output$instrukcja <- shiny::renderText(
-      if (input$szkola == "")
+      if (is.null(input$szkola) | input$szkola == "")
         '<p style="color:green;">Tutaj bedzie instrukcja</p>'
     )
   

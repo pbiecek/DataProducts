@@ -7,12 +7,14 @@ demo <- function() {
   kolumny <- list(
     c(uw.matematyka$skrot, uw.matematyka$formula),
     c(uw.informatyka$skrot, uw.informatyka$formula),
-    c(zdawalnosc$skrot, zdawalnosc$formula),
-    c(uw.prawo$skrot, uw.prawo$formula)
+    c(uw.prawo$skrot, uw.prawo$formula),
+    c(uw.dziennikarstwo$skrot, uw.dziennikarstwo$formula),
+    c(zdawalnosc$skrot, zdawalnosc$formula)
   )
   
   # lista kolumn dla których mają być prezentowane wykresy
-  fajne <- list(
+  fajne.kolumny <- list(
+    c("m_pol_p", "Polski podstawowy"),
     c("m_mat_p", "Matematyka podstawowa"),
     c("m_mat_r", "Matematyka rozszerzona"),
     c("m_fiz_r", "Fizyka rozszerzona"),
@@ -27,6 +29,6 @@ demo <- function() {
   # dodaj kolumny na wyznaczniki
   ramka <- dodaj.kolumny(matura.2015, kolumny) 
   # uruchom aplikację
-  uruchom(ramka, fajne)
+  uruchom(ramka, fajne.kolumny)
   
 }
