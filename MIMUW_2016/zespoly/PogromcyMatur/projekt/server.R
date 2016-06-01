@@ -99,14 +99,16 @@ dane_poprzedni <- function(nr, poziom = "kry", nr_arkusza) {
 dane_poprzedni_wszystko <- function(wyniki_egz, poziom) {
   if (poziom == "pyt") {
     wyniki_egz = wyniki_egz %>%
-      group_by(poprzedni_wynik, id_pytania, liczba) %>%
+      group_by(poprzedni_wynik, liczba, id_pytania) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
+      ungroup() %>%
       rename(id = id_pytania)
     n_poziom <- "id pytania"
   } else if (poziom == "wia") {
     wyniki_egz = wyniki_egz %>%
-      group_by(poprzedni_wynik, id_wiazki, liczba) %>%
+      group_by(poprzedni_wynik, liczba, id_wiazki) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
+      ungroup() %>%
       rename(id = id_wiazki)
     n_poziom <- "id wiązki"
   } else {
@@ -134,15 +136,17 @@ dane_poprzedni_arkusz <- function(wyniki_egz, poziom) {
       as.character()
   } else if (poziom == "pyt") {
     wyniki_egz = wyniki_egz %>%
-      group_by(poprzedni_wynik, id_pytania, liczba, numer_pytania) %>%
+      group_by(poprzedni_wynik, liczba, numer_pytania, id_pytania) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
+      ungroup() %>%
       rename(id = id_pytania)
     n_poziom <- "numer pytania"
     wyniki_egz$id_factor = as.character(wyniki_egz$numer_pytania)
   } else if (poziom == "wia") { # FIXME - jak dobrze zrobic numery wiazek?
     wyniki_egz = wyniki_egz %>%
-      group_by(poprzedni_wynik, id_wiazki, liczba) %>%
+      group_by(poprzedni_wynik, liczba, id_wiazki) %>%
       summarise_each(funs(sum), wynik, max_punktow) %>%
+      ungroup() %>%
       rename(id = id_wiazki)
     n_poziom <- "numer wiązki"
     wyniki_egz$id_factor = as.character(wyniki_egz$id)
@@ -261,7 +265,7 @@ shinyServer(function(input, output) {
     d <- dane_poprzedni(input$nr_poprzedni, input$poziom, input$nr_arkusza)
     poprzedni_data <<- d[[1]]
     poprzedni_poziom <<- d[[2]]
-    szer = PX_PER_EXAM_PART * (poprzedni_data %>% select(id_factor) %>% distinct() %>% nrow())
+    szer = PX_PER_EXAM_PART * (poprzedni_data %>% select(id) %>% distinct() %>% nrow())
     output$poprz_plot <- renderPlot(rysuj_wykres_poprzedni(d[[1]], d[[2]]), width = szer)
   })
   
