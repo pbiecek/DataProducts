@@ -68,7 +68,7 @@ wykres_kryterium_header <- wykres_header("Szczegółowy wykres części", "")
 
 shinyUI(pageWithSidebar(
   
-  headerPanel("Czwarta, finalna iteracja"),
+  headerPanel("Egzaminy względem egzaminów"),
   
   sidebarPanel(
     uiOutput("egz_wybor"),
