@@ -162,7 +162,10 @@ arkusze_zawierajace <- function(n_id, poziom)
 }
 
 arkusz_linia <- function(arkusz, czesc) {
-  paste(arkusz, " [", czesc, "]", "<br/>", sep = "")
+  test <- tags$a(href = generuj_link(arkusz, 0), "[Test]")
+  klucz <- tags$a(href = generuj_link(arkusz, 1), "[Klucz]")
+  gdzie <- paste(arkusz, " [", czesc, "]", sep = "")
+  paste(gdzie, test, klucz, "<br/>")
 }
 
 tekst_arkuszy <- function(dane) {
