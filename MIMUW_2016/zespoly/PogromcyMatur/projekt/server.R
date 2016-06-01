@@ -7,11 +7,8 @@
 
 library(shiny)
 library(dplyr)
-library(ZPD)
 library(ggplot2)
 library(scales)
-library(tidyr)
-library(corrplot)
 
 source("./pobierz_pytania.R")
 
