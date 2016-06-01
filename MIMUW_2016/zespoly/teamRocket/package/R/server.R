@@ -63,7 +63,8 @@ maturiser.server <- function(matury, wyznaczniki) {
     })
     
     output$wyznacznik <- shiny::renderUI({
-      shiny::selectInput(inputId = "wyznacznik", 
+      if (is.null(input$szkola) | input$szkola != "")
+        shiny::selectInput(inputId = "wyznacznik", 
                   label = "Wybierz wyznacznik",
                   choices = opisy.wyznacznikow,
                   width = "100%",
@@ -80,7 +81,7 @@ maturiser.server <- function(matury, wyznaczniki) {
     
     output$instrukcja <- shiny::renderText(
       if (is.null(input$szkola) | input$szkola == "")
-        '<p style="color:green;">Tutaj bedzie instrukcja</p>'
+        '<p style="color:green; font-size:16px;">Obsługa aplikacji jest niezwykle prosta!</p><br/><p style="color:green; font-size:16px;">W panelu bocznym wybierz <b>gminę</b> oraz interesującą Cię <b>szkołę</b>. Następnie wybierz <b>wyznacznik</b> - kryterium, ze względu na które chcesz porównać wyniki maturalne uczniów wybranej placówki. Możliwe jest filtrowanie gmin/szkół/wyznaczników poprzez wpisywanie części nazw w polach wyboru.</p><br/><p style="color:green; font-size:16px;">Przed Twoimi oczami ukaże się piękny histogram - wykres przedstawiający liczbę uczniów, dla których wyznacznik ma wartość przedstawioną na osi x.</p>'
     )
   
     # output$wykresy <- renderUI({
