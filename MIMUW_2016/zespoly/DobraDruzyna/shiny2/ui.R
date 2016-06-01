@@ -30,12 +30,21 @@ shinyUI(fluidPage(
            tags$p(class="subtitle", 
                   "Aplikacja umożliwia zestawienie wyników matur w danej gminie z czynnikami społeczno-ekonomicznymi
               oraz porównanie sytuacji wyników tego zestawienia z innymi gminami w Polsce."),
-           
+           tags$p(class="subtitle", "Aplikcja wykorzystuje wskaźnik EWD. Edukacyjna Wartość Dodana to metoda analizy pozwalająca 
+                  oszacować wkład szkoły w wyniki egzaminacyjne uczniów.
+                  Skala ma swój środek w punkcie 0. Np.: EWD równe 5 oznacza, że wynik w danym obszarze ucznia tej szkoły
+                  na maturze był o 5 punktów wyższy(w skali standardowej, czyli o 1/3 odchylenia standardowego wyższy), 
+                  niż by to wynikało z jego rezultatu na egzaminie gimnazjalnym."),
            mainPanel(
              
              tags$div(
               tags$p(class="select_gmina", "Wybierz gminę"),
               htmlOutput("listaGmin")),
+             
+             h3("Średni wynik matury."),
+             tags$p(class="subtitle", "Poniższy wykres przedstawia średni wynik matury z 
+                    danego przedmiotu w wybranej gminie. Pozwala porównać wyniki na przestrzeni lat."),
+             plotlyOutput("wykres_matury"),
              
              tags$p(class="subtitle", 
                     "Poniżej znajdują się wykresy, w których wyniki wybranej matury zestawione są z różnymi czynnikami, 
@@ -46,6 +55,9 @@ shinyUI(fluidPage(
              tags$p(class="subtitle", "Poniższy wykres zestawia wyniki matur z liczbą bezrobotnych
                     przypadających na 1000 mieszkańców w danych gminach i pozwala porównać tę relację względem innych
                     gmin w Polsce. "),
+             tags$p(class="subtitle", "EWD, czyli Edukacyjna Wartość Dodana to metoda analizy pozwalająca 
+                    oszacować wkład szkoły w wyniki egzaminacyjne uczniów.
+                    Skala ma swój środek w punkcie 0. Np.: EWD równe 5 oznacza, że wynik w danym obszarze ucznia tej szkoły na maturze był o 5 punktów wyższy(w skali standardowej, czyli o 1/3 odchylenia standardowego wyższy), niż by to wynikało z jego rezultatu na egzaminie gimnazjalnym."),
              plotlyOutput("wykres_bezrobotni"),
              
              tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest bezrobocie w wybranej 
@@ -103,8 +115,7 @@ shinyUI(fluidPage(
              tags$p(class="subtitle", "Poniżej możemy sprawdzić na jakim poziomie jest suma trzyletnich wydatków
                     na 1 ucznia w wybranej gminie w porównaniu z innymi polskimi gminami."),
              plotlyOutput("wykres_wydatki2"),
-             textOutput("liczba_wydatki"),
-             plotlyOutput("wykres_matury")
+             textOutput("liczba_wydatki")
              
            )    
         )

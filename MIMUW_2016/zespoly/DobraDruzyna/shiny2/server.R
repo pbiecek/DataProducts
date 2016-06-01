@@ -2,6 +2,7 @@ library(shiny)
 library(dplyr)
 library(ggplot2)
 library(plotly)
+library(RColorBrewer)
 
 shinyServer(function(input, output) { 
   
@@ -53,14 +54,15 @@ shinyServer(function(input, output) {
   
   output$wykres_bezrobotni = renderPlotly({
     wskaznik <- reactive({
-      arrange(merge(polski, bezrobocie), gmina_szkoly)
+      data <- merge(polski, bezrobocie)
+      merge(x = data, y = ewd, by = c("rok", "teryt"))
     })
     
     wskaznikWybranyRok <- filter(wskaznik(), rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, teryt == input$gmina)
     
     wykres <- plot_ly(wskaznikWybranyRok, x = Wartosc, y = srednia_gminy, text = paste("gmina: ", gmina_szkoly),
-                      mode = "markers", marker = list(color = "lightblue"))
+                      mode = "markers", color = EWD, colors = "RdYlGn")
     
     wykres <- layout(wykres, 
                      xaxis = list(title = "Liczba bezrobotnych na 1000 osób w wieku produkcyjnym"),
@@ -88,14 +90,15 @@ shinyServer(function(input, output) {
   
   output$wykres_biblioteki = renderPlotly({
     wskaznik <- reactive({
-      arrange(merge(polski, biblioteki), gmina_szkoly)
+      data <- merge(polski, biblioteki)
+      merge(x = data, y = ewd, by = c("rok", "teryt"))
     })
     
     wskaznikWybranyRok <- filter(wskaznik(), rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, teryt == input$gmina)
 
     wykres <- plot_ly(wskaznikWybranyRok, x = Wartosc, y = srednia_gminy, text = paste("gmina: ", gmina_szkoly),
-                      mode = "markers", marker = list(color = "lightblue"))
+                      mode = "markers", color = EWD, colors = "RdYlGn")
     
     wykres <- layout(wykres, 
                      xaxis = list(title = "Liczba mieszkańców na 1 bibliotekę"),
@@ -124,7 +127,8 @@ shinyServer(function(input, output) {
   
   output$wykres_czytelnicy = renderPlotly({
     wskaznik <- reactive({
-      arrange(merge(polski,czytelnicy), gmina_szkoly)
+      data <- merge(polski, czytelnicy)
+      merge(x = data, y = ewd, by = c("rok", "teryt"))
     })
     
     wskaznikWybranyRok <- filter(wskaznik(), rok == input$rok)
@@ -132,7 +136,7 @@ shinyServer(function(input, output) {
     
   
     wykres <- plot_ly(wskaznikWybranyRok, x = Wartosc, y = srednia_gminy, text = paste("gmina: ", gmina_szkoly),
-                      mode = "markers", marker = list(color = "lightblue"))
+                      mode = "markers", color = EWD, colors = "RdYlGn")
     
     wykres <- layout(wykres, 
                      xaxis = list(title = "Liczba czytelników bibliotek na 1000 mieszkańców"),
@@ -160,14 +164,15 @@ shinyServer(function(input, output) {
   
   output$wykres_wypozyczenia = renderPlotly({
     wskaznik <- reactive({
-      arrange(merge(polski, wypozyczenia), gmina_szkoly)
+      data <- merge(polski, wypozyczenia)
+      merge(x = data, y = ewd, by = c("rok", "teryt"))
     })
     
     wskaznikWybranyRok <- filter(wskaznik(), rok == input$rok)
     zaznaczonaGmina <- subset(wskaznikWybranyRok, teryt == input$gmina)
    
     wykres <- plot_ly(wskaznikWybranyRok, x = Wartosc, y = srednia_gminy, text = paste("gmina: ", gmina_szkoly),
-                      mode = "markers", marker = list(color = "lightblue"))
+                      mode = "markers", color = EWD, colors = "RdYlGn")
     
     wykres <- layout(wykres, 
                      xaxis = list(title = "Liczba wypożyczeń na 1 czytelnika"),
@@ -194,10 +199,9 @@ shinyServer(function(input, output) {
   })
   
   output$wykres_matury = renderPlotly({
-    wykres <- plot_ly(filter(polski_srednia, gmina_szkoly==zaznaczonaGmina$nazwa_gminy), x = rok, y = sredni_wynik_matury)
+    wykres <- plot_ly(filter(polski, teryt==input$gmina), x = rok, y = srednia_gminy)
     wykres <- layout(wykres,
                      yaxis = list(title = "Średni wynik matury"))
     wykres
   })
-
 })
