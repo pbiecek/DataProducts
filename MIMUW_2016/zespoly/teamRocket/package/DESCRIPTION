@@ -1,14 +1,14 @@
 Package: maturiser
-Title: Wyswietl wyniki matury
+Title: Wyswietl wyniki matury.
 Version: 0.0.0.9000
 Authors@R: c(person("Piotr", "Bakalarski", email = "pb358995@students.mimuw.edu.pl", role = c("aut", "cre")),
              person("Bartek", "Bancerek", email = "bb332063@students.mimuw.edu.pl", role = c("aut")),
              person("Mateusz", "Macias", email = "mm332321@students.mimuw.edu.pl", role = c("aut")),
              person("Adrianna", "Traczyk", email = "at360392@students.mimuw.edu.pl", role = c("aut")))
-Description: Provides a shiny app for displaying of matura 2015 results
+Description: Aplikacja do wyswietlania wynikow matury i wspolczynnikow wyliczalnych na podstawie tych wynikow.
 Depends:
     R (>= 3.2.4)
-License: What license is it under?
+License: CC-BY-SA-4.0
 LazyData: true
 Imports:
     dplyr,

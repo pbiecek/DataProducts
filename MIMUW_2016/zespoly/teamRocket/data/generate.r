@@ -11,35 +11,29 @@ generate_single <- function(ido_cke, czesc, szk) {
   } else {
     czesc_d <- paste("pods_", czesc[2], sep='')
   }
-  czesc_s <-paste(czesc[1], czesc[2], sep="_", collapse="")
-
+  czesc_s <-paste("m", czesc[2], czesc[1], sep="_", collapse="")
+  cat(paste0("Working on ", czesc_s, "\n"))
   load(file = paste("../raw_data/ZPD", czesc_d, "2015.dat", sep="_"))
   dt <-get(paste("mt", czesc_d, "2015", sep="_"))
   l_kol <- ncol(dt)
   mx_sum <- strtoi(czesc[3]) / 100
-  #print(mx_sum)
   dt %>%
     inner_join(szk, by = "id_szkoly") %>%
     mutate_(.dots=setNames(
-      list(~(rowSums(.[5 : l_kol ], na.rm = TRUE)/mx_sum)),
-           czesc_s)) %>%
-    select_("id_obserwacji", czesc_s, "id_szkoly") -> wyn
-  inner_join(wyn, ido_cke, by="id_obserwacji") %>%
-    select_("id_cke", czesc_s, "id_szkoly") %>%
-    rename(id_szkoly_new = id_szkoly) -> wyn
-  print(paste("Generated ", czesc[1], czesc[2]))
+      list(~(rowSums(.[grepl("^[pk]_[0-9]+$", names(.))], na.rm = TRUE))), czesc_s)) %>%
+    mutate_(.dots=setNames(paste(czesc_s, "* 100 / max(",czesc_s,")"),
+                           czesc_s)) %>%
+    inner_join(ido_cke, by="id_obserwacji") %>%
+    select_("id_cke", "id_szkoly", "nazwa_szkoly", "gmina_szkoly",czesc_s ) -> wyn
+  cat(paste("Generated ", czesc_s,"\n"))
   return(wyn)
 }
 
 generate_all <- function(ucz, szk, czesci) {
   Reduce(function(a, b) {
-    rename(a, id_szkoly_old = id_szkoly) %>%
-      full_join(generate_single(ucz, b, szk),
-                                  by = "id_cke") %>%
-      mutate(id_szkoly = ifelse(is.na(id_szkoly_old), id_szkoly_new, id_szkoly_old)) %>%
-      select(-id_szkoly_old, -id_szkoly_new)
+      full_join(a, generate_single(ucz, b, szk), by = NULL)
     },
-         czesci, data.frame(id_cke = character(0), id_szkoly = integer(0)))
+         czesci[-1], generate_single(ucz, first(czesci), szk))
 }
 
 
@@ -55,26 +49,33 @@ generuj.3.iter <- function() {
   szkoly %>%
     filter(rok==2015) %>%
     filter(typ_szkoly %in% c("LO", "LOU","LP", "T", "TU", "ZZ")) %>%
-    select(id_szkoly, nazwa_szkoly) -> szkoly.2015
+    select(id_szkoly, nazwa_szkoly, gmina_szkoly) -> szkoly.2015
   
   #lista dobrana mniej-więcej eksperymentalnie. potrzebne konkretniejsze dane :P
   lista.matur = list(
-    c("p", "mat", 50),
-    c("p", "pl", 70),
-    c("p", "ang", 50),
-    c("p", "fiz", 50),
-    c("p", "bio", 50),
-    c("p", "chem", 50),
-    c("p", "inf", 60),
-    c("r", "mat", 50),
-    c("r", "pl", 40),
-    c("r", "ang", 50),
-    c("r", "fiz", 60),
-    c("r", "bio", 47),
-    c("r", "chem", 48),
-    c("r", "inf", 50)
+    c("p", "mat"),
+    c("p", "pl"),
+    c("p", "ang"),
+    c("p", "fiz"),
+    c("p", "bio"),
+    c("p", "chem"),
+    c("p", "inf"),
+    c("p", "wos"),
+    c("p", "his"),
+    c("p", "geo"),
+    c("r", "mat"),
+    c("r", "pl"),
+    c("r", "ang"),
+    c("r", "fiz"),
+    c("r", "bio"),
+    c("r", "chem"),
+    c("r", "inf"),
+    c("r", "wos"),
+    c("r", "his"),
+    c("r", "geo")
   )
-  data.all.pl <- generate_all(ucz, szkoly.2015, lista.matur)
-  save(data.all.pl, file = "ZPD_iter3.dat")
+  data.all.pl <- generate_all(ucz, szkoly.2015, lista.matur) %>%
+    rename(m_che_p = m_chem_p, m_pol_p = m_pl_p, m_che_r = m_chem_r, m_pol_r = m_pl_r)
+  #save(data.all.pl, file = "ZPD_iter3.dat")
   return(data.all.pl)
 }
