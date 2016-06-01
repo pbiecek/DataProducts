@@ -11,18 +11,23 @@ pobierz.szkoly <- function(ramka) {
     dplyr::distinct(id_szkoly) %>% dplyr::arrange(nazwa_szkoly)
 }
 
+# szkoly.z.gminy <- function(lista.szkol, gmina) {
+#   lista.szkol %>%
+#     sort(dplyr::filter(gmina_szkoly == gmina)$nazwa_szkoly)
+# }
+
 szkoly.z.gminy <- function(lista.szkol, gmina) {
-  lista.szkol %>%
-    sort(dplyr::filter(nazwa_gminy == gmina)$nazwa_szkoly)
+  matury.dla.gmin <- matury %>% filter(gmina_szkoly == gmina)
+  sort(matury.dla.gmin$nazwa_szkoly)
 }
 
 pobierz.id.szkoly <- function(lista.szkol, szkola) {
-  wiersz <- ramka %>% dplyr::filter(nazwa_szkoly == szkola) %>% utils::head(1)
+  wiersz <- lista.szkol %>% dplyr::filter(nazwa_szkoly == szkola) %>% utils::head(1)
   wiersz$id_szkoly
 }
 
 pobierz.opisy.wyznacznikow <- function(wyznaczniki) {
-  opisy <- NULL
+  opisy <- c()
   for (w in wyznaczniki)
     opisy <- c(opisy, w[[2]])
   opisy
@@ -46,19 +51,16 @@ maturiser.server <- function(matury, wyznaczniki) {
     output$gmina <- shiny::renderUI({
       shiny::selectInput(inputId = "gmina",
                   label = "Wybierz gminę",
-                  choices = gminy,
-                  selected = dplyr::first(gminy))
+                  choices = gminy)
+                  # selected = dplyr::first(gminy))
     })
-  
-    if(is.null(input$gmina))
-      input$gmina <- dplyr::first(gminy)
-      
-    szk.gm <- szkoly.z.gminy(szkoly, input$gmina)
+   
     output$szkola <- shiny::renderUI({
+      szk.gm <- szkoly.z.gminy(szkoly, input$gmina)
       shiny::selectInput(inputId = "szkola", 
                   label = "Wybierz szkołę",
-                  choices = szk.gm,
-                  selected = dplyr::first(szk.gm))
+                  choices = szk.gm)
+                  # selected = dplyr::first(szk.gm))
     })
     
     output$wyznacznik <- shiny::renderUI({
@@ -68,13 +70,18 @@ maturiser.server <- function(matury, wyznaczniki) {
                   width = "100%",
                   selected = dplyr::first(opisy.wyznacznikow))
     })
-    if(is.null(input$wyznacznik))
-      input$wyznacznik <- dplyr::first(opisy.wyznacznikow)
+    
     output$wykres <- shiny::renderPlot(
-      generuj.wykres(matury,
+      if (input$szkola != "")
+        generuj.wykres(matury,
                      pobierz.wyznacznik(wyznaczniki, input$wyznacznik),
                      pobierz.id.szkoly(matury, input$szkola),
                      input$wyznacznik)
+    )
+    
+    output$instrukcja <- shiny::renderText(
+      if (input$szkola == "")
+        '<p style="color:green;">Tutaj bedzie instrukcja</p>'
     )
   
     # output$wykresy <- renderUI({
