@@ -238,7 +238,7 @@ shinyServer(function(input, output) {
         tags$a(href = generuj_link(dane@typy_testow[input$nr_arkusza,]$arkusz, 1), "[Klucz]")
       ))
     } else {
-      output$link_do_arkusza <- renderUI(tags$div(""))
+      output$linki_do_arkusza <- renderUI(tags$div(""))
     }
   })
   
