@@ -7,10 +7,10 @@ library(RColorBrewer)
 shinyServer(function(input, output) { 
   
   output$listaGmin <- renderUI({ 
-    wskaznik <- arrange(czytelnicy, Nazwa)
+    wskaznik <- arrange(polski, gmina_szkoly)
     
     teryty <- wskaznik$teryt
-    nazwy <- wskaznik$Nazwa
+    nazwy <- wskaznik$gmina_szkoly
     names(teryty) <- nazwy
     
     selectInput("gmina", NULL, teryty, selected = NULL, width='100%')
