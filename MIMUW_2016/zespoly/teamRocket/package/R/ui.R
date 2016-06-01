@@ -2,14 +2,16 @@ library(shiny)
 
 #' UI aplikacji shiny
 maturiser.ui <- shinyUI(fluidPage(
-  titlePanel("Statystyki szkoły"),
+  titlePanel("Wyniki matur"),
   sidebarLayout(
       sidebarPanel(
           htmlOutput("gmina"),
           htmlOutput("szkola")
       ),
       mainPanel(
-          htmlOutput("wykresy")
+          htmlOutput("wyznacznik"),
+          plotOutput("wykres")
+          #htmlOutput("wykresy")
       )
     )
   )
