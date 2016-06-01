@@ -90,7 +90,10 @@ shinyUI(pageWithSidebar(
         value = "poprzednie",
         glowny_wykres_header,
         htmlOutput("linki_do_arkusza"),
-        plotOutput("poprz_plot", click="poprz_click"),
+        tags$div (
+          style = "overflow-x: scroll",
+          plotOutput("poprz_plot", click="poprz_click")
+        ),
         wykres_kryterium_header,
         plotOutput("poprz_plot_jedno"),
         htmlOutput("arkusze_zawierajace")
