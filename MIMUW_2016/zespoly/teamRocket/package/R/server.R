@@ -63,7 +63,7 @@ maturiser.server <- function(matury, wyznaczniki) {
     })
     
     output$wyznacznik <- shiny::renderUI({
-      if (is.null(input$szkola) | input$szkola != "")
+      #if (is.null(input$szkola) | input$szkola != "")
         shiny::selectInput(inputId = "wyznacznik", 
                   label = "Wybierz wyznacznik",
                   choices = opisy.wyznacznikow,
