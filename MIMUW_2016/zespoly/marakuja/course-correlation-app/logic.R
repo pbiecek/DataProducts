@@ -6,32 +6,43 @@ get_subjects_codes_mock <- function() {
   c("1000-214bWWW", "1000-224bJNP2", "1000-214bJAO", "1000-213bASD")
 }
 
-correlation_mock <- function(fun, courseA, courseB) {
-  dist_a <- fun(courseA, courseB)
-  series_a <- df_for_plot(dist_a)$liczba_studentow
+courses_summary_joined <- function(data) {
+  data %>%
+    group_by(OCENA_LICZBOWA.x) %>%
+    summarise(liczba_studentow=n()) %>%
+    select(ocena_przedmiot_B = OCENA_LICZBOWA.x, liczba_studentow)}
 
+compute_rate <- function(data) {
+  summary <- courses_summary_joined(data)
+  series_a <- df_for_plot(summary)$liczba_studentow
   sum(series_a)
 }
 
-correlation_mock_passed <- function(subject, courseB) {
-  correlation_mock(count_A_by_mark_B_passed, subject, courseB)
+sort_courses_by_correlation <- function(courseB, min_common, filterA) {
+  subjects <- get_subjects_codes_mock()
+  subjects <- subjects[subjects != courseB]
+  
+  rate_data <- data.frame(subject=character(0), rate=numeric(0))
+  
+  for (subject in subjects) {
+    dataA <- filterA(get_last_grade_for_course(data, subject))
+    dataB <- get_last_grade_for_course(data, courseB)
+    joined <- dataB %>% inner_join(dataA, by="OSOBA")
+    if (count(joined) >= min_common) {
+      rate <- compute_rate(joined)
+      rate_data <- rbind(rate_data, c(subject, rate))
+    }
+  }
+  names(rate_data) <- c("subject", "rate")
+  rate_data
 }
 
-correlation_mock_failed <- function(subject, courseB) {
-  -correlation_mock(count_A_by_mark_B_failed, subject, courseB)
+sort_courses_passed_by_correlation <- function(courseB, min_common) {
+  data <- sort_courses_by_correlation(courseB, min_common, filter_passed)
+  data %>% arrange(desc(rate)) %>% head(PLOTS_NUMBER) %>% select(subject)
 }
 
-sort_courses_by_correlation <- function(fun, courseB) {
-  subjects <- tbl_df(data.frame(sub = get_subjects_codes_mock())) %>%
-    subset(sub != courseB) %>%
-    rowwise() %>% mutate(corr = fun(sub, courseB)) %>%
-    arrange(desc(corr)) %>% head(PLOTS_NUMBER) %>% select(sub)
-}
-
-sort_courses_passed_by_correlation <- function(courseB) {
-  sort_courses_by_correlation(correlation_mock_passed, courseB)
-}
-
-sort_courses_failed_by_correlation <- function(courseB) {
-  sort_courses_by_correlation(correlation_mock_failed, courseB)
+sort_courses_failed_by_correlation <- function(courseB, min_common) {
+  data <- sort_courses_by_correlation(courseB, min_common, filter_failed)
+  data %>% arrange(rate) %>% head(PLOTS_NUMBER) %>% select(subject)
 }
