@@ -11,7 +11,7 @@ shinyServer(function(input, output) {
       need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
     )
     course <- input$przedmiot
-    sorted <- sort_courses_passed_by_correlation(course, input$`min-common`)
+    sorted <- sort_courses_passed(course, input$`min-common`)
     validate(
       need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
     )
@@ -24,7 +24,7 @@ shinyServer(function(input, output) {
     validate(
       need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
     )
-    sorted <- sort_courses_failed_by_correlation(course, input$`min-common`)
+    sorted <- sort_courses_failed(course, input$`min-common`)
     validate(
       need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
     )

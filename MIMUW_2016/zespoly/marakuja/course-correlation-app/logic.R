@@ -18,11 +18,11 @@ compute_rate <- function(data) {
   sum(series_a)
 }
 
-sort_courses_by_correlation <- function(courseB, min_common, filterA) {
+sort_courses <- function(courseB, min_common, filterA) {
   subjects <- get_subjects_codes_mock()
   subjects <- subjects[subjects != courseB]
   
-  rate_data <- data.frame(subject=character(0), rate=numeric(0))
+  rate_data <- data.frame(subject=character(0), rate=numeric(0), stringsAsFactors=FALSE)
   
   for (subject in subjects) {
     dataA <- filterA(get_last_grade_for_course(data, subject))
@@ -37,12 +37,12 @@ sort_courses_by_correlation <- function(courseB, min_common, filterA) {
   rate_data
 }
 
-sort_courses_passed_by_correlation <- function(courseB, min_common) {
-  data <- sort_courses_by_correlation(courseB, min_common, filter_passed)
+sort_courses_passed <- function(courseB, min_common) {
+  data <- sort_courses(courseB, min_common, filter_passed)
   data %>% arrange(desc(rate)) %>% head(PLOTS_NUMBER) %>% select(subject)
 }
 
-sort_courses_failed_by_correlation <- function(courseB, min_common) {
-  data <- sort_courses_by_correlation(courseB, min_common, filter_failed)
+sort_courses_failed <- function(courseB, min_common) {
+  data <- sort_courses(courseB, min_common, filter_failed)
   data %>% arrange(rate) %>% head(PLOTS_NUMBER) %>% select(subject)
 }
