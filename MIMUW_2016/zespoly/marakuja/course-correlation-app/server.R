@@ -15,8 +15,7 @@ shinyServer(function(input, output) {
     validate(
       need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
     )
-    # działa tylko przy N = 1
-    c(t(sorted))
+    sorted
   })
   
   negative_subject <- reactive ({
@@ -28,8 +27,7 @@ shinyServer(function(input, output) {
     validate(
       need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
     )
-    # działa tylko przy N = 1
-    c(t(sorted))
+    sorted
   })
   
   plot_for_data <- function(computed_course, data, p_or_f) {
@@ -53,12 +51,12 @@ shinyServer(function(input, output) {
   })
   
   output$headerPositive <- renderText({
-    paste("Jeżeli zdałeś ", positive_subject(), "przedmiot ",
+    paste("Jeżeli zdałeś ", positive_subject()[[1,1]], "przedmiot ",
           input$przedmiot, " jest dla Ciebie")
   })
 
   output$headerNegative <- renderText({
-    paste("Jeżeli nie zdałeś ", negative_subject(),
+    paste("Jeżeli nie zdałeś ", negative_subject()[[1,1]],
           "lepiej nie wybieraj przedmiotu ", input$przedmiot)
   })
 
@@ -69,4 +67,7 @@ shinyServer(function(input, output) {
   output$corDiagramNegative = renderPlot(
     ggplot(points_negative(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = typ)) + geom_line() +geom_errorbar(aes(ymax = max_err, ymin = min_err)) + ylim(0,1) + ylab("p-stwo uzyskania oceny >= niż")
   )
+
+  output$tableNegative = renderDataTable(negative_subject())
+  output$tablePositive = renderDataTable(positive_subject())
 })

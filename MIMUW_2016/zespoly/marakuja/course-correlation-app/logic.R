@@ -1,9 +1,8 @@
 source("input.R")
-
-PLOTS_NUMBER = 1
+source("courses.R")
 
 get_subjects_codes_mock <- function() {
-  c("1000-214bWWW", "1000-224bJNP2", "1000-214bJAO", "1000-213bASD")
+  courses_vector
 }
 
 courses_summary_joined <- function(data) {
@@ -22,27 +21,28 @@ sort_courses <- function(courseB, min_common, filterA) {
   subjects <- get_subjects_codes_mock()
   subjects <- subjects[subjects != courseB]
   
-  rate_data <- data.frame(subject=character(0), rate=numeric(0), stringsAsFactors=FALSE)
+  rate_data <- data.frame(subject=character(0), rate=numeric(0), student_count=numeric(0), stringsAsFactors=FALSE)
   
   for (subject in subjects) {
     dataA <- filterA(get_last_grade_for_course(data, subject))
     dataB <- get_last_grade_for_course(data, courseB)
     joined <- dataB %>% inner_join(dataA, by="OSOBA")
-    if (count(joined) >= min_common) {
+    common <- count(joined)
+    if (common >= min_common) {
       rate <- compute_rate(joined)
-      rate_data <- rbind(rate_data, c(subject, rate))
+      rate_data <- rbind(rate_data, data.frame(subject=subject, rate=rate, student_count=common))
     }
   }
-  names(rate_data) <- c("subject", "rate")
+  names(rate_data) <- c("subject", "rate", "student count")
   rate_data
 }
 
 sort_courses_passed <- function(courseB, min_common) {
   data <- sort_courses(courseB, min_common, filter_passed)
-  data %>% arrange(desc(rate)) %>% head(PLOTS_NUMBER) %>% select(subject)
+  data %>% arrange(desc(rate))
 }
 
 sort_courses_failed <- function(courseB, min_common) {
   data <- sort_courses(courseB, min_common, filter_failed)
-  data %>% arrange(rate) %>% head(PLOTS_NUMBER) %>% select(subject)
+  data %>% arrange(rate)
 }
