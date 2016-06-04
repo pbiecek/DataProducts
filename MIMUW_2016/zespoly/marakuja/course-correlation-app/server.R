@@ -40,13 +40,13 @@ shinyServer(function(input, output) {
   
   points_positive <- reactive ({
     input_course <- input$przedmiot
-    computed_course <- positive_subject()
+    computed_course <- positive_subject()[[1,1]]
     plot_for_data(computed_course, count_A_by_mark_B_passed(computed_course, input_course), "passed")
   })
   
   points_negative <- reactive ({
     course <- input$przedmiot
-    computed_course <- negative_subject()
+    computed_course <- negative_subject()[[1,1]]
     plot_for_data(computed_course, count_A_by_mark_B_failed(computed_course, course), "failed")
   })
   
