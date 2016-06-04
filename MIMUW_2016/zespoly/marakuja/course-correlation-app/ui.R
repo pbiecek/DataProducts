@@ -1,8 +1,9 @@
 library(shiny)
 
-source("input.R")
+source("courses.R")
 
-nazwyPrzedmiotow <- get_subjects_codes()
+
+nazwyPrzedmiotow <- courses_vector
 
 shinyUI(fluidPage(
   titlePanel("Przedmioty skorelowane"),

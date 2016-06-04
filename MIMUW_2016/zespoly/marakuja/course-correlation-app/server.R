@@ -1,6 +1,5 @@
 library(ggplot2)
 
-source("input.R")
 source("logic.R")
 
 
