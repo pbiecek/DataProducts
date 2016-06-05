@@ -48,13 +48,17 @@ shinyServer(function(input, output) {
     paste("Związek oceny z niezdaniem innego przedmiotu")
   })
 
+  output$headerTwoCourses <- renderText({
+    paste("Związek oceny z przedmiotu B ze zdaniem lub niezdaniem przedmiotu A")
+  })
+
   output$corDiagramTwoCourses <- renderPlot(
     twoCoursesChart(input$przedmiot_a, input$przedmiot_b)
   )
 
   formatPlot <- function(dataFunc) {
     ggplot(dataFunc(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +
-      geom_line() + ylim(0,1) +
+      geom_line(size = 2) + ylim(0,1) +
       ylab("p-stwo uzyskania przynajmniej podanej oceny") +
       xlab("ocena z wybranego przedmiotu")
   }

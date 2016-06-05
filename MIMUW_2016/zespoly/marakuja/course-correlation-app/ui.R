@@ -20,10 +20,10 @@ shinyUI(fluidPage(
                        min = 1, max = 200)
         ),
         mainPanel(
-          h2(textOutput("headerNegative")),
+          h3(textOutput("headerNegative")),
           plotOutput("corDiagramNegative"),
           dataTableOutput("tableNegative"),
-          h2(textOutput("headerPositive")),
+          h3(textOutput("headerPositive")),
           plotOutput("corDiagramPositive"),
           dataTableOutput("tablePositive")
         )
@@ -42,6 +42,7 @@ shinyUI(fluidPage(
                       selected = "1000-214bJAO")
         ),
         mainPanel(
+          h3(textOutput("headerTwoCourses")),
           plotOutput("corDiagramTwoCourses")
         )
       )
