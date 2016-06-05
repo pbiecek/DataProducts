@@ -29,24 +29,16 @@ shinyServer(function(input, output) {
     sorted
   })
   
-  plot_for_data <- function(computed_course, data, p_or_f) {
-    input_course <- input$przedmiot
-    all <- count_A_by_mark_B_all(input_course)
-    plot <- data_for_plot(data, all, p_or_f)
-    plot$header <- computed_course
-    plot
-  }
-  
   points_positive <- reactive ({
     input_course <- input$przedmiot
-    computed_course <- positive_subject()[[1,1]]
-    plot_for_data(computed_course, count_A_by_mark_B_passed(computed_course, input_course), "passed")
+    computed_courses <- positive_subject()[[1]]
+    plot_for_data(input_course, computed_courses, count_A_by_mark_B_passed, "passed")
   })
   
   points_negative <- reactive ({
     course <- input$przedmiot
-    computed_course <- negative_subject()[[1,1]]
-    plot_for_data(computed_course, count_A_by_mark_B_failed(computed_course, course), "failed")
+    computed_courses <- negative_subject()[[1]]
+    plot_for_data(course, computed_courses, count_A_by_mark_B_failed, "failed")
   })
   
   output$headerPositive <- renderText({
@@ -59,13 +51,8 @@ shinyServer(function(input, output) {
           "lepiej nie wybieraj przedmiotu ", input$przedmiot)
   })
 
-  output$corDiagramPositive = renderPlot(
-    ggplot(points_positive(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = typ)) + geom_line() + geom_errorbar(aes(ymax = max_err, ymin = min_err)) + ylim(0,1) + ylab("p-stwo uzyskania oceny >= niż")
-  )
-
-  output$corDiagramNegative = renderPlot(
-    ggplot(points_negative(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = typ)) + geom_line() +geom_errorbar(aes(ymax = max_err, ymin = min_err)) + ylim(0,1) + ylab("p-stwo uzyskania oceny >= niż")
-  )
+  output$corDiagramPositive = renderPlot(ggplot(points_positive(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = typ)) + geom_line() + ylim(0,1) + ylab("p-stwo uzyskania oceny >= niż"))
+  output$corDiagramNegative = renderPlot(ggplot(points_negative(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = typ)) + geom_line() + ylim(0,1) + ylab("p-stwo uzyskania oceny >= niż"))
 
   output$tableNegative = renderDataTable(negative_subject())
   output$tablePositive = renderDataTable(positive_subject())

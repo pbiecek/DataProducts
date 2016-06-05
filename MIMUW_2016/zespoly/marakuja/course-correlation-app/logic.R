@@ -57,7 +57,7 @@ count_A_by_mark_B_failed <- function(courseA, courseB) {
 }
 
 emptydf <- data.frame(ocena_przedmiot_B = c(2.0, 3.0, 3.5, 4.0, 4.5, 5.0), liczba_studentow = c(0, 0, 0, 0, 0, 0))
-df_for_plot <- function(df) {
+df_for_plot <- function(df, error) {
   colnames(df) = c("ocena_przedmiot_B", "liczba_studentow")
   df <- bind_rows(df, emptydf)
   df %>%
@@ -67,7 +67,9 @@ df_for_plot <- function(df) {
   maks <- sum(df_new[2])
   df_new[2] = cumsum(df_new[2])
   df_new <- arrange(df_new, -row_number())
-  df_new = add_error(df_new)
+  if (error) {
+      df_new = add_error(df_new)
+  }
   df_new[2] = df_new[2] / maks
   df_new
 }
@@ -90,17 +92,6 @@ add_error <- function(df) {
   df
 }
 
-data_for_plot <- function(chosen, all, rodzaj) {
-  
-  chosen_plot <- df_for_plot(chosen)
-  chosen_plot$typ = rodzaj
-  
-  all_plot <- df_for_plot(all)
-  all_plot$typ = "all"
-  
-  union(chosen_plot, all_plot)
-}
-
 get_subjects_codes_mock <- function() {
   courses_vector
 }
@@ -113,7 +104,7 @@ courses_summary_joined <- function(data) {
 
 compute_rate <- function(data) {
   summary <- courses_summary_joined(data)
-  series_a <- df_for_plot(summary)$liczba_studentow
+  series_a <- df_for_plot(summary, FALSE)$liczba_studentow
   sum(series_a)
 }
 
@@ -146,3 +137,23 @@ sort_courses_failed <- function(courseB, min_common) {
   data <- sort_courses(courseB, min_common, filter_failed)
   data %>% arrange(rate)
 }
+
+plot_for_data <- function(input_course, computed_courses, row_func, p_or_f) {
+  all <- count_A_by_mark_B_all(input_course)
+
+  subselected_courses = union(head(computed_courses, 1), tail(computed_courses, 1))
+
+  all_plot <- df_for_plot(all, FALSE)
+  all_plot$typ = "all"
+
+  plot <- all_plot
+  for (course_a in subselected_courses) {
+      chosen_plot <- df_for_plot(row_func(course_a, input_course), FALSE)
+      chosen_plot$typ = paste(p_or_f, " ", course_a)
+
+      plot <- union(plot, chosen_plot)
+  }
+
+  plot
+}
+
