@@ -71,6 +71,7 @@ df_for_plot <- function(df, error) {
       df_new = add_error(df_new)
   }
   df_new[2] = df_new[2] / maks
+  #df_new$ocena_przedmiot_B = c(2.5, 3, 3.5, 4, 4.5, 5)
   df_new
 }
 
@@ -177,7 +178,7 @@ twoCoursesChart <- function(course_a, course_b) {
   data <- pointsTwoCourses(course_a, course_b)
 
   plot <- ggplot(data, aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +
-    geom_line() + ylim(0,1) +
+    geom_line(size = 2) + ylim(0,1) +
     geom_errorbar(aes(ymax = max_err, ymin = min_err, width = 0.12)) +
     ylab("p-stwo uzyskania przynajmniej podanej oceny") +
     xlab("ocena z przedmiotu B")
