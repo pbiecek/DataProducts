@@ -144,12 +144,12 @@ plot_for_data <- function(input_course, computed_courses, row_func, p_or_f) {
   subselected_courses = union(head(computed_courses, 1), tail(computed_courses, 1))
 
   all_plot <- df_for_plot(all, FALSE)
-  all_plot$typ = "all"
+  all_plot$warunek = "brak"
 
   plot <- all_plot
   for (course_a in subselected_courses) {
       chosen_plot <- df_for_plot(row_func(course_a, input_course), FALSE)
-      chosen_plot$typ = paste(p_or_f, " ", course_a)
+      chosen_plot$warunek = paste(p_or_f, course_a)
 
       plot <- union(plot, chosen_plot)
   }

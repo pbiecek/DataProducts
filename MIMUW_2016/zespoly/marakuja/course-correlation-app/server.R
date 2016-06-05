@@ -32,13 +32,13 @@ shinyServer(function(input, output) {
   points_positive <- reactive ({
     input_course <- input$przedmiot
     computed_courses <- positive_subject()[[1]]
-    plot_for_data(input_course, computed_courses, count_A_by_mark_B_passed, "passed")
+    plot_for_data(input_course, computed_courses, count_A_by_mark_B_passed, "zdał")
   })
   
   points_negative <- reactive ({
     course <- input$przedmiot
     computed_courses <- negative_subject()[[1]]
-    plot_for_data(course, computed_courses, count_A_by_mark_B_failed, "failed")
+    plot_for_data(course, computed_courses, count_A_by_mark_B_failed, "nie zdał")
   })
   
   output$headerPositive <- renderText({
@@ -51,8 +51,15 @@ shinyServer(function(input, output) {
           "lepiej nie wybieraj przedmiotu ", input$przedmiot)
   })
 
-  output$corDiagramPositive = renderPlot(ggplot(points_positive(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = typ)) + geom_line() + ylim(0,1) + ylab("p-stwo uzyskania oceny >= niż"))
-  output$corDiagramNegative = renderPlot(ggplot(points_negative(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = typ)) + geom_line() + ylim(0,1) + ylab("p-stwo uzyskania oceny >= niż"))
+  formatPlot <- function(dataFunc) {
+    ggplot(dataFunc(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +
+      geom_line() + ylim(0,1) +
+      ylab("p-stwo uzyskania przynajmniej podanej oceny") +
+      xlab("ocena z wybranego przedmiotu")
+  }
+
+  output$corDiagramPositive = renderPlot(formatPlot(points_positive))
+  output$corDiagramNegative = renderPlot(formatPlot(points_negative))
 
   output$tableNegative = renderDataTable(negative_subject())
   output$tablePositive = renderDataTable(positive_subject())
