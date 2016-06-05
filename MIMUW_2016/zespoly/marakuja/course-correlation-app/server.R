@@ -2,7 +2,6 @@ library(ggplot2)
 
 source("logic.R")
 
-
 shinyServer(function(input, output) {
   
   positive_subject <- reactive ({
@@ -50,6 +49,10 @@ shinyServer(function(input, output) {
     paste("Jeżeli nie zdałeś ", negative_subject()[[1,1]],
           "lepiej nie wybieraj przedmiotu ", input$przedmiot)
   })
+
+  output$corDiagramTwoCourses <- renderPlot(
+    twoCoursesChart(input$przedmiot_a, input$przedmiot_b)
+  )
 
   formatPlot <- function(dataFunc) {
     ggplot(dataFunc(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +

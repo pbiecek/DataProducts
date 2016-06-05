@@ -157,3 +157,30 @@ plot_for_data <- function(input_course, computed_courses, row_func, p_or_f) {
   plot
 }
 
+pointsTwoCourses <- function(course_a, course_b) {
+  all <- count_A_by_mark_B_all(course_b)
+  all_plot <- df_for_plot(all, TRUE)
+  all_plot$warunek = "brak"
+
+  plot_failed <- df_for_plot(count_A_by_mark_B_failed(course_a, course_b), TRUE)
+  plot_failed$warunek = "nie zdał przedmiotu A"
+
+  plot_passed <- df_for_plot(count_A_by_mark_B_passed(course_a, course_b), TRUE)
+  plot_passed$warunek = "zdał przedmiot A"
+
+  # plot_passed <- df_for_plot(count_A_by_mark_B_not_attending(course_a, course_b))
+  # plot_failed$warunek = "zdał przedmiot A"
+  plot <- union(all_plot, union(plot_failed, plot_passed))
+}
+
+twoCoursesChart <- function(course_a, course_b) {
+  data <- pointsTwoCourses(course_a, course_b)
+
+  plot <- ggplot(data, aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +
+    geom_line() + ylim(0,1) +
+    geom_errorbar(aes(ymax = max_err, ymin = min_err)) +
+    ylab("p-stwo uzyskania przynajmniej podanej oceny") +
+    xlab("ocena z przedmiotu B")
+
+  plot
+}
