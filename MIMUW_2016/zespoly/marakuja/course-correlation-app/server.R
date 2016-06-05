@@ -59,6 +59,7 @@ shinyServer(function(input, output) {
   formatPlot <- function(dataFunc) {
     ggplot(dataFunc(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +
       geom_line(size = 2) + ylim(0,1) +
+      geom_errorbar(aes(ymax = max_err, ymin = min_err, width = 0.12)) +
       ylab("p-stwo uzyskania przynajmniej podanej oceny") +
       xlab("ocena z wybranego przedmiotu")
   }
