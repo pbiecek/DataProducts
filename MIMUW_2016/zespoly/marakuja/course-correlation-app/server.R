@@ -2,7 +2,16 @@ library(ggplot2)
 
 source("logic.R")
 
-shinyServer(function(input, output) {
+row_click_callback <- "function(table) {
+    table.on('click.dt', 'tr', function() {
+      tabs = $('.tabbable .nav.nav-tabs li a');
+      Shiny.onInputChange('przedmiot_a', table.row(this).data()[0]);
+      Shiny.onInputChange('przedmiot_b', $('#przedmiot').val());
+      $(tabs[1]).click();
+    });
+}"
+
+shinyServer(function(input, output, session) {
   
   positive_subject <- reactive ({
     validate(
@@ -67,6 +76,13 @@ shinyServer(function(input, output) {
   output$corDiagramPositive = renderPlot(formatPlot(points_positive))
   output$corDiagramNegative = renderPlot(formatPlot(points_negative))
 
-  output$tableNegative = renderDataTable({negative_subject()}, options = list(pageLength = 10))
-  output$tablePositive = renderDataTable({positive_subject()}, options = list(pageLength = 10))
+  tab2_przedmiot_a = reactive({input$przedmiot_a})
+  tab2_przedmiot_b = reactive({input$przedmiot_b})
+  observe({updateSelectInput(session, "przedmiot_a", selected = tab2_przedmiot_a())})
+  observe({updateSelectInput(session, "przedmiot_b", selected = tab2_przedmiot_b())})
+
+  output$tableNegative = renderDataTable({negative_subject()}, options = list(pageLength = 10),
+                                         callback = row_click_callback)
+  output$tablePositive = renderDataTable({positive_subject()}, options = list(pageLength = 10),
+                                         callback = row_click_callback)
 })
