@@ -41,13 +41,11 @@ shinyServer(function(input, output) {
   })
   
   output$headerPositive <- renderText({
-    paste("Jeżeli zdałeś ", positive_subject()[[1,1]], "przedmiot ",
-          input$przedmiot, " jest dla Ciebie")
+    paste("Związek oceny ze zdaniem innego przedmiotu")
   })
 
   output$headerNegative <- renderText({
-    paste("Jeżeli nie zdałeś ", negative_subject()[[1,1]],
-          "lepiej nie wybieraj przedmiotu ", input$przedmiot)
+    paste("Związek oceny z niezdaniem innego przedmiotu")
   })
 
   output$corDiagramTwoCourses <- renderPlot(
