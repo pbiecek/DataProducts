@@ -8,7 +8,7 @@ nazwyPrzedmiotow <- courses_vector
 shinyUI(fluidPage(
   titlePanel("Porównanie przedmiotów"),
   tabsetPanel(
-    tabPanel("Wybierz jeden przedmiot",
+    tabPanel("Znajdź skorelowane przedmioty",
       sidebarLayout(
         sidebarPanel(
           selectInput(inputId = "przedmiot",
@@ -29,7 +29,7 @@ shinyUI(fluidPage(
         )
       )
     ),
-    tabPanel("Wybierz dwa przedmioty",
+    tabPanel("Porównaj dwa przedmioty",
       sidebarLayout(
         sidebarPanel(
           selectInput(inputId = "przedmiot_a",
