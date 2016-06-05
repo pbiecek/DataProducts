@@ -67,6 +67,6 @@ shinyServer(function(input, output) {
   output$corDiagramPositive = renderPlot(formatPlot(points_positive))
   output$corDiagramNegative = renderPlot(formatPlot(points_negative))
 
-  output$tableNegative = renderDataTable(negative_subject())
-  output$tablePositive = renderDataTable(positive_subject())
+  output$tableNegative = renderDataTable({negative_subject()}, options = list(pageLength = 10))
+  output$tablePositive = renderDataTable({positive_subject()}, options = list(pageLength = 10))
 })
