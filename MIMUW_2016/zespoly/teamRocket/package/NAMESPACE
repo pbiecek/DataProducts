@@ -3,6 +3,7 @@
 export(demo)
 export(dodaj.kolumny)
 export(generuj.wykres)
+export(generuj.wykres.porownaj)
 export(uruchom)
 export(uw.dziennikarstwo)
 export(uw.informatyka)
