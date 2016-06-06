@@ -13,17 +13,16 @@
 #' }
 #' @export
 generuj.wykres.porownaj <- function(dane, nazwa.kolumny, szkola1_id, szkola2_id, opis) {
-  # Odfiltrowywanie danych
-  dane_szkola1 <- dplyr::filter_(dane, paste0("id_szkoly==", szkola1_id, " & !is.na(", nazwa.kolumny,")"))
-  dane_szkola2 <- dplyr::filter_(dane, paste0("id_szkoly==", szkola2_id, " & !is.na(", nazwa.kolumny,")"))
-  # Odzyskaj nazwę szkoły
-  nazwa.szkola.1 <- dplyr::first(dane_szkola1$nazwa_szkoly) %>% strwrap(30) %>% paste(collapse="\n") %>% paste0("\n")
-  nazwa.szkola.2 <- dplyr::first(dane_szkola2$nazwa_szkoly) %>% strwrap(30) %>% paste(collapse="\n") %>% paste0("\n")
-  
   # Czy kolumna typu liczbowego?
   czy.liczbowe <- is.numeric(dane[[nazwa.kolumny]])
   # Różne wykresy zależnie od typu kolumny
   wykres <- if(czy.liczbowe){
+    # Odfiltrowywanie danych
+    dane_szkola1 <- dplyr::filter_(dane, paste0("id_szkoly==", szkola1_id))
+    dane_szkola2 <- dplyr::filter_(dane, paste0("id_szkoly==", szkola2_id))
+    # Odzyskaj nazwę szkoły
+    nazwa.szkola.1 <- dplyr::first(dane_szkola1$nazwa_szkoly) %>% strwrap(30) %>% paste(collapse="\n") %>% paste0("\n")
+    nazwa.szkola.2 <- dplyr::first(dane_szkola2$nazwa_szkoly) %>% strwrap(30) %>% paste(collapse="\n") %>% paste0("\n")
     # Dla numerycznych kolumn generuj wykresy "funkcji gęstości"
     ggplot2::ggplot() +
       ggplot2::geom_freqpoly(data=dane_szkola1, ggplot2::aes_string(x=nazwa.kolumny, "..density..", colour='"red"'), bins = 10) +
@@ -38,6 +37,12 @@ generuj.wykres.porownaj <- function(dane, nazwa.kolumny, szkola1_id, szkola2_id,
       ggplot2::guides(colour = ggplot2::guide_legend(nrow=2, ncol=1))+
       ggplot2::scale_colour_identity(name="", guide = "legend", labels = c("red" = nazwa.szkola.1, "blue" = nazwa.szkola.2))
   } else {
+    # Odfiltrowywanie danych
+    dane_szkola1 <- dplyr::filter_(dane, paste0("id_szkoly==", szkola1_id, " & !is.na(", nazwa.kolumny,")"))
+    dane_szkola2 <- dplyr::filter_(dane, paste0("id_szkoly==", szkola2_id, " & !is.na(", nazwa.kolumny,")"))
+    # Odzyskaj nazwę szkoły
+    nazwa.szkola.1 <- dplyr::first(dane_szkola1$nazwa_szkoly) %>% strwrap(30) %>% paste(collapse="\n") %>% paste0("\n")
+    nazwa.szkola.2 <- dplyr::first(dane_szkola2$nazwa_szkoly) %>% strwrap(30) %>% paste(collapse="\n") %>% paste0("\n")
     # Dla nie-numerycznych kolumn generuj stackowane wykresy słupkowe
     ggplot2::ggplot() +
       ggplot2::geom_bar(data=dane_szkola1, ggplot2::aes_string(fill=nazwa.kolumny, y="100*..count../sum(..count..)", x="nazwa.szkola.1"),position = "stack", na.rm = TRUE)+

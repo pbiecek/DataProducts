@@ -79,7 +79,7 @@ maturiser.server <- function(matury, wyznaczniki) {
     
     output$instrukcja <- shiny::renderText({
       if (is.null(input$szkola) | input$szkola == "")
-        '<p style="color:green; font-size:16px;">Obsługa aplikacji jest niezwykle prosta!</p><br/><p style="color:green; font-size:16px;">W panelu bocznym wybierz <b>gminę</b> oraz interesującą Cię <b>szkołę</b>. Następnie wybierz <b>wyznacznik</b> - kryterium, ze względu na które chcesz porównać wyniki maturalne uczniów wybranej placówki. Możliwe jest filtrowanie gmin/szkół/wyznaczników poprzez wpisywanie części nazw w polach wyboru.</p><br/><p style="color:green; font-size:16px;">Przed Twoimi oczami ukaże się piękny histogram - wykres przedstawiający liczbę uczniów, dla których wyznacznik ma wartość przedstawioną na osi x.</p>'
+        '<p style="color:green; font-size:16px;">Obsługa aplikacji jest niezwykle prosta!</p><br/><p style="color:green; font-size:16px;">W panelu bocznym wybierz <b>gminę</b> oraz interesującą Cię <b>szkołę</b>. Następnie wybierz <b>wyznacznik</b> - kryterium, ze względu na które chcesz porównać wyniki maturalne uczniów wybranej placówki. Możliwe jest filtrowanie gmin/szkół/wyznaczników poprzez wpisywanie części nazw w polach wyboru.</p><br/><p style="color:green; font-size:16px;">Przed Twoimi oczami ukaże się wykres przedstawiający liczbę uczniów, dla których wyznacznik ma określoną wartość.</p>'
     })
     
     
@@ -132,7 +132,7 @@ maturiser.server <- function(matury, wyznaczniki) {
     
     output$instrukcja2 <- shiny::renderText({
       if (is.null(input$szkola1) | input$szkola1 == "" | is.null(input$szkola2) | input$szkola2 == "")
-        '<p style="color:green; font-size:16px;">Obsługa aplikacji jest niezwykle prosta!</p><br/><p style="color:green; font-size:16px;">W panelu bocznym wybierz dwie placówki, które chcesz porównać. W celu wskazania placówki najpierw wybierz <b>gminę</b>, potem interesującą Cię <b>szkołę</b>. Następnie ustaw <b>wyznacznik</b> - kryterium, ze względu na które chcesz porównać wyniki maturalne uczniów wybranej placówki. Możliwe jest filtrowanie gmin/szkół/wyznaczników poprzez wpisywanie części nazw w polach wyboru.</p><br/><p style="color:green; font-size:16px;">Przed Twoimi oczami ukaże się piękny histogram - wykres przedstawiający liczbę uczniów, dla których wyznacznik ma wartość przedstawioną na osi x.</p>'
+        '<p style="color:green; font-size:16px;">Obsługa aplikacji jest niezwykle prosta!</p><br/><p style="color:green; font-size:16px;">W panelu bocznym wybierz dwie placówki, które chcesz porównać. W celu wskazania placówki najpierw wybierz <b>gminę</b>, potem interesującą Cię <b>szkołę</b>. Następnie ustaw <b>wyznacznik</b> - kryterium, ze względu na które chcesz porównać wyniki maturalne uczniów wybranych placówek. Możliwe jest filtrowanie gmin/szkół/wyznaczników poprzez wpisywanie części nazw w polach wyboru.</p><br/><p style="color:green; font-size:16px;">Przed Twoimi oczami ukaże się wykres przedstawiający liczbę uczniów, dla których wyznacznik ma określona wartość.</p>'
     })
   })
 }
