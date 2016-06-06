@@ -64,14 +64,17 @@ df_for_plot <- function(df, error) {
     group_by(ocena_przedmiot_B) %>%
     summarise(liczba_studentow = sum(liczba_studentow)) %>%
     arrange(-row_number()) -> df_new
-  maks <- sum(df_new[2])
-  df_new[2] = cumsum(df_new[2])
+  x = df_new$liczba_studentow
+  maks <- sum(df_new$liczba_studentow)
+  df_new$liczba_studentow = cumsum(df_new$liczba_studentow)
+  y = df_new$liczba_studentow
   df_new <- arrange(df_new, -row_number())
   if (error) {
       df_new = add_error(df_new)
   }
-  df_new[2] = df_new[2] / maks
-  #df_new$ocena_przedmiot_B = c(2.5, 3, 3.5, 4, 4.5, 5)
+  df_new$liczba_studentow = df_new$liczba_studentow / maks
+  df_new$liczba = x
+  df_new$conajmniej = rev(y)
   df_new
 }
 
@@ -184,4 +187,26 @@ twoCoursesChart <- function(course_a, course_b) {
     xlab("ocena z przedmiotu B")
 
   plot
+}
+
+twoCoursesTable <- function(course_a, course_b) {
+  data <- pointsTwoCourses(course_a, course_b)
+  data$liczba_studentow = round(data$liczba_studentow * 100, 2)
+  data$min_err = round(data$min_err * 100, 2)
+  data$max_err = round(data$max_err * 100, 2)
+  data = data[c("ocena_przedmiot_B",
+                "liczba",
+                "warunek",
+                "conajmniej",
+                "liczba_studentow",
+                "min_err",
+                "max_err")]
+  colnames(data) = c("Ocena",
+                     "Ilość studentów",
+                     "Warunek",
+                     "Ilość studentów *",
+                     "P-stwo (%) *",
+                     "Minimalne p-stwo (%) *",
+                     "Maksymalne p-stwo (%) *")
+  data
 }
