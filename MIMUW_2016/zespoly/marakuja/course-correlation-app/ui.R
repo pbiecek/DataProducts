@@ -8,22 +8,28 @@ nazwyPrzedmiotow <- courses_vector
 shinyUI(fluidPage(
   titlePanel("Porównanie przedmiotów"),
   tabsetPanel(
-    tabPanel("Znajdź skorelowane przedmioty",
+    tabPanel("Znajdź skorelowane przedmioty",
       sidebarLayout(
         sidebarPanel(
           selectInput(inputId = "przedmiot",
-                      label = "Wybierz przedmiot",
+                      label = "Wybierz przedmiot B",
                       choices = nazwyPrzedmiotow,
                       selected = "1000-214bJAO"
           ),
           numericInput("min-common", "Minimalna liczba wspólnych studentów", 20,
-                       min = 1, max = 200)
+                       min = 1),
+          selectInput(inputId = "min-grade",
+                      label = "Minimalna ocena z przedmiotu B",
+                      choices = c(2, 3, 3.5, 4, 4.5, 5),
+                      selected = 5)
         ),
         mainPanel(
           h3(textOutput("headerNegative")),
+          textOutput("descriptionNegative"),
           plotOutput("corDiagramNegative"),
           dataTableOutput("tableNegative"),
           h3(textOutput("headerPositive")),
+          textOutput("descriptionPositive"),
           plotOutput("corDiagramPositive"),
           dataTableOutput("tablePositive")
         )

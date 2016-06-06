@@ -18,11 +18,10 @@ shinyServer(function(input, output, session) {
       need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
     )
     course <- input$przedmiot
-    sorted <- sort_courses_passed(course, input$`min-common`)
+    sorted <- sort_courses_passed(course, input$`min-common`, input$`min-grade`)
     validate(
       need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
     )
-    names(sorted) = c("Przedmiot", "Suma*", "Liczba studentów")
     sorted
   })
   
@@ -31,11 +30,10 @@ shinyServer(function(input, output, session) {
     validate(
       need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
     )
-    sorted <- sort_courses_failed(course, input$`min-common`)
+    sorted <- sort_courses_failed(course, input$`min-common`, input$`min-grade`)
     validate(
       need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
     )
-    names(sorted) = c("Przedmiot", "Suma*", "Liczba studentów")
     sorted
   })
   
@@ -55,10 +53,18 @@ shinyServer(function(input, output, session) {
     paste("Związek oceny ze zdaniem innego przedmiotu")
   })
 
+  output$descriptionPositive <- renderText({
+    paste("Bierzemy pod uwagę tylko studentów, którzy podchodzili do przedmiotu B.")
+  })
+
   output$headerNegative <- renderText({
     paste("Związek oceny z niezdaniem innego przedmiotu")
   })
-  
+
+  output$descriptionNegative <- renderText({
+    paste("Bierzemy pod uwagę tylko studentów, którzy podchodzili do przedmiotu B.")
+  })
+
   output$headerTwoCourses <- renderText({
     paste("Związek oceny z przedmiotu B ze zdaniem lub niezdaniem przedmiotu A")
   })
@@ -81,8 +87,14 @@ shinyServer(function(input, output, session) {
       xlab("ocena z wybranego przedmiotu")
   }
 
-  output$corDiagramPositive = renderPlot(formatPlot(points_positive))
-  output$corDiagramNegative = renderPlot(formatPlot(points_negative))
+  barPercentPlot <- function(data) {
+    ggplot(data %>% head(5), aes(x = reorder(`Przedmiot A`, -`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`),
+                                 y = `Procent studentów, którzy uzyskali co najmniej wybraną ocenę`)) +
+      geom_bar(stat = "identity", width=.5) + xlab('Przedmiot')
+  }
+
+  output$corDiagramPositive = renderPlot(barPercentPlot(positive_subject()))
+  output$corDiagramNegative = renderPlot(barPercentPlot(negative_subject()))
 
   tab2_przedmiot_a = reactive({input$przedmiot_a})
   tab2_przedmiot_b = reactive({input$przedmiot_b})

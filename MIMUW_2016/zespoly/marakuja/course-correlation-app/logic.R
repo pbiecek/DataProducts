@@ -112,34 +112,38 @@ compute_rate <- function(data) {
   sum(series_a)
 }
 
-sort_courses <- function(courseB, min_common, filterA) {
+summarise_data <- function(courseB, min_common, filterA, min_grade_B) {
   subjects <- get_subjects_codes_mock()
   subjects <- subjects[subjects != courseB]
   
-  rate_data <- data.frame(subject=character(0), rate=numeric(0), student_count=numeric(0), stringsAsFactors=FALSE)
+  rate_data <- data.frame(subject=character(0), percent=numeric(0), students_min_grade=numeric(0),
+                          all_students=numeric(0), rate=numeric(0), stringsAsFactors=FALSE)
   
   for (subject in subjects) {
     dataA <- filterA(get_last_grade_for_course(data, subject))
     dataB <- get_last_grade_for_course(data, courseB)
     joined <- dataB %>% inner_join(dataA, by="OSOBA")
-    common <- count(joined)
-    if (common >= min_common) {
-      rate <- compute_rate(joined)
-      rate_data <- rbind(rate_data, data.frame(subject=subject, rate=rate, student_count=common))
+    all <- count(joined)
+    filtered <- count(joined %>% filter(OCENA_LICZBOWA.x >= min_grade_B))
+    rate <- compute_rate(joined)
+    if (all >= min_common) {
+      rate_data <- rbind(rate_data, data.frame(subject=subject, percent=filtered/all,
+                                               students_min_grade=filtered, all_students=all, rate=rate))
     }
   }
-  names(rate_data) <- c("subject", "rate", "student count")
   rate_data
 }
 
-sort_courses_passed <- function(courseB, min_common) {
-  data <- sort_courses(courseB, min_common, filter_passed)
-  data %>% arrange(desc(rate))
+sort_courses_passed <- function(courseB, min_common, min_grade_B) {
+  data <- summarise_data(courseB, min_common, filter_passed, min_grade_B)
+  names(data) <- c("Przedmiot A", "Procent studentów, którzy uzyskali co najmniej wybraną ocenę", "Studenci, którzy zdali A, a z B uzyskali co najmniej wybraną ocenę", "Studenci, którzy zdali A", "Wskaźnik")
+  data %>% arrange(desc(`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`))
 }
 
-sort_courses_failed <- function(courseB, min_common) {
-  data <- sort_courses(courseB, min_common, filter_failed)
-  data %>% arrange(rate)
+sort_courses_failed <- function(courseB, min_common, min_grade_B) {
+  data <- summarise_data(courseB, min_common, filter_failed, min_grade_B)
+  names(data) <- c("Przedmiot A", "Procent studentów, którzy uzyskali co najmniej wybraną ocenę", "Studenci, którzy nie zdali A, a z B uzyskali co najmniej wybraną ocenę", "Studenci, którzy nie zdali A", "Wskaźnik")
+  data %>% arrange(desc(`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`))
 }
 
 plot_for_data <- function(input_course, computed_courses, row_func, p_or_f) {
