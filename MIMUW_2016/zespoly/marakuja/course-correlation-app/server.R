@@ -2,7 +2,16 @@ library(ggplot2)
 
 source("logic.R")
 
-shinyServer(function(input, output) {
+row_click_callback <- "function(table) {
+    table.on('click.dt', 'tr', function() {
+      tabs = $('.tabbable .nav.nav-tabs li a');
+      Shiny.onInputChange('przedmiot_a', table.row(this).data()[0]);
+      Shiny.onInputChange('przedmiot_b', $('#przedmiot').val());
+      $(tabs[1]).click();
+    });
+}"
+
+shinyServer(function(input, output, session) {
   
   positive_subject <- reactive ({
     validate(
@@ -43,13 +52,15 @@ shinyServer(function(input, output) {
   })
   
   output$headerPositive <- renderText({
-    paste("Jeżeli zdałeś ", positive_subject()[[1,1]], "przedmiot ",
-          input$przedmiot, " jest dla Ciebie")
+    paste("Związek oceny ze zdaniem innego przedmiotu")
   })
 
   output$headerNegative <- renderText({
-    paste("Jeżeli nie zdałeś ", negative_subject()[[1,1]],
-          "lepiej nie wybieraj przedmiotu ", input$przedmiot)
+    paste("Związek oceny z niezdaniem innego przedmiotu")
+  })
+  
+  output$headerTwoCourses <- renderText({
+    paste("Związek oceny z przedmiotu B ze zdaniem lub niezdaniem przedmiotu A")
   })
 
   output$corDiagramTwoCourses <- renderPlot(
@@ -65,6 +76,7 @@ shinyServer(function(input, output) {
   formatPlot <- function(dataFunc) {
     ggplot(dataFunc(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +
       geom_line(size = 2) + ylim(0,1) +
+      geom_errorbar(aes(ymax = max_err, ymin = min_err, width = 0.12)) +
       ylab("p-stwo uzyskania przynajmniej podanej oceny") +
       xlab("ocena z wybranego przedmiotu")
   }
@@ -72,6 +84,13 @@ shinyServer(function(input, output) {
   output$corDiagramPositive = renderPlot(formatPlot(points_positive))
   output$corDiagramNegative = renderPlot(formatPlot(points_negative))
 
-  output$tableNegative = renderDataTable(negative_subject())
-  output$tablePositive = renderDataTable(positive_subject())
+  tab2_przedmiot_a = reactive({input$przedmiot_a})
+  tab2_przedmiot_b = reactive({input$przedmiot_b})
+  observe({updateSelectInput(session, "przedmiot_a", selected = tab2_przedmiot_a())})
+  observe({updateSelectInput(session, "przedmiot_b", selected = tab2_przedmiot_b())})
+
+  output$tableNegative = renderDataTable({negative_subject()}, options = list(pageLength = 10),
+                                         callback = row_click_callback)
+  output$tablePositive = renderDataTable({positive_subject()}, options = list(pageLength = 10),
+                                         callback = row_click_callback)
 })
