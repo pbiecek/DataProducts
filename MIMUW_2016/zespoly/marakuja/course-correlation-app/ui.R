@@ -19,7 +19,7 @@ shinyUI(fluidPage(
           selectInput(inputId = "min-grade",
                       label = "Minimalna ocena z przedmiotu B",
                       choices = c(2, 3, 3.5, 4, 4.5, 5),
-                      selected = 5),
+                      selected = 4),
           
           numericInput("min-common", "Minimalna liczba wspólnych studentów", 20,
                        min = 1)
