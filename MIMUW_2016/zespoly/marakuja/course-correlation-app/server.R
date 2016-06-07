@@ -65,6 +65,10 @@ shinyServer(function(input, output, session) {
     twoCoursesChart(input$przedmiot_a, input$przedmiot_b)
   )
   
+  output$textSummary = renderText(
+    createSummary(input$przedmiot_a, input$przedmiot_b)
+  )
+  
   output$tableTwoCourses = renderTable(twoCoursesTable(input$przedmiot_a, input$przedmiot_b))
 
   output$legendTwoCourses = renderText({

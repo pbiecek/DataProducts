@@ -229,3 +229,14 @@ twoCoursesTable <- function(course_a, course_b) {
 
   data1
 }
+
+createSummary <- function(course_a, course_b) {
+  pointsTwoCourses(course_a, course_b) %>%
+    filter(ocena_przedmiot_B == 2) -> data
+  data %>% filter(warunek == "brak") -> data1
+  data %>% filter(warunek == "nie zdał przedmiotu A") -> data2
+  data %>% filter(warunek == "zdał przedmiot A") -> data3
+  HTML(paste("<br>Liczba studentów uczestniczących w przedmiocie B: ", data1$conajmniej,
+             "<br><br>Liczba studentów którzy nie zdali A a uczestniczyli w B: ", data2$conajmniej,
+             "<br><br>Liczba studentow którzy zdali A i uczestniczyli w B: ", data3$conajmniej, "<br><br>"))
+}
