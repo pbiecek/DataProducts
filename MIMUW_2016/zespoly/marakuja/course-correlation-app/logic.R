@@ -62,19 +62,19 @@ df_for_plot <- function(df, error) {
   df <- bind_rows(df, emptydf)
   df %>%
     group_by(ocena_przedmiot_B) %>%
-    summarise(liczba_studentow = sum(liczba_studentow)) %>%
-    arrange(-row_number()) -> df_new
-  x = df_new$liczba_studentow
+    summarise(liczba_studentow = sum(liczba_studentow)) -> df_new
+  x = df_new$liczba_studentow  
+  arrange(df_new, -row_number()) -> df_new
   maks <- sum(df_new$liczba_studentow)
   df_new$liczba_studentow = cumsum(df_new$liczba_studentow)
-  y = df_new$liczba_studentow
   df_new <- arrange(df_new, -row_number())
   if (error) {
       df_new = add_error(df_new)
   }
+  y = df_new$liczba_studentow
   df_new$liczba_studentow = df_new$liczba_studentow / maks
   df_new$liczba = x
-  df_new$conajmniej = rev(y)
+  df_new$conajmniej = y
   df_new
 }
 
@@ -194,19 +194,22 @@ twoCoursesTable <- function(course_a, course_b) {
   data$liczba_studentow = round(data$liczba_studentow * 100, 2)
   data$min_err = round(data$min_err * 100, 2)
   data$max_err = round(data$max_err * 100, 2)
-  data = data[c("ocena_przedmiot_B",
-                "liczba",
-                "warunek",
-                "conajmniej",
-                "liczba_studentow",
-                "min_err",
-                "max_err")]
-  colnames(data) = c("Ocena",
-                     "Ilość studentów",
-                     "Warunek",
-                     "Ilość studentów *",
-                     "P-stwo (%) *",
-                     "Minimalne p-stwo (%) *",
-                     "Maksymalne p-stwo (%) *")
-  data
+  data <- select(data, ocena_przedmiot_B, warunek, conajmniej, liczba_studentow)
+
+  filter(data, warunek == "brak") %>% arrange(-ocena_przedmiot_B) -> data1
+  filter(data, warunek == "nie zdał przedmiotu A") %>% arrange(-ocena_przedmiot_B) -> data2
+  filter(data, warunek == "zdał przedmiot A") %>% arrange(-ocena_przedmiot_B) -> data3
+  data1 <- select(data1, ocena_przedmiot_B, conajmniej, liczba_studentow)
+  data1$ls2 = data2$conajmniej
+  data1$p2 = data2$liczba_studentow
+  data1$ls3 = data3$conajmniej
+  data1$p3 = data3$liczba_studentow
+  colnames(data1) = c("Ocena",
+                     "Liczba studentów (wszyscy)",
+                     "P-stwo (%) (wszyscy)",
+                     "Liczba studentow (nie zdali A)",
+                     "P-stwo (%) (nie zdali A)",
+                     "Liczba studentow (zdali A)",
+                     "P-stwo (%) (zdali A)")
+  data1
 }

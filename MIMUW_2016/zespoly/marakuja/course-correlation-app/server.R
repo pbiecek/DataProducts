@@ -70,7 +70,7 @@ shinyServer(function(input, output, session) {
   output$tableTwoCourses = renderDataTable(twoCoursesTable(input$przedmiot_a, input$przedmiot_b))
 
   output$legendTwoCourses = renderText({
-    paste("Kolumny z * odnoszą się do wartości dla oceny większej równej")
+    paste("Kolumny w tabeli przedstawiają ilu studentów zdobyło co najmniej daną ocenę")
   })
   
   formatPlot <- function(dataFunc) {
