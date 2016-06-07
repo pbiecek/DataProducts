@@ -106,18 +106,12 @@ courses_summary_joined <- function(data) {
     summarise(liczba_studentow=n()) %>%
     select(ocena_przedmiot_B = OCENA_LICZBOWA.x, liczba_studentow)}
 
-compute_rate <- function(data) {
-  summary <- courses_summary_joined(data)
-  series_a <- df_for_plot(summary, FALSE)$liczba_studentow
-  sum(series_a)
-}
-
 summarise_data <- function(courseB, min_common, filterA, min_grade_B) {
   subjects <- get_subjects_codes_mock()
   subjects <- subjects[subjects != courseB]
   
   rate_data <- data.frame(subject=character(0), percent=numeric(0), students_min_grade=numeric(0),
-                          all_students=numeric(0), rate=numeric(0), stringsAsFactors=FALSE)
+                          all_students=numeric(0), stringsAsFactors=FALSE)
   
   for (subject in subjects) {
     dataA <- filterA(get_last_grade_for_course(data, subject))
@@ -125,10 +119,9 @@ summarise_data <- function(courseB, min_common, filterA, min_grade_B) {
     joined <- dataB %>% inner_join(dataA, by="OSOBA")
     all <- count(joined)
     filtered <- count(joined %>% filter(OCENA_LICZBOWA.x >= min_grade_B))
-    rate <- compute_rate(joined)
     if (filtered >= min_common) {
       rate_data <- rbind(rate_data, data.frame(subject=subject, percent=filtered/all,
-                                               students_min_grade=filtered, all_students=all, rate=rate))
+                                               students_min_grade=filtered, all_students=all))
     }
   }
   rate_data
@@ -139,8 +132,7 @@ sort_courses_passed <- function(courseB, min_common, min_grade_B) {
   names(data) <- c("Przedmiot A",
                    "Procent studentów, którzy uzyskali co najmniej wybraną ocenę",
                    "Liczba studentów, którzy zdali A, a z B uzyskali co najmniej wybraną ocenę",
-                   "Liczba studentów, którzy zdali A",
-                   "Wskaźnik")
+                   "Liczba studentów, którzy zdali A")
   data %>% arrange(desc(`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`))
 }
 
@@ -149,8 +141,7 @@ sort_courses_failed <- function(courseB, min_common, min_grade_B) {
   names(data) <- c("Przedmiot A",
                    "Procent studentów, którzy uzyskali co najmniej wybraną ocenę",
                    "Liczba studentów, którzy nie zdali A, a z B uzyskali co najmniej wybraną ocenę",
-                   "Liczba studentów, którzy nie zdali A",
-                   "Wskaźnik")
+                   "Liczba studentów, którzy nie zdali A")
   data %>% arrange(`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`)
 }
 
