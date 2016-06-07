@@ -83,18 +83,32 @@ shinyServer(function(input, output, session) {
       xlab("ocena z wybranego przedmiotu")
   }
 
+  percent_grade <- function(course, min_grade) {
+    grades <- get_last_grade_for_course(data, course)
+    all <- count(grades)
+    filtered <- count(grades %>% filter(OCENA_LICZBOWA >= min_grade))
+    filtered / all
+  }
+
   barPercentPlot <- function(data, direction) {
     bar_num <- min(3, count(data)[[1]]/2)
     data %>% head(bar_num) %>% mutate(type=direction) -> highest
     data %>% tail(bar_num) %>% mutate(type=-direction) -> lowest
     chosen <- rbind(highest, lowest)
+    line_value <- percent_grade(input$przedmiot, input$`min-grade`)
     ggplot(chosen, aes(x = reorder(`Przedmiot A`, direction * `Procent studentów, którzy uzyskali co najmniej wybraną ocenę`),
                        y = `Procent studentów, którzy uzyskali co najmniej wybraną ocenę`,
                        fill=factor(type))) +
       geom_bar(stat = "identity", width=.5) +
       xlab('Przedmiot A') +
       scale_fill_discrete(name=paste("Czołówka przedmiotów z procentem osób \npowyżej oceny graniczej"),
-                          labels=c("Najwyższym", "Najniższym"))
+                          labels=c("Najwyższym", "Najniższym")) +
+      geom_hline(aes(yintercept=line_value, colour=Threshold),
+                 linetype="dashed",
+                 data.frame(y=line_value,
+                            Threshold = "Procent studentów uczestniczących w przedmiocie B,\nktórzy otrzymali co najmniej wybraną ocenę")) +
+      scale_colour_manual(values = c(`Procent studentów uczestniczących w przedmiocie B,\nktórzy otrzymali co najmniej wybraną ocenę` = "black")) +
+      guides(colour=guide_legend(title=NULL))
   }
 
   output$corDiagramPositive = renderPlot(barPercentPlot(positive_subject(), -1) +
