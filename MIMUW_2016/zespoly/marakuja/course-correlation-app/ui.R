@@ -17,11 +17,11 @@ shinyUI(fluidPage(
                       selected = "1000-214bJAO"
           ),
           selectInput(inputId = "min-grade",
-                      label = "Minimalna ocena z przedmiotu B",
+                      label = "Graniczna minimalna ocena z przedmiotu B",
                       choices = c(2, 3, 3.5, 4, 4.5, 5),
                       selected = 4),
           
-          numericInput("min-common", "Minimalna liczba wspólnych studentów", 20,
+          numericInput("min-common", "Minimalna liczba studentów z oceną co najmniej graniczną", 10,
                        min = 1)
         ),
         mainPanel(
