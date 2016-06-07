@@ -53,16 +53,8 @@ shinyServer(function(input, output, session) {
     paste("Związek oceny ze zdaniem innego przedmiotu")
   })
 
-  output$descriptionPositive <- renderText({
-    paste("Bierzemy pod uwagę tylko studentów, którzy podchodzili do przedmiotu B.")
-  })
-
   output$headerNegative <- renderText({
     paste("Związek oceny z niezdaniem innego przedmiotu")
-  })
-
-  output$descriptionNegative <- renderText({
-    paste("Bierzemy pod uwagę tylko studentów, którzy podchodzili do przedmiotu B.")
   })
 
   output$headerTwoCourses <- renderText({
@@ -87,14 +79,24 @@ shinyServer(function(input, output, session) {
       xlab("ocena z wybranego przedmiotu")
   }
 
-  barPercentPlot <- function(data) {
-    ggplot(data %>% head(5), aes(x = reorder(`Przedmiot A`, -`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`),
-                                 y = `Procent studentów, którzy uzyskali co najmniej wybraną ocenę`)) +
-      geom_bar(stat = "identity", width=.5) + xlab('Przedmiot')
+  barPercentPlot <- function(data, direction) {
+    bar_num <- min(3, count(data)[[1]]/2)
+    data %>% head(bar_num) %>% mutate(type=direction) -> highest
+    data %>% tail(bar_num) %>% mutate(type=-direction) -> lowest
+    chosen <- rbind(highest, lowest)
+    ggplot(chosen, aes(x = reorder(`Przedmiot A`, direction * `Procent studentów, którzy uzyskali co najmniej wybraną ocenę`),
+                       y = `Procent studentów, którzy uzyskali co najmniej wybraną ocenę`,
+                       fill=factor(type))) +
+      geom_bar(stat = "identity", width=.5) +
+      xlab('Przedmiot A') +
+      scale_fill_discrete(name=paste("Czołówka przedmiotów z procentem osób \npowyżej oceny graniczej"),
+                          labels=c("Najwyższym", "Najniższym"))
   }
 
-  output$corDiagramPositive = renderPlot(barPercentPlot(positive_subject()))
-  output$corDiagramNegative = renderPlot(barPercentPlot(negative_subject()))
+  output$corDiagramPositive = renderPlot(barPercentPlot(positive_subject(), -1) +
+    ylab(paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę \nz przedmiotu B wśród studentów, którzy zaliczyli przedmiot A')))
+  output$corDiagramNegative = renderPlot(barPercentPlot(negative_subject(), 1) +
+    ylab(paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę \nz przedmiotu B wśród studentów, którzy nie zaliczyli przedmiotu A')))
 
   tab2_przedmiot_a = reactive({input$przedmiot_a})
   tab2_przedmiot_b = reactive({input$przedmiot_b})

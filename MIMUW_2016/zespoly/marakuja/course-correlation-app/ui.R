@@ -16,20 +16,19 @@ shinyUI(fluidPage(
                       choices = nazwyPrzedmiotow,
                       selected = "1000-214bJAO"
           ),
-          numericInput("min-common", "Minimalna liczba wspólnych studentów", 20,
-                       min = 1),
           selectInput(inputId = "min-grade",
                       label = "Minimalna ocena z przedmiotu B",
                       choices = c(2, 3, 3.5, 4, 4.5, 5),
-                      selected = 5)
+                      selected = 5),
+          
+          numericInput("min-common", "Minimalna liczba wspólnych studentów", 20,
+                       min = 1)
         ),
         mainPanel(
           h3(textOutput("headerNegative")),
-          textOutput("descriptionNegative"),
           plotOutput("corDiagramNegative"),
           dataTableOutput("tableNegative"),
           h3(textOutput("headerPositive")),
-          textOutput("descriptionPositive"),
           plotOutput("corDiagramPositive"),
           dataTableOutput("tablePositive")
         )

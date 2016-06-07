@@ -136,14 +136,22 @@ summarise_data <- function(courseB, min_common, filterA, min_grade_B) {
 
 sort_courses_passed <- function(courseB, min_common, min_grade_B) {
   data <- summarise_data(courseB, min_common, filter_passed, min_grade_B)
-  names(data) <- c("Przedmiot A", "Procent studentów, którzy uzyskali co najmniej wybraną ocenę", "Studenci, którzy zdali A, a z B uzyskali co najmniej wybraną ocenę", "Studenci, którzy zdali A", "Wskaźnik")
+  names(data) <- c("Przedmiot A",
+                   "Procent studentów, którzy uzyskali co najmniej wybraną ocenę",
+                   "Liczba studentów, którzy zdali A, a z B uzyskali co najmniej wybraną ocenę",
+                   "Liczba studentów, którzy zdali A",
+                   "Wskaźnik")
   data %>% arrange(desc(`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`))
 }
 
 sort_courses_failed <- function(courseB, min_common, min_grade_B) {
   data <- summarise_data(courseB, min_common, filter_failed, min_grade_B)
-  names(data) <- c("Przedmiot A", "Procent studentów, którzy uzyskali co najmniej wybraną ocenę", "Studenci, którzy nie zdali A, a z B uzyskali co najmniej wybraną ocenę", "Studenci, którzy nie zdali A", "Wskaźnik")
-  data %>% arrange(desc(`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`))
+  names(data) <- c("Przedmiot A",
+                   "Procent studentów, którzy uzyskali co najmniej wybraną ocenę",
+                   "Liczba studentów, którzy nie zdali A, a z B uzyskali co najmniej wybraną ocenę",
+                   "Liczba studentów, którzy nie zdali A",
+                   "Wskaźnik")
+  data %>% arrange(`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`)
 }
 
 plot_for_data <- function(input_course, computed_courses, row_func, p_or_f) {
