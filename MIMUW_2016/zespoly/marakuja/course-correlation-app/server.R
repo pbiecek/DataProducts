@@ -73,7 +73,7 @@ shinyServer(function(input, output, session) {
     twoCoursesChart(input$przedmiot_a, input$przedmiot_b)
   )
   
-  output$tableTwoCourses = renderDataTable(twoCoursesTable(input$przedmiot_a, input$przedmiot_b))
+  output$tableTwoCourses = renderTable(twoCoursesTable(input$przedmiot_a, input$przedmiot_b))
 
   output$legendTwoCourses = renderText({
     paste("Kolumny w tabeli przedstawiają ilu studentów zdobyło co najmniej daną ocenę")

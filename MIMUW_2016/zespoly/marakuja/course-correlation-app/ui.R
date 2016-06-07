@@ -50,8 +50,8 @@ shinyUI(fluidPage(
         mainPanel(
           h3(textOutput("headerTwoCourses")),
           plotOutput("corDiagramTwoCourses"),
-          h3(textOutput("legendTwoCourses")),
-          dataTableOutput("tableTwoCourses")
+          textOutput("legendTwoCourses"),
+          tableOutput("tableTwoCourses")
         )
       )
     )

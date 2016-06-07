@@ -203,17 +203,21 @@ twoCoursesTable <- function(course_a, course_b) {
   filter(data, warunek == "brak") %>% arrange(-ocena_przedmiot_B) -> data1
   filter(data, warunek == "nie zdał przedmiotu A") %>% arrange(-ocena_przedmiot_B) -> data2
   filter(data, warunek == "zdał przedmiot A") %>% arrange(-ocena_przedmiot_B) -> data3
-  data1 <- select(data1, ocena_przedmiot_B, conajmniej, liczba_studentow)
-  data1$ls2 = data2$conajmniej
-  data1$p2 = data2$liczba_studentow
-  data1$ls3 = data3$conajmniej
-  data1$p3 = data3$liczba_studentow
-  colnames(data1) = c("Ocena",
-                     "Liczba studentów (wszyscy)",
-                     "P-stwo (%) (wszyscy)",
-                     "Liczba studentow (nie zdali A)",
-                     "P-stwo (%) (nie zdali A)",
-                     "Liczba studentow (zdali A)",
-                     "P-stwo (%) (zdali A)")
+  rownames(data1) = data1$ocena_przedmiot_B
+  data1 <- select(data1, liczba_studentow)
+  data1$liczba_studentow = paste(data1$liczba_studentow, "%")
+  #data1$ls2 = data2$conajmniej
+  data1$p2 = paste(data2$liczba_studentow, "%")
+  #data1$ls3 = data3$conajmniej
+  data1$p3 = paste(data3$liczba_studentow, "%")
+  
+  colnames(data1) = c(#"Ocena nie mniejsza niż",
+                     #"Liczba studentów (wszyscy)",
+                     "Prawdopodobieństwo",
+                     #"Liczba studentow (nie zdali A)",
+                     "Prawdopodobieństwo jeżeli nie zdałeś przedmiotu A",
+                     #"Liczba studentow (zdali A)",
+                     "Prawdopodobieństwo jeżeli zdałeś przedmiotu A)")
+
   data1
 }
