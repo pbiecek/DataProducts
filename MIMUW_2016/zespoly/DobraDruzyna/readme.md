@@ -38,7 +38,7 @@ git clone https://github.com/mihal277/DataProducts/
 
 W R Studio zmieniamy folder roboczy na odpowiedni:
 ```
-setwd('/home/nazwa_uzytkownika/DataProducts/MIMUW_2016/zespoly/DobraDruzyna/shiny2')
+setwd("/home/nazwa_uzytkownika/DataProducts/MIMUW_2016/zespoly/DobraDruzyna/pakiet")
 ```
 
 Instalujemy bibliotekę devtools:
@@ -65,7 +65,7 @@ install.packages("devtools")
 
 Instalujemy:
 ```
-devtools::install_github(repo = "mihal277/DataProducts", subdir="/MIMUW_2016/zespoly/DobraDruzyna/shiny2/JakPoszlaMatura")
+devtools::install_github(repo = "mihal277/DataProducts", subdir="/MIMUW_2016/zespoly/DobraDruzyna/pakiet/JakPoszlaMatura")
 ```
 
 ### Instrukcja uruchomienia
@@ -75,6 +75,16 @@ Aplikację uruchamiamy poleceniem
 ```
 JakPoszlaMatura::uruchom()
 ```
+
+### Instrukcja korzystania
+
+Aplikacja przeznaczona jest dla wszystkich zainteresowanych możliwością analizy wyników edukacyjnych na poziomie poszczególnych gmin oraz porównania tych wyników ze wskaźnikami społeczno-ekenomicznymi (np. poziom bezrobocia, liczba bibliotek itp.).
+
+Aplikacja jest niezwykle prosta w użyciu.
+Po uruchomieniu naszym oczom ukazuje się główny pasek nawigacyjny u góry, pod którym znajduje się pojedyncza strona z serią wykresów. Każdy wykres jest opisany.
+
+Na pasku nawigacyjnym mamy możliwość wybrać interesujący nas rok oraz przedmiot (w tym momencie do wyboru są lata 2012-2014 oraz matura podstawowa z języka polskiego).
+Tuż poniżej możemy wybrać interesującą nas gminę.
 
 
 
