@@ -11,6 +11,9 @@ shinyUI(fluidPage(
     tabPanel("Znajdź skorelowane przedmioty",
       sidebarLayout(
         sidebarPanel(
+          em("Zdanie lub niezdanie których przedmiotów najbardziej koreluje
+             z uzyskaniem oceny przynajmniej X z przedmiotu B?"),
+          hr(),
           selectInput(inputId = "przedmiot",
                       label = "Wybierz przedmiot B",
                       choices = nazwyPrzedmiotow,
@@ -37,6 +40,9 @@ shinyUI(fluidPage(
     tabPanel("Porównaj dwa przedmioty",
       sidebarLayout(
         sidebarPanel(
+          em("Jak zdanie bądź niezdanie przedmiotu A koreluje z uzyskaniem oceny
+             przynajmniej X z przedmiotu B?"),
+          hr(),
           selectInput(inputId = "przedmiot_a",
                       label = "Wybierz przedmiot A",
                       choices = nazwyPrzedmiotow,

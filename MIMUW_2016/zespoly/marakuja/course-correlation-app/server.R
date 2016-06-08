@@ -48,7 +48,7 @@ shinyServer(function(input, output, session) {
     computed_courses <- negative_subject()[[1]]
     plot_for_data(course, computed_courses, count_A_by_mark_B_failed, "nie zdał")
   })
-  
+
   output$headerPositive <- renderText({
     paste("Związek oceny ze zdaniem innego przedmiotu")
   })
