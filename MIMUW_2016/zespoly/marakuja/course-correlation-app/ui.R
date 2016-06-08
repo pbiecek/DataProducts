@@ -20,7 +20,7 @@ shinyUI(fluidPage(
                       selected = "1000-214bJAO"
           ),
           selectInput(inputId = "min-grade",
-                      label = "Graniczna minimalna ocena z przedmiotu B",
+                      label = "Ocena X",
                       choices = c(2, 3, 3.5, 4, 4.5, 5),
                       selected = 4),
           
