@@ -93,6 +93,7 @@ Jeśli chcemy zaktualizować dane aktualnie już wykorzystywane w programie, nal
 ### Dodanie nowych danych
 
 Aby dodać nowy wskaźnik porównawczy do aplikacji należy:
+
 1. Dodać plik .RData do katalogu data.
 2. Zdefiniować nowe wykresy w pliku server.r jako zmienne output$nazwa_wykresu.
 3. W pliku ui.r dodać w contencie strony opis nowych wykresów oraz wywołać je przy użyciu plotlyOutput, bądź innym odpowiednim do stworzonego wykresu.
