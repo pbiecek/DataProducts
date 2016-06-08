@@ -175,8 +175,6 @@ pointsTwoCourses <- function(course_a, course_b) {
   plot_passed <- df_for_plot(count_A_by_mark_B_passed(course_a, course_b), TRUE)
   plot_passed$warunek = "zdał przedmiot A"
 
-  # plot_passed <- df_for_plot(count_A_by_mark_B_not_attending(course_a, course_b))
-  # plot_failed$warunek = "zdał przedmiot A"
   plot <- union(all_plot, union(plot_failed, plot_passed))
 }
 
@@ -204,19 +202,14 @@ twoCoursesTable <- function(course_a, course_b) {
   filter(data, warunek == "zdał przedmiot A") %>% arrange(-ocena_przedmiot_B) -> data3
   rownames(data1) = data1$ocena_przedmiot_B
   data1 <- select(data1, liczba_studentow)
-  data1$liczba_studentow = paste(data1$liczba_studentow, "%")
-  #data1$ls2 = data2$conajmniej
-  data1$p2 = paste(data2$liczba_studentow, "%")
-  #data1$ls3 = data3$conajmniej
-  data1$p3 = paste(data3$liczba_studentow, "%")
+  data1$liczba_studentow = data1$liczba_studentow
+  data1$p2 = data2$liczba_studentow
+  data1$p3 = data3$liczba_studentow
   
-  colnames(data1) = c(#"Ocena nie mniejsza niż",
-                     #"Liczba studentów (wszyscy)",
-                     "Prawdopodobieństwo",
-                     #"Liczba studentow (nie zdali A)",
-                     "Prawdopodobieństwo jeżeli nie zdałeś przedmiotu A",
-                     #"Liczba studentow (zdali A)",
-                     "Prawdopodobieństwo jeżeli zdałeś przedmiotu A)")
+  colnames(data1) = c(
+                     "spośród wszystkich uczestników przedmiotu B",
+                     "spośród studentów, którzy zdali A",
+                     "spośród studentów, którzy nie zdali A")
 
   data1
 }
@@ -227,7 +220,9 @@ createSummary <- function(course_a, course_b) {
   data %>% filter(warunek == "brak") -> data1
   data %>% filter(warunek == "nie zdał przedmiotu A") -> data2
   data %>% filter(warunek == "zdał przedmiot A") -> data3
-  HTML(paste("<br>Liczba studentów uczestniczących w przedmiocie B: ", data1$conajmniej,
-             "<br><br>Liczba studentów którzy nie zdali A a uczestniczyli w B: ", data2$conajmniej,
-             "<br><br>Liczba studentow którzy zdali A i uczestniczyli w B: ", data3$conajmniej, "<br><br>"))
+  table <- matrix(c(data1$conajmniej, data2$conajmniej, data3$conajmniej), ncol = 3)
+  colnames(table) = c("Liczba studentów uczestniczących w przedmiocie B",
+                     "Liczba studentów, którzy nie zdali A i uczestniczyli w B",
+                     "Liczba studentow, którzy zdali A i uczestniczyli w B")
+  table
 }

@@ -65,14 +65,15 @@ shinyServer(function(input, output, session) {
     twoCoursesChart(input$przedmiot_a, input$przedmiot_b)
   )
   
-  output$textSummary = renderText(
-    createSummary(input$przedmiot_a, input$przedmiot_b)
+  output$countSummary = renderTable(
+    createSummary(input$przedmiot_a, input$przedmiot_b),
+    display = c("d", "d", "d", "d"), include.rownames = FALSE
   )
   
   output$tableTwoCourses = renderTable(twoCoursesTable(input$przedmiot_a, input$przedmiot_b))
 
   output$legendTwoCourses = renderText({
-    paste("Kolumny w tabeli przedstawiają ilu studentów zdobyło co najmniej daną ocenę")
+    "Procent studentów, którzy uzyskali przynajmniej daną ocenę z przedmiotu B"
   })
   
   formatPlot <- function(dataFunc) {
