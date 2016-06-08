@@ -31,9 +31,11 @@ shinyUI(fluidPage(
           h3(textOutput("headerNegative")),
           plotOutput("corDiagramNegative"),
           dataTableOutput("tableNegative"),
+          tags$style(type="text/css", '#tableNegative tfoot {display:none;}'),
           h3(textOutput("headerPositive")),
           plotOutput("corDiagramPositive"),
-          dataTableOutput("tablePositive")
+          dataTableOutput("tablePositive"),
+          tags$style(type="text/css", '#tablePositive tfoot {display:none;}')
         )
       )
     ),
