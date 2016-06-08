@@ -120,7 +120,8 @@ summarise_data <- function(courseB, min_common, filterA, min_grade_B) {
     all <- count(joined)
     filtered <- count(joined %>% filter(OCENA_LICZBOWA.x >= min_grade_B))
     if (filtered >= min_common) {
-      rate_data <- rbind(rate_data, data.frame(subject=subject, percent=filtered/all,
+      percent <- round(filtered/all * 100, 2)
+      rate_data <- rbind(rate_data, data.frame(subject=subject, percent=percent,
                                                students_min_grade=filtered, all_students=all))
     }
   }

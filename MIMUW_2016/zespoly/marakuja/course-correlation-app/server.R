@@ -88,7 +88,7 @@ shinyServer(function(input, output, session) {
     grades <- get_last_grade_for_course(data, course)
     all <- count(grades)
     filtered <- count(grades %>% filter(OCENA_LICZBOWA >= min_grade))
-    filtered / all
+    round(filtered / all * 100, 2)
   }
 
   barPercentPlot <- function(data, direction) {
