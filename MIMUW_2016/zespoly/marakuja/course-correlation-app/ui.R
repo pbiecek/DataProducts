@@ -12,10 +12,10 @@ shinyUI(fluidPage(
       sidebarLayout(
         sidebarPanel(
           em("Zdanie lub niezdanie których przedmiotów najbardziej koreluje
-             z uzyskaniem oceny przynajmniej X z przedmiotu B?"),
+             z uzyskaniem przynajmniej oceny X z przedmiotu B?"),
           hr(),
           selectInput(inputId = "przedmiot",
-                      label = "Wybierz przedmiot B",
+                      label = "Przedmiot B",
                       choices = nazwyPrzedmiotow,
                       selected = "1000-214bJAO"
           ),
@@ -24,8 +24,8 @@ shinyUI(fluidPage(
                       choices = c(2, 3, 3.5, 4, 4.5, 5),
                       selected = 4),
           
-          numericInput("min-common", "Minimalna liczba studentów z oceną co najmniej graniczną", 10,
-                       min = 1)
+          numericInput("min-common", "Minimalna liczba studentów z oceną co najmniej X",
+                       10, min = 1)
         ),
         mainPanel(
           h3(textOutput("headerNegative")),
@@ -40,15 +40,15 @@ shinyUI(fluidPage(
     tabPanel("Porównaj dwa przedmioty",
       sidebarLayout(
         sidebarPanel(
-          em("Jak zdanie bądź niezdanie przedmiotu A koreluje z uzyskaniem oceny
-             przynajmniej X z przedmiotu B?"),
+          em("Jak zdanie bądź niezdanie przedmiotu A koreluje z uzyskaniem poszczególnych
+             ocen z przedmiotu B?"),
           hr(),
           selectInput(inputId = "przedmiot_a",
-                      label = "Wybierz przedmiot A",
+                      label = "Przedmiot A",
                       choices = nazwyPrzedmiotow,
                       selected = "1000-224bJNP2"),
           selectInput(inputId = "przedmiot_b",
-                      label = "Wybierz przedmiot B",
+                      label = "Przedmiot B",
                       choices = nazwyPrzedmiotow,
                       selected = "1000-214bJAO")
         ),
