@@ -6,7 +6,7 @@ source("courses.R")
 nazwyPrzedmiotow <- courses_vector
 
 shinyUI(fluidPage(
-  titlePanel("Porównanie przedmiotów"),
+  titlePanel("Porównanie przedmiotów z informatyki, MIMUW"),
   tabsetPanel(
     tabPanel("Znajdź skorelowane przedmioty",
       sidebarLayout(
