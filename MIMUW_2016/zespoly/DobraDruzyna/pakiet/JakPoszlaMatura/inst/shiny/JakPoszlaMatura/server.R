@@ -14,7 +14,7 @@ shinyServer(function(input, output) {
     nazwy <- wskaznik$gmina_szkoly
     names(teryty) <- nazwy
     
-    selectInput("gmina", NULL, teryty, width='100%')
+    selectInput("gmina", NULL, teryty, selected=1, width='100%')
   })
   
   output$wykres_wydatki = renderPlotly({

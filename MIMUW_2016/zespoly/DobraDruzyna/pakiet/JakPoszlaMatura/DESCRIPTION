@@ -15,5 +15,6 @@ Imports: dplyr,
     shiny,
     ggplot2,
     plotly,
-    RColorBrewer,
+    RColorBrewer
+Suggests:
     devtools

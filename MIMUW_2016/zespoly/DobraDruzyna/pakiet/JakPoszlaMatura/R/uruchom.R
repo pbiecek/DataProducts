@@ -1,7 +1,9 @@
+#' Jedyna funkcja pakietu. 
+#' 
+#' Uruchamia aplikację Shiny.
+#'
 #' @export
 uruchom <- function() {
-  
-
   
   appDir <- system.file("shiny", "JakPoszlaMatura", package = "JakPoszlaMatura")
   if (appDir == "") {
