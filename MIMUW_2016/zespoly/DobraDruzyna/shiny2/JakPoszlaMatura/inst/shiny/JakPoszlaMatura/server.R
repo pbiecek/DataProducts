@@ -8,13 +8,13 @@ library(JakPoszlaMatura)
 shinyServer(function(input, output) { 
   
   output$listaGmin <- renderUI({ 
-    wskaznik <- arrange(czytelnicy, Nazwa)
+    wskaznik <- arrange(polski, gmina_szkoly)
     
     teryty <- wskaznik$teryt
-    nazwy <- wskaznik$Nazwa
+    nazwy <- wskaznik$gmina_szkoly
     names(teryty) <- nazwy
     
-    selectInput("gmina", NULL, teryty, selected = teryty["Kraków"], width='100%')
+    selectInput("gmina", NULL, teryty, width='100%')
   })
   
   output$wykres_wydatki = renderPlotly({
