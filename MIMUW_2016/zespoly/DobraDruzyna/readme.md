@@ -86,5 +86,16 @@ Po uruchomieniu naszym oczom ukazuje się główny pasek nawigacyjny u góry, po
 Na pasku nawigacyjnym mamy możliwość wybrać interesujący nas rok oraz przedmiot (w tym momencie do wyboru są lata 2012-2014 oraz matura podstawowa z języka polskiego).
 Tuż poniżej możemy wybrać interesującą nas gminę.
 
+### Aktualizacja danych
+
+Jeśli chcemy zaktualizować dane aktualnie już wykorzystywane w programie, należy podmienić plik odpowiedniego wskaźnika w katalogu data, dbając o to, aby kolumny w nowej wersji danych miały dokładnie te same nazwy oraz reprezentowały te same wartości.
+
+### Dodanie nowych danych
+
+Aby dodać nowy wskaźnik porównawczy do aplikacji należy:
+1. Dodać plik .RData do katalogu data.
+2. Zdefiniować nowe wykresy w pliku server.r jako zmienne output$nazwa_wykresu.
+3. W pliku ui.r dodać w contencie strony opis nowych wykresów oraz wywołać je przy użyciu plotlyOutput, bądź innym odpowiednim do stworzonego wykresu.
+
 
 
