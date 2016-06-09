@@ -112,7 +112,8 @@ shinyServer(function(input, output, session) {
                        fill=factor(type))) +
       geom_bar(stat = "identity", width=.5) +
       xlab('Przedmiot A') +
-      scale_fill_discrete(name=paste("Czołówka przedmiotów z procentem osób \npowyżej oceny graniczej"),
+      ylab('') +
+      scale_fill_discrete(name=paste("Czołówka przedmiotów z procentem osób \npowyżej oceny X"),
                           labels=c("Najwyższym", "Najniższym")) +
       geom_hline(aes(yintercept=line_value, colour=Threshold),
                  linetype="dashed",
@@ -122,10 +123,18 @@ shinyServer(function(input, output, session) {
       guides(colour=guide_legend(title=NULL))
   }
 
-  output$corDiagramPositive = renderPlot(barPercentPlot(positive_subject(), -1) +
-    ylab(paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę \nz przedmiotu B wśród studentów, którzy zaliczyli przedmiot A')))
-  output$corDiagramNegative = renderPlot(barPercentPlot(negative_subject(), 1) +
-    ylab(paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę \nz przedmiotu B wśród studentów, którzy nie zaliczyli przedmiotu A')))
+  output$descriptionPositive = renderText(
+    paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z',
+          input$przedmiot,
+          'wśród studentów, którzy zaliczyli przedmiot A')
+  )
+  output$descriptionNegative = renderText(
+    paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z',
+          input$przedmiot,
+          'wśród studentów, którzy nie zaliczyli przedmiotu A')
+  )
+  output$corDiagramPositive = renderPlot(barPercentPlot(positive_subject(), -1))
+  output$corDiagramNegative = renderPlot(barPercentPlot(negative_subject(), 1))
 
   tab2_przedmiot_a = reactive({input$przedmiot_a})
   tab2_przedmiot_b = reactive({input$przedmiot_b})
