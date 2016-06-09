@@ -111,6 +111,7 @@ shinyServer(function(input, output, session) {
                        y = `Procent studentów, którzy uzyskali co najmniej wybraną ocenę`,
                        fill=factor(type))) +
       geom_bar(stat = "identity", width=.5) +
+      geom_text(aes(label=`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`), position=position_dodge(width=0.9), vjust=-0.25) +
       xlab('Przedmiot A') +
       ylab('') +
       scale_fill_discrete(name=paste("Czołówka przedmiotów z procentem osób \npowyżej oceny X"),
