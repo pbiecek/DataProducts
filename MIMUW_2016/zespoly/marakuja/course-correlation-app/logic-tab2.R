@@ -57,6 +57,9 @@ df_for_plot <- function(df, error) {
   if (error) {
     df_new = add_error(df_new)
   }
+  if (maks == 0) {
+    maks = 1
+  }
   y = df_new$liczba_studentow
   df_new$liczba_studentow = df_new$liczba_studentow / maks
   df_new$liczba = x
@@ -71,14 +74,25 @@ add_error <- function(df) {
   wyn2 <- x
   i <- 1
   for(a in x) {
-    b <- prop.test(a, maks)
-    wyn1[i] = b$conf.int[1]
-    wyn2[i] = b$conf.int[2]
+    if (maks != 0)
+    {
+      b <- prop.test(a, maks)
+      wyn1[i] = b$conf.int[1]
+      wyn2[i] = b$conf.int[2]
+    } else
+    {
+      wyn1[i] = 0
+      wyn2[i] = 0
+    }
     i <- i + 1
   }
   df$min_err = wyn1
   df$max_err = wyn2
   df[1,3] = 1
+  if (maks == 0)
+  {
+    df[1,3] = 0
+  }
   df
 }
 
