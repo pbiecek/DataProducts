@@ -19,24 +19,27 @@ courses_summary <- function(dataA, dataB) {
     select(ocena_przedmiot_B = OCENA_LICZBOWA.x, liczba_studentow)
 }
 
-count_A_by_mark_B <- function(courseA, last_grades_courseB, filterA) {
+count_A_by_mark_B <- function(courseA, courseB, filterA) {
   dataA <- filterA(get_last_grade_for_course(data, courseA))
-  courses_summary(dataA, last_grades_courseB)
+  dataB <- get_last_grade_for_course(data, courseB)
+  courses_summary(dataA, dataB)
 }
 
-count_A_by_mark_B_all <- function(course_data) {
+count_A_by_mark_B_all <- function(course) {
+  all_data <- data
+  course_data <- get_last_grade_for_course(all_data, course)
   course_data %>%
     group_by(OCENA_LICZBOWA) %>%
     summarise(liczba_studentow=n()) %>%
     select(ocena = OCENA_LICZBOWA, liczba_studentow)
 }
 
-count_A_by_mark_B_passed <- function(courseA, last_grades_courseB) {
-  count_A_by_mark_B(courseA, last_grades_courseB, filter_passed)
+count_A_by_mark_B_passed <- function(courseA, courseB) {
+  count_A_by_mark_B(courseA, courseB, filter_passed)
 }
 
-count_A_by_mark_B_failed <- function(courseA, last_grades_courseB) {
-  count_A_by_mark_B(courseA, last_grades_courseB, filter_failed)
+count_A_by_mark_B_failed <- function(courseA, courseB) {
+  count_A_by_mark_B(courseA, courseB, filter_failed)
 }
 
 emptydf <- data.frame(ocena_przedmiot_B = c(2.0, 3.0, 3.5, 4.0, 4.5, 5.0), liczba_studentow = c(0, 0, 0, 0, 0, 0))
@@ -79,22 +82,22 @@ add_error <- function(df) {
   df
 }
 
-pointsTwoCourses <- function(course_a, last_grades_course_b) {
-  all <- count_A_by_mark_B_all(last_grades_course_b)
+pointsTwoCourses <- function(course_a, course_b) {
+  all <- count_A_by_mark_B_all(course_b)
   all_plot <- df_for_plot(all, TRUE)
   all_plot$warunek = "brak"
   
-  plot_failed <- df_for_plot(count_A_by_mark_B_failed(course_a, last_grades_course_b), TRUE)
+  plot_failed <- df_for_plot(count_A_by_mark_B_failed(course_a, course_b), TRUE)
   plot_failed$warunek = "nie zdał przedmiotu A"
   
-  plot_passed <- df_for_plot(count_A_by_mark_B_passed(course_a, last_grades_course_b), TRUE)
+  plot_passed <- df_for_plot(count_A_by_mark_B_passed(course_a, course_b), TRUE)
   plot_passed$warunek = "zdał przedmiot A"
   
   plot <- union(all_plot, union(plot_failed, plot_passed))
 }
 
-twoCoursesChart <- function(course_a, course_b, last_grades_for_input_course) {
-  data <- pointsTwoCourses(course_a, last_grades_for_input_course)
+twoCoursesChart <- function(course_a, course_b) {
+  data <- pointsTwoCourses(course_a, course_b)
   data$liczba_studentow = round(100 * data$liczba_studentow, 2)
   data$min_err = round(100 * data$min_err, 2)
   data$max_err = round(100 * data$max_err, 2)
@@ -108,8 +111,8 @@ twoCoursesChart <- function(course_a, course_b, last_grades_for_input_course) {
   plot
 }
 
-twoCoursesTable <- function(course_a, course_b, last_grades_for_input_course) {
-  data <- pointsTwoCourses(course_a, last_grades_for_input_course)
+twoCoursesTable <- function(course_a, course_b) {
+  data <- pointsTwoCourses(course_a, course_b)
   data$liczba_studentow = round(data$liczba_studentow * 100, 2)
   data$min_err = round(data$min_err * 100, 2)
   data$max_err = round(data$max_err * 100, 2)
@@ -133,8 +136,8 @@ twoCoursesTable <- function(course_a, course_b, last_grades_for_input_course) {
   data1
 }
 
-createSummary <- function(course_a, course_b, last_grades_for_input_course) {
-  pointsTwoCourses(course_a, last_grades_for_input_course) %>%
+createSummary <- function(course_a, course_b) {
+  pointsTwoCourses(course_a, course_b) %>%
     filter(ocena_przedmiot_B == 2) -> data
   data %>% filter(warunek == "brak") -> data1
   data %>% filter(warunek == "nie zdał przedmiotu A") -> data2

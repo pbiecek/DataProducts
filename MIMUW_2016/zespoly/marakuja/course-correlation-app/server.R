@@ -89,7 +89,7 @@ shinyServer(function(input, output, session) {
   )
 
   output$countSummary = renderTable(
-    createSummary(input$przedmiot_a, input$przedmiot_b, last_grades_for_input_course()),
+    createSummary(input$przedmiot_a, input$przedmiot_b),
     display = c("d", "d", "d", "d"), include.rownames = FALSE
   )
 
@@ -99,7 +99,7 @@ shinyServer(function(input, output, session) {
   )
 
   output$corDiagramTwoCourses <- renderPlot(
-    twoCoursesChart(input$przedmiot_a, input$przedmiot_b, last_grades_for_input_course())
+    twoCoursesChart(input$przedmiot_a, input$przedmiot_b)
   )
 
   output$legendTwoCourses = renderText(
@@ -107,5 +107,5 @@ shinyServer(function(input, output, session) {
           input$przedmiot_b)
   )
 
-  output$tableTwoCourses = renderTable(twoCoursesTable(input$przedmiot_a, input$przedmiot_b, last_grades_for_input_course()))
+  output$tableTwoCourses = renderTable(twoCoursesTable(input$przedmiot_a, input$przedmiot_b))
 })
