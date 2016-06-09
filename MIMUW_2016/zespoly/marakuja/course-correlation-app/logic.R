@@ -185,8 +185,8 @@ twoCoursesChart <- function(course_a, course_b) {
   plot <- ggplot(data, aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +
     geom_line(size = 2) + ylim(0,1) +
     geom_errorbar(aes(ymax = max_err, ymin = min_err, width = 0.12)) +
-    ylab("p-stwo uzyskania przynajmniej podanej oceny") +
-    xlab("ocena z przedmiotu B")
+    xlab(paste("ocena z przedmiotu", course_b)) +
+    ylab("")
 
   plot
 }
@@ -208,9 +208,10 @@ twoCoursesTable <- function(course_a, course_b) {
   data1$p3 = data3$liczba_studentow
   
   colnames(data1) = c(
-                     "spośród wszystkich uczestników przedmiotu B",
-                     "spośród studentów, którzy zdali A",
-                     "spośród studentów, którzy nie zdali A")
+    paste("spośród wszystkich uczestników", course_b),
+    paste("spośród studentów, którzy zdali", course_a),
+    paste("spośród studentów, którzy nie zdali", course_a)
+  )
 
   data1
 }
@@ -222,8 +223,10 @@ createSummary <- function(course_a, course_b) {
   data %>% filter(warunek == "nie zdał przedmiotu A") -> data2
   data %>% filter(warunek == "zdał przedmiot A") -> data3
   table <- matrix(c(data1$conajmniej, data2$conajmniej, data3$conajmniej), ncol = 3)
-  colnames(table) = c("Liczba studentów uczestniczących w przedmiocie B",
-                     "Liczba studentów, którzy nie zdali A i uczestniczyli w B",
-                     "Liczba studentow, którzy zdali A i uczestniczyli w B")
+  colnames(table) = c(
+    "wszystkich",
+    paste("którzy nie zdali", course_a),
+    paste("którzy zdali", course_a)
+  )
   table
 }

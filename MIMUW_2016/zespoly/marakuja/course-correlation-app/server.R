@@ -58,11 +58,17 @@ shinyServer(function(input, output, session) {
   })
 
   output$headerTwoCourses <- renderText({
-    paste("Związek oceny z przedmiotu B ze zdaniem lub niezdaniem przedmiotu A")
+    paste("Związek oceny z", input$przedmiot_b, "ze zdaniem lub niezdaniem",
+          input$przedmiot_a)
   })
 
   output$corDiagramTwoCourses <- renderPlot(
     twoCoursesChart(input$przedmiot_a, input$przedmiot_b)
+  )
+
+  output$legendTwoCoursesDiagram <- renderText(
+    paste("Procent studentów, którzy uzyskali przynajmniej daną ocenę z",
+          input$przedmiot_b)
   )
   
   output$countSummary = renderTable(
@@ -72,15 +78,19 @@ shinyServer(function(input, output, session) {
   
   output$tableTwoCourses = renderTable(twoCoursesTable(input$przedmiot_a, input$przedmiot_b))
 
-  output$legendTwoCourses = renderText({
-    "Procent studentów, którzy uzyskali przynajmniej daną ocenę z przedmiotu B"
-  })
+  output$legendCountSummary = renderText(
+    paste("Liczba studentów, którzy uczestniczyli w", input$przedmiot_b),
+  )
+
+  output$legendTwoCourses = renderText(
+    paste("Procent studentów, którzy uzyskali przynajmniej daną ocenę z",
+          input$przedmiot_b)
+  )
   
   formatPlot <- function(dataFunc) {
     ggplot(dataFunc(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +
       geom_line(size = 2) + ylim(0,1) +
       geom_errorbar(aes(ymax = max_err, ymin = min_err, width = 0.12)) +
-      ylab("p-stwo uzyskania przynajmniej podanej oceny") +
       xlab("ocena z wybranego przedmiotu")
   }
 
