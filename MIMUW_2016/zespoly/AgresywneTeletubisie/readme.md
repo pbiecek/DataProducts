@@ -28,4 +28,7 @@ Opieka nad dokumentacją końcową: Mateusz
 ###Tytul realizowanego tematu
 
 
-Budowa analitycznego narzędzia dla wyników egzaminów w szkołach średnich
+Budowa analitycznego narzędzia służącego do porównywania szkół w wybranym regionie Polski.
+
+Link do commitów z repozytorium na bitbuckecie, na którym miała miejsce cała historia zmian projektu:
+https://bitbucket.org/xantore/jnp2/commits/all
