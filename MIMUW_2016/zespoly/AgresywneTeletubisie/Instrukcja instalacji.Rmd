@@ -1,0 +1,22 @@
+---
+title: "Instrukcja instalacji narzędzia"
+output: html_document
+---
+
+1. Należy zainstalować na swoim komputerze środowisko RStudio.
+2. Aplikacja nie uruchomi się bez zainstalowania odpowiednich pakietów. Należy w konsoli w dolnym lewym rogu RStudio wpisać następujące komendy:
+
+```{r eval=FALSE}
+install.packages("devtools")
+install.packages("tools")
+install.packages("shiny")
+install.packages("shinydashboard")
+install.packages("RCurl")
+install.packages("RJSONIO")
+install.packages("dplyr")
+install.packages("leaflet")
+install.packages("htmltools")
+install.packages("tidyr")
+install.packages("DT")
+```
+3. Następnie należy uruchomić aplikację poprzez kliknięcie przycisku „Run app” w górnym panelu środowiska RStudio.

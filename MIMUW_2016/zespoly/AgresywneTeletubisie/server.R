@@ -1,294 +1,189 @@
-## Dependencies
+minimum_lon <- all_data_geo %>% filter(!is.na(lat)) %>% distinct(id_szkoly) %>% select(lon) %>% min
+maximum_lon <- all_data_geo %>% filter(!is.na(lat)) %>% distinct(id_szkoly) %>% select(lon) %>% max
+minimum_lat <- all_data_geo %>% filter(!is.na(lat)) %>% distinct(id_szkoly) %>% select(lat) %>% min
+maximum_lat <- all_data_geo %>% filter(!is.na(lat)) %>% distinct(id_szkoly) %>% select(lat) %>% max
+markers_palette <- colorNumeric('RdYlGn', domain = NULL)
 
-library(shiny)
-library(dplyr)
-library(maptools)
-library(RColorBrewer)
-library(classInt)
-
-## Load cached data
-
-## This is what's in Dane_z_bazy.RData
-# conn <- polacz()
-# 
-# if (!exists('wartosci_wskaznikow')) {
-#   wartosci_wskaznikow <- pobierz_wartosci_wskaznikow(conn) %>% collect
-# }
-# if (!exists('wskazniki')) {
-#   wskazniki <- pobierz_wskazniki(conn) %>% collect
-# }
-# if (!exists('szkoly')) {
-#   szkoly <- pobierz_szkoly(conn) %>% collect
-# }
-# 
-# rozlacz()
-
-baza_danych <- './Dane_z_bazy.RData'
-
-## Dane GUS 
-
-dane_powiatowe <- read.csv("dane_powiatowe_2015.csv", sep=";", dec=",", fileEncoding = 'Windows-1252', header=TRUE)
-
-## Check if we have data frames we need. If not - load them from cached RData file
-
-lista <- c("szkoly","wartosci_wskaznikow","wskazniki")
-if (!all(sapply(lista,exists))) {
-  load(baza_danych)
-}
-
-## ?? Hacky solution ??
-## Fix values in wartosci_wskaznikow so they match wskazniki
-
-wartosci_wskaznikow['wskaznik'] <- wartosci_wskaznikow %>%
-  select(wskaznik) %>%
-  sapply(function(x) gsub('paou_m_mat_var','paou_m_mat_war', x))
-
-# dane geograficzne jednostek administracyjnych
-# TODO: powinniśmy to pobrać raz, żeby nie zamulać ładowania aplikacji
-
-lista_shapes <- c("pl", "woj", "pow", 'gmn', 'srodki_powiatow', 'srodki_gmin', 'srodki_wojewodztw')
-
-## URL for shapes data ftp://91.223.135.109/prg/jednostki_administracyjne.zip
-
-geo_shapes <- './Jednostki_administracyjne.RData'
-
-if (!all(sapply(lista,exists))) {
-  load(geo_shapes)
-}
-
-# Code used to generate above
-# pl <- readShapePoly("panstwo/panstwo.shp")
-# woj <- readShapePoly("wojewodztwa/wojewodztwa.shp")
-# pow <- readShapePoly("powiaty/powiaty.shp")
-# gmn <- readShapePoly("gminy/gminy.shp")
-# srodki_powiatow <- coordinates(pow)
-# srodki_wojewodztw <- coordinates(woj)
-# srodki_gmin <- coordinates(gmn)
-
-# testowe dane do generowania mapy prezentującej stopę bezrobocia 
-# TODO: zamienić na generowanie mapy przedstawiają wyniki egzaminów
-
-powiatowe_wskazniki <- wartosci_wskaznikow %>% filter(poziom_agregacji=='powiat')
-powiatowe_wskazniki['jpt_kod_je'] <- powiatowe_wskazniki %>% select(teryt_jst) %>%
-  unlist(use.names=FALSE) %>%
-  gsub('(\\d{2}$)','',.,perl=TRUE) %>% 
-  as.integer
-
-powiatowe_wskazniki_light <- powiatowe_wskazniki %>% select(wskaznik,rok,srednia,jpt_kod_je) %>%
-  inner_join(wskazniki) %>%
-  distinct(wskaznik,srednia) %>%
-  select(typ_szkoly,czesc_egzaminu,rok,srednia,jpt_kod_je)
-
-## Remove as we will not use it further
-
-rm(powiatowe_wskazniki)
-
-
-## Create voievodship list
-
-wojewodztwa <- szkoly %>% select(wojewodztwo_szkoly) %>% unique %>% na.omit %>% unlist(use.names=FALSE)
-
-## Create school type list. Remove undefined schools from the choice list (only 6 schools, shouldn't be an issue)
-
-rodzaj_szkoly <- szkoly %>% filter(typ_szkoly!='ZZ') %>% select(typ_szkoly) %>% distinct %>% unlist
-
-## Create names for list of examination
-
-names(rodzaj_szkoly) <- rodzaj_szkoly
-
-
-## Make a list assigning exam type to each school type
-
-typy_egzaminow <- lapply(rodzaj_szkoly,
-                         function(x) wskazniki %>%
-                           filter(typ_szkoly==x) %>%
-                           select(rodzaj_egzaminu) %>%
-                           na.omit %>%
-                           distinct %>%
-                           unlist(use.names=FALSE))
-
-
-## Create names for UI
-## ?? Seems like reusing it like that is dirty and should be redone ??
-
-lista_egzaminow <- lapply(rodzaj_szkoly,
-                          function(x) wskazniki %>%
-                            filter(typ_szkoly == x) %>%
-                            select(czesc_egzaminu) %>%
-                            na.omit %>%
-                            distinct)
-
-names(rodzaj_szkoly) <- c('gimnazjum', 'szkoła podstawowa', 'liceum ogólnokształcące', 'technikum',
-                          'liceum profilowane', 'liceum uzupełniające', 'technikum uzupełniające')
-
-## Create names for maps
-
-rodzaj_egzaminu <- rodzaj_szkoly
-names(rodzaj_egzaminu) <- c('egzaminu gimnazjalnego', 'sprawdzianu szóstoklasisty', 'matury', 'matury', 'matury', 'matury', 'matury')
-
-## Helper functions for creating lists for input choices
-
-lista_powiatow <- function(w){
-  szkoly %>% filter(wojewodztwo_szkoly == w) %>%
-    select(powiat_szkoly) %>% distinct %>% unlist(use.names=FALSE)
-}  
-
-lista_gmin <- function(w,p){
-  szkoly %>% filter(wojewodztwo_szkoly == w, powiat_szkoly == p) %>%
-    select(gmina_szkoly) %>% distinct %>% unlist(use.names=FALSE)
-}
-
-## ?? Rewrite this so we can return list of schools at any aggregate level and
-## only require the type of school to be specified. In such case give schools from all of Poland
-## ?? Some schools have empty string as a name - it results in id of school being given as a name
-## should do something about it...
-
-lista_szkol <- function(w,p,g,r){
-  l_s <- szkoly %>% filter(wojewodztwo_szkoly==w,powiat_szkoly==p,gmina_szkoly==g,typ_szkoly==r) %>%
-    select(nazwa_szkoly,id_szkoly) %>% distinct
-  lista_return <- l_s['id_szkoly'] %>% unlist(use.names=FALSE)
-  names(lista_return) <- l_s['nazwa_szkoly'] %>% unlist(use.names=FALSE)
-  lista_return
-}
-
-## Generuje liste szkol pos sredniej z wybranego egzaminu z wybranego zakresu lat
-## (wyniki z poszczegolnych lat tez sa usredniane)
-
-lista_po_sredniej <- function(id, rodzaj, czesc, lata){
+shinyServer(function(input, output, session) {
+  rodzaj_szkoly <- all_data_geo %>% filter(typ_szkoly!='ZZ') %>% select(typ_szkoly) %>% distinct %>% unlist
   
-  rw <- ifelse(rodzaj == 'sprawdzian', 'pwe', 'ewd')
+  ## Create names for list of examination
   
-  wybrane_wskazniki <- wskazniki %>%
-    filter(rodzaj_wsk == rw, rodzaj_egzaminu == rodzaj, czesc_egzaminu == czesc)
+  names(rodzaj_szkoly) <- rodzaj_szkoly
   
-  wybrane_szkoly <- szkoly %>%
-    filter(id_szkoly %in% id, rok %in% lata)
+  ## Make a list assigning exam type to each school type
   
-  wybrane_dane <- wartosci_wskaznikow %>%
-    inner_join(wybrane_szkoly) %>%
-    inner_join(wybrane_wskazniki) %>%
-    select(nazwa_szkoly, miejscowosc, czesc_egzaminu, srednia) %>%
-    group_by(nazwa_szkoly) %>%
-    mutate(srednia=mean(srednia)) %>%
-    distinct %>%
-    ungroup %>%
-    arrange(desc(srednia))
-}
-
-## Map creating function
-## !! Works only for primary and secondary schools now. Not for high school types
-
-mapa_powiatow <- function(szkola, rok_egzaminu, egzamin=NULL){
-  dane_do_mapy <- powiatowe_wskazniki_light %>% filter(typ_szkoly==szkola, rok==rok_egzaminu)
-  if(is.null(egzamin)){
-    dane_do_mapy <- dane_do_mapy %>%
-      group_by(jpt_kod_je, rok) %>%
+  typy_egzaminow <- lapply(rodzaj_szkoly,
+                           function(x) all_data_geo %>%
+                             filter(typ_szkoly==x) %>%
+                             select(rodzaj_egzaminu) %>%
+                             na.omit %>%
+                             distinct %>%
+                             unlist(use.names=FALSE))
+  
+  
+  ## Create names for UI
+  ## ?? Seems like reusing it like that is dirty and should be redone ??
+  
+  lista_egzaminow <- lapply(rodzaj_szkoly,
+                            function(x) all_data_geo %>%
+                              filter(typ_szkoly == x) %>%
+                              select(skrot) %>%
+                              na.omit %>%
+                              distinct)
+  
+  names(rodzaj_szkoly) <- c('gimnazjum', 'technikum uzupełniające', 'liceum ogólnokształcące', 'technikum',
+                            'szkoła podstawowa')
+  
+  listaCzesci <- reactive(lista_egzaminow[[input$rodzaj]] %>% unlist(use.names=F) %>% as.list())
+  jakieLata <- reactive(all_data_geo %>% filter(typ_szkoly=='gimn.')  %>% select(rok) %>% range())
+  observeEvent(input$rodzaj, updateCheckboxGroupInput(session, 'czesc', choices = listaCzesci(), selected = listaCzesci()))
+  observeEvent(input$rodzaj, updateSliderInput(session, 'wybierz_lata', min = jakieLata()[1], max = jakieLata()[2],
+                                               value = c(jakieLata()[1],jakieLata()[2])))
+  
+  output$wagi_czesci <- renderMenu({
+    sidebarMenu(
+      menuItem("Wybrane wskazniki", icon = icon("bar-chart-o"),
+               checkboxGroupInput('czesc', label = NULL, choices = lista_egzaminow[['gimn.']] %>% unlist(use.names=F) %>% as.list(),
+                                  selected = lista_egzaminow[['gimn.']] %>% unlist(use.names=F) %>% as.list())
+      )
+     ,
+     menuItem("Waga czesci egzaminu", icon = icon("bar-chart-o"),
+              lapply(listaCzesci(), function(nazwa_czesci) {
+                numericInput(inputId = paste0('waga_',nazwa_czesci), value=100, label = nazwa_czesci, min = 0 , max = 100, step = 5)
+              })
+    )
+    )
+  })
+  
+  output$mapa <- renderLeaflet({
+    leaflet() %>%
+      addProviderTiles("CartoDB.Positron") %>%
+      fitBounds(minimum_lon, minimum_lat, maximum_lon, maximum_lat) %>%
+      addLegend(position = 'bottomright', title = 'Legenda: kolor odzwierciedla wyniki z wybranych egzaminów w danej szkole.',
+                bins = 3, 
+                colors = rev(markers_palette(c(1:3))),
+                labels = c('Lepiej', rep('',1), 'Gorzej'))
+    })
+  
+  observe({
+      if(nrow(filteredData())==0) { leafletProxy("mapa") %>% clearShapes() %>% clearMarkerClusters()} 
+      else{
+      ilosc_szkol <- schools_in_bounds() %>% nrow
+      ilosc_szkol_pl <- filteredData() %>% nrow
+      miejsce_szkoly_pl <- function(id) { which(weightedData()$id_szkoly %in% id) }
+      miejsce_szkoly <- function(id) { which(schools_in_bounds()$id_szkoly == id) } 
+      leafletProxy(map = 'mapa', data=schools_in_bounds()) %>%
+          clearShapes() %>%
+          clearMarkerClusters() %>% 
+          addCircleMarkers(lng = ~lon, lat = ~lat,
+                           clusterOptions = markerClusterOptions(disableClusteringAtZoom = 8),
+                           popup=~paste0('<STRONG><BOLD>', nazwa_szkoly, '<BR></BOLD></STRONG>',
+                                         'BR',
+                                         'Miejsce szkoly na pokazanym obszarze: ', miejsce_szkoly(id_szkoly), '/', ilosc_szkol,
+                                         '<BR>',
+                                         'Miejsce szkoly w Polsce: ', miejsce_szkoly_pl(id_szkoly), '/', ilosc_szkol_pl),
+                           fillColor = ~markers_palette(srednia), fillOpacity = 1, radius = 7,
+                           stroke = TRUE, color='black', opacity = 1, weight = 1)
+      }
+    })
+  
+  filteredData <- reactive({
+    rodzaj_szkoly <- input$rodzaj
+    lata <- input$wybierz_lata
+    wybrana_czesc <- input$czesc
+    
+    first <- all_data_geo %>% filter(nazwa_szkoly != '', !is.na(lon), !is.na(lat), rok %in% seq(lata[1], lata[2], by = 1),
+                            typ_szkoly==rodzaj_szkoly, skrot %in% wybrana_czesc) %>% 
+      group_by(id_szkoly) %>%
       mutate(srednia=mean(srednia)) %>%
       ungroup %>%
-      select(srednia, jpt_kod_je) %>%
-      distinct
-  }
-  
-  nazwa_egzaminu <- rodzaj_egzaminu[rodzaj_egzaminu %in% szkola] %>% names
-  tytul_mapy <- paste0('Wyniki ',nazwa_egzaminu,' ',rok_egzaminu,'r.')
-  
-  przedzialy <- 5
-  kolory <- brewer.pal(przedzialy, "BrBG")
-  klasy <- classIntervals(dane_do_mapy['srednia'] %>% unlist,
-                          n=5, style = "sd", dataPrecision = 0)
-  tabela.kolorow <- findColours(klasy, kolory)
-  
-  plot(pow, lwd = 0.5 , col = tabela.kolorow)
-  plot(woj, lwd = 2.5, add = TRUE)
-  legend("bottomleft", legend = names(attr(tabela.kolorow, "table")),
-         fill = attr(tabela.kolorow, "palette"), cex = 1, bty = "n")
-  title(main = tytul_mapy)
-}
-
-# Server logic
-
-shinyServer(function(input, output) {
-  
-  ## Create input lists for UI 
-  
-  output$wybierz_wojewodztwo <- renderUI({
-    selectInput('wojewodztwo', label = ('Województwo'), choices = c(Wybierz = '',wojewodztwa))
-  })
-  
-  output$wybierz_powiat <- renderUI({
-    ## Do not run if previous input is not done - stops erros
-    if (is.null(input$wojewodztwo) || is.na(input$wojewodztwo) || input$wojewodztwo == '') {
-      return()
-    }
-    else {
-      powiaty <- lista_powiatow(input$wojewodztwo)
-      selectInput('powiat', label = ('Powiat'), choices = c(Wybierz = '', powiaty))
-    }
-  })
-  
-  output$wybierz_gmine <- renderUI({
-    ## Do not run if previous input is not done - stops errors
-    if (is.null(input$powiat) || is.na(input$powiat) || input$powiat == '') {
-      return()
-    }
-    else { 
-      gminy <- lista_gmin(input$wojewodztwo, input$powiat)
-      selectInput('gmina', label = ('Gmina'), choices = c(Wybierz = '', gminy))
-    }
-  })
-  
-  output$wybierz_rodzaj <- renderUI({
-    selectInput('rodzaj', label = ('Rodzaj szkoły'), choices = c(Wybierz = '', rodzaj_szkoly))
-  })
-  
-  output$wybierz_szkole <- renderUI({
-    ## Do not run if previous input is not done - stops errors
-    if (is.null(input$gmina) || is.na(input$gmina) || input$gmina == '' || is.null(input$rodzaj) ||
-        is.na(input$rodzaj) || input$rodzaj == '')
-    {
-      return()
-    }
-    else {
-      lista_szkol <- lista_szkol(input$wojewodztwo, input$powiat, input$gmina, input$rodzaj)
-      selectInput('szkola', label = ('Szkoła'), choices = c(Wybierz = '', lista_szkol))
-    }
-  })
-  
-  output$wybierz_czesc_egzaminu <- renderUI({
-   
-   ## Do not run if previous input is not done - stops errors
+      distinct(id_szkoly)
     
-   if (is.null(input$rodzaj) || is.na(input$rodzaj) || input$rodzaj == '') {
-     return()
-   }
-   else {
-      lista_czesci <- lista_egzaminow[[input$rodzaj]]
-      selectInput('czesc', label = ('Czesc egzaminu'), choices = c(Wybierz = '', lista_czesci))
-    }
-  })
-  
-  output$wybierz_lata <- renderUI({
-    ## Different time ranges for different data sets - should probably restrict values after choice of data set
-    ## PWE is 2002 - 2013 EWD is 2006 - 2015
-    ## !! Temporarily lock top value to 2013
-    sliderInput("wybierz_lata", "Wybierz lata", min = 2002, max = 2013, value = c(2002,2013),
-                ticks = TRUE, sep = '')
+    second <- all_data_geo %>%
+       filter(!is.na(lat), rok %in% seq(lata[1], lata[2], by = 1),
+              typ_szkoly==rodzaj_szkoly, skrot %in% wybrana_czesc) %>% 
+       group_by(id_szkoly, skrot) %>%
+       summarise(srednia=mean(srednia)) %>%
+       spread(., skrot, srednia) %>%
+       ungroup
+    
+    right_join(first,second) %>% arrange(desc(srednia))
     
   })
   
-  output$mapa <- renderPlot({
-    if (is.null(input$rodzaj) || is.na(input$rodzaj) || input$rodzaj == '') {
-      return()
-    }
-    else mapa_powiatow(input$rodzaj, max(input$wybierz_lata), input$czesc)
+  wagiCzesci <- reactive ({
+    input$czesc
+    wagi <- lapply(input$czesc, function(nazwa_czesci) {
+      paste0('input[[\'waga_',nazwa_czesci,'\']]') %>% parse(text=.) %>% eval
+    })
+    if(length(wagi) == length(reactive_values$nazwa_czesci)) names(wagi) <- reactive_values$nazwa_czesci
+    wagi
   })
   
-  output$wyniki_egzaminu <- renderDataTable({ 
-    if (is.null(input$rodzaj) || input$rodzaj == "") {
-      return()
-    }
-    else {
-    lista_po_sredniej(input$szkola, typy_egzaminow[[input$rodzaj]], input$czesc, input$wybierz_lata)
-    }
+  reactive_values <- reactiveValues()
+  reactive_values$nazwa_czesci <- NULL
+  observeEvent(input$czesc, {reactive_values$nazwa_czesci <- input$czesc})
+  observe(reactive_values$table_length <- colnames(weightedData()) %>% length)
+  observe(reactive_values$wagi_length <- length(wagiCzesci()))
+  
+  weightedData <- reactive({
+    input$czesc
+    wagi <- wagiCzesci()
+    my_check <- !is.null(names(wagiCzesci())) 
+    output <- intersect(names(wagi),names(filteredData()))
+    output1 <- setdiff(names(filteredData()), c(names(wagi),'srednia'))
+    #print(c(output,wagi))
+    if(my_check){
+      weight_this <- filteredData()[output] 
+      lapply(output, function(x) (weight_this[x] * wagi[x])/100) %>%
+        do.call(cbind, .) %>%
+        mutate(srednia=rowMeans(., na.rm=T)) %>%
+        cbind(filteredData()[output1], .) %>%
+        arrange(desc(srednia))
+    } 
+    else filteredData()
   })
+  
+  # output$teshting <- {
+  #   DT::renderDataTable(
+  #   weightedData(), options=list(scrollX=TRUE))
+  # }
+  
+  
+  schools_in_bounds <- reactive({
+      lata <- input$wybierz_lata
+      if ( is.null(input$mapa_bounds) ){ return(all_data_geo[FALSE,]) }
+    
+      if ( is.null(input$rodzaj) || is.na(input$rodzaj) || input$rodzaj == ''){
+          rodzaj_szkoly <- all_data_geo %>% dplyr::filter(typ_szkoly!='ZZ') %>% select(typ_szkoly) %>% distinct %>% unlist 
+          names(rodzaj_szkoly) <- c('gimnazjum', 'technikum uzupełniające', 'liceum ogólnokształcące', 'technikum',
+                                  'szkoła podstawowa')
+        }
+      else rodzaj_szkoly <- input$rodzaj
+      
+      bounds <- input$mapa_bounds
+      lat_rng <- range(bounds$north, bounds$south)
+      lon_rng <- range(bounds$east, bounds$west)
+      weightedData() %>% dplyr::filter(lat >= lat_rng[1], lat <= lat_rng[2], lon >= lon_rng[1], lon <= lon_rng[2])
+      
+    })
+      
+  output$schools_in_view <- DT::renderDataTable({
+    
+    wybrana_czesc <- input$czesc
+    
+    dane_do_tabeli <- schools_in_bounds()[,c('nazwa_szkoly','srednia',wybrana_czesc)] %>%
+      arrange(desc(srednia)) %>%
+      rename(Ogolnie=srednia,Nazwa_Szkoly=nazwa_szkoly)
+    
+    normalit15<-function(m){
+      round(4*((m - min(m, na.rm = T))/(max(m, na.rm = T)-min(m, na.rm = T)))+1, digits = 2)
+    }
+    
+   dane_do_tabeli <- dane_do_tabeli %>% ungroup %>% mutate_each(funs(normalit15),-1)
+    DT::datatable(dane_do_tabeli, options=list(scrollX=TRUE))
+    
+  })
+  
 })
