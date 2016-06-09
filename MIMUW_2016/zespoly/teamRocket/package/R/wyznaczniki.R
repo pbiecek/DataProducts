@@ -20,8 +20,8 @@ uw.informatyka <- list(skrot = "uw_inf", formula =
 
 #' Krotka zawierająca opis funkcji wyliczającej czy osoba zdała maturę
 #' @export
-zdawalnosc <- list(skrot = "zdawalnosc", formula = "ifelse(m_mat_p >= 30 &  m_pol_p >= 30 & m_ang_p >= 30, 1, 0)",
-                   opis = paste("Zdawalność matury [0 = nie zdał, 1 = zdał]"))
+zdawalnosc <- list(skrot = "zdawalnosc", formula = "ifelse( m_mat_p >= 30 & m_pol_p >= 30 & m_ang_p >= 30, 'Zdał', 'Nie zdał')",
+                   opis = paste("Zdawalność matury"))
 
 #' Krotka zawierająca opis funkcji wyliczającej punkty przy rekrutacji na dziennikarstwo na UW
 #' @export

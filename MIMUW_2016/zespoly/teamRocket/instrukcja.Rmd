@@ -19,7 +19,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 Pakiet Maturiser dostarcza narzędzia do badania osiągnięć uczniów poszczególnych szkół.
 
-Dla wybranej szkoły pokaże jakie wyniki uzyskali jej uczniowie i porówna je z wynikami uczniów innych szkół w gminie jak i w kraju. Wyniki można porównywać ze względu na różne kryteria (np. liczba punktów jakie uczniowie szkoły uzyskaliby podczas rekrutacji na dziennikarstwo UW). Aplikacja wyświetla czytelny histogram przedstawiający rozkład punktów jakie uczniowie szkoły uzyskali w tym kryterium. W tle ich wyniki są porownywane z osiągnięciami uczniów w gminie i w kraju. Możliwe jest definiowanie własnych kryteriów porównawczych. Nasza aplikacja dostarcza w tym celu prosty framework.
+Dla wybranej szkoły pokaże jakie wyniki uzyskali jej uczniowie i porówna je z wynikami uczniów innych szkół w gminie jak i w kraju. Możliwe jest także bezpośrednie porównanie dwóch szkół. Wyniki można porównywać ze względu na różne kryteria (np. liczba punktów jakie uczniowie szkoły uzyskaliby podczas rekrutacji na dziennikarstwo na UW). Aplikacja wyświetla czytelny histogram lub wykres słupkowy, przedstawiający rozkład punktów jakie uczniowie szkoły uzyskali w tym kryterium. Wyniki są porownywane z osiągnięciami uczniów w gminie i w kraju. Możliwe jest definiowanie własnych kryteriów porównawczych. Nasza aplikacja dostarcza w tym celu prosty framework.
 
 
 ## Instalacja i pierwsze uruchomienie
@@ -58,19 +58,16 @@ library(maturiser)
 demo()
 ```
 Powyższe wywołanie załaduje dołączony zbior danych wyników matur z
-roku 2015, doda do niego kilka dodatkowych wyznaczników i przekaże te
-dane do aplikacji shiny.
+roku 2015, doda do niego kilka dodatkowych wyznaczników i przekaże te dane do aplikacji shiny.
 
 ## Dla użytkownika aplikacji - instrukcja
 
-Obsługa aplikacji jest niezwykle prosta!
-
 1. W panelu bocznym wybierz gminę oraz interesującą Cię szkołę.
-2. Następnie wybierz wyznacznik - kryterium, ze względu na które chceszporównać wyniki maturalne uczniów wybranej placówki.
+2. Następnie wybierz wyznacznik - kryterium, ze względu na które chcesz porównać wyniki maturalne uczniów.
 
 Możliwe jest filtrowanie gmin/szkół/wyznaczników poprzez wpisywanie części nazw w polach wyboru.
 
-Przed Twoimi oczami ukaże się piękny histogram - wykres przedstawiający względną liczbę uczniów, dla których wyznacznik ma wartość przedstawioną na osi x.
+Przed Twoimi oczami ukaże się wykres przedstawiający względną liczbę uczniów, dla których wyznacznik ma określoną wartość.
 
 ## Definiowanie własnych kryteriów porównawczych
 
