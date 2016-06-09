@@ -212,8 +212,8 @@ twoCoursesTable <- function(course_a, course_b) {
   
   colnames(data1) = c(
     paste("spośród wszystkich uczestników", course_b),
-    paste("spośród studentów, którzy zdali", course_a),
-    paste("spośród studentów, którzy nie zdali", course_a)
+    paste("spośród studentów, którzy nie zdali", course_a),
+    paste("spośród studentów, którzy zdali", course_a)
   )
 
   data1
