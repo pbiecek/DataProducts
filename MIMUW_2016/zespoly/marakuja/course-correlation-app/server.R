@@ -1,6 +1,7 @@
 library(ggplot2)
 
-source("logic.R")
+source("logic-tab1.R")
+source("logic-tab2.R")
 source("plots.R")
 
 row_click_callback <- "function(table) {

@@ -1,18 +1,4 @@
 source("input.R")
-source("courses.R")
-
-get_last_grade_for_course <- function(data, course) {
-  data %>%
-    filter(!is.na(OCENA_LICZBOWA)) %>%
-    filter(!is.na(NUMER_TERMINU)) %>%
-    filter(KOD %in% course) %>%
-    group_by(OSOBA) %>%
-    mutate(ostatni_termin = max(NUMER_TERMINU)) %>%
-    filter(NUMER_TERMINU %in% ostatni_termin) %>%
-    mutate(max_ocena = max(OCENA_LICZBOWA)) %>%
-    filter(OCENA_LICZBOWA == max_ocena) %>%
-    distinct(OCENA_LICZBOWA)
-}
 
 filter_passed <- function(data) {
   data %>%
@@ -69,7 +55,7 @@ df_for_plot <- function(df, error) {
   df_new$liczba_studentow = cumsum(df_new$liczba_studentow)
   df_new <- arrange(df_new, -row_number())
   if (error) {
-      df_new = add_error(df_new)
+    df_new = add_error(df_new)
   }
   y = df_new$liczba_studentow
   df_new$liczba_studentow = df_new$liczba_studentow / maks
@@ -96,86 +82,17 @@ add_error <- function(df) {
   df
 }
 
-get_subjects_codes_mock <- function() {
-  courses_vector
-}
-
-courses_summary_joined <- function(data) {
-  data %>%
-    group_by(OCENA_LICZBOWA.x) %>%
-    summarise(liczba_studentow=n()) %>%
-    select(ocena_przedmiot_B = OCENA_LICZBOWA.x, liczba_studentow)}
-
-summarise_data <- function(courseB, min_common, filterA, min_grade_B) {
-  subjects <- get_subjects_codes_mock()
-  subjects <- subjects[subjects != courseB]
-  
-  rate_data <- data.frame(subject=character(0), percent=numeric(0), students_min_grade=numeric(0),
-                          all_students=numeric(0), stringsAsFactors=FALSE)
-  
-  for (subject in subjects) {
-    dataA <- filterA(get_last_grade_for_course(data, subject))
-    dataB <- get_last_grade_for_course(data, courseB)
-    joined <- dataB %>% inner_join(dataA, by="OSOBA")
-    all <- count(joined)
-    filtered <- count(joined %>% filter(OCENA_LICZBOWA.x >= min_grade_B))
-    if (filtered >= min_common) {
-      percent <- round(filtered/all * 100, 2)
-      rate_data <- rbind(rate_data, data.frame(subject=subject, percent=percent,
-                                               students_min_grade=filtered, all_students=all))
-    }
-  }
-  rate_data
-}
-
-sort_courses_passed <- function(courseB, min_common, min_grade_B) {
-  data <- summarise_data(courseB, min_common, filter_passed, min_grade_B)
-  names(data) <- c("Przedmiot A",
-                   "Procent studentów, którzy uzyskali co najmniej wybraną ocenę",
-                   "Liczba studentów, którzy zdali A, a z B uzyskali co najmniej wybraną ocenę",
-                   "Liczba studentów, którzy zdali A")
-  data %>% arrange(desc(`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`))
-}
-
-sort_courses_failed <- function(courseB, min_common, min_grade_B) {
-  data <- summarise_data(courseB, min_common, filter_failed, min_grade_B)
-  names(data) <- c("Przedmiot A",
-                   "Procent studentów, którzy uzyskali co najmniej wybraną ocenę",
-                   "Liczba studentów, którzy nie zdali A, a z B uzyskali co najmniej wybraną ocenę",
-                   "Liczba studentów, którzy nie zdali A")
-  data %>% arrange(`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`)
-}
-
-plot_for_data <- function(input_course, computed_courses, row_func, p_or_f) {
-  all <- count_A_by_mark_B_all(input_course)
-
-  subselected_courses = union(head(computed_courses, 1), tail(computed_courses, 1))
-
-  all_plot <- df_for_plot(all, TRUE)
-  all_plot$warunek = "brak"
-
-  plot <- all_plot
-  for (course_a in subselected_courses) {
-      chosen_plot <- df_for_plot(row_func(course_a, input_course), TRUE)
-      chosen_plot$warunek = paste(p_or_f, course_a)
-
-      plot <- union(plot, chosen_plot)
-  }
-
-  plot
-}
-
 pointsTwoCourses <- function(course_a, course_b) {
   all <- count_A_by_mark_B_all(course_b)
   all_plot <- df_for_plot(all, TRUE)
   all_plot$warunek = "brak"
-
+  
   plot_failed <- df_for_plot(count_A_by_mark_B_failed(course_a, course_b), TRUE)
   plot_failed$warunek = "nie zdał przedmiotu A"
-
+  
   plot_passed <- df_for_plot(count_A_by_mark_B_passed(course_a, course_b), TRUE)
   plot_passed$warunek = "zdał przedmiot A"
-
+  
   plot <- union(all_plot, union(plot_failed, plot_passed))
 }
 
@@ -190,7 +107,7 @@ twoCoursesChart <- function(course_a, course_b) {
     geom_errorbar(aes(ymax = max_err, ymin = min_err, width = 0.12)) +
     xlab(paste("ocena z przedmiotu", course_b)) +
     ylab("")
-
+  
   plot
 }
 
@@ -200,7 +117,7 @@ twoCoursesTable <- function(course_a, course_b) {
   data$min_err = round(data$min_err * 100, 2)
   data$max_err = round(data$max_err * 100, 2)
   data <- select(data, ocena_przedmiot_B, warunek, conajmniej, liczba_studentow)
-
+  
   filter(data, warunek == "brak") %>% arrange(-ocena_przedmiot_B) -> data1
   filter(data, warunek == "nie zdał przedmiotu A") %>% arrange(-ocena_przedmiot_B) -> data2
   filter(data, warunek == "zdał przedmiot A") %>% arrange(-ocena_przedmiot_B) -> data3
@@ -215,7 +132,7 @@ twoCoursesTable <- function(course_a, course_b) {
     paste("spośród studentów, którzy nie zdali", course_a),
     paste("spośród studentów, którzy zdali", course_a)
   )
-
+  
   data1
 }
 

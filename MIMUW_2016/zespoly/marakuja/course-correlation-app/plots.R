@@ -1,17 +1,10 @@
-source("logic.R")
+source("utils.R")
 
 formatPlot <- function(dataFunc) {
   ggplot(dataFunc(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +
     geom_line(size = 2) + ylim(0,1) +
     geom_errorbar(aes(ymax = max_err, ymin = min_err, width = 0.12)) +
     xlab("ocena z wybranego przedmiotu")
-}
-
-percent_grade <- function(course, min_grade) {
-  grades <- get_last_grade_for_course(data, course)
-  all <- count(grades)
-  filtered <- count(grades %>% filter(OCENA_LICZBOWA >= min_grade))
-  round(filtered / all * 100, 2)
 }
 
 barPercentPlot <- function(data, direction, course, min_grade) {
