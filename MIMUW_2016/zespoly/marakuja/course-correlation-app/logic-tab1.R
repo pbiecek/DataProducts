@@ -5,7 +5,7 @@ get_subjects_codes_mock <- function() {
   courses_vector
 }
 
-summarise_data <- function(courseB, min_common, filterA, min_grade_B) {
+summarise_data <- function(courseB, min_common, filterA, min_grade_B, courseB_grades) {
   subjects <- get_subjects_codes_mock()
   subjects <- subjects[subjects != courseB]
   
@@ -14,8 +14,7 @@ summarise_data <- function(courseB, min_common, filterA, min_grade_B) {
   
   for (subject in subjects) {
     dataA <- filterA(get_last_grade_for_course(data, subject))
-    dataB <- get_last_grade_for_course(data, courseB)
-    joined <- dataB %>% inner_join(dataA, by="OSOBA")
+    joined <- courseB_grades() %>% inner_join(dataA, by="OSOBA")
     all <- count(joined)
     filtered <- count(joined %>% filter(OCENA_LICZBOWA.x >= min_grade_B))
     if (filtered >= min_common) {
@@ -27,8 +26,8 @@ summarise_data <- function(courseB, min_common, filterA, min_grade_B) {
   rate_data
 }
 
-sort_courses_passed <- function(courseB, min_common, min_grade_B) {
-  data <- summarise_data(courseB, min_common, filter_passed, min_grade_B)
+sort_courses_passed <- function(courseB, min_common, min_grade_B, courseB_grades) {
+  data <- summarise_data(courseB, min_common, filter_passed, min_grade_B, courseB_grades)
   names(data) <- c("Przedmiot A",
                    "Procent studentów, którzy uzyskali co najmniej wybraną ocenę",
                    "Liczba studentów, którzy zdali A, a z B uzyskali co najmniej wybraną ocenę",
@@ -36,8 +35,8 @@ sort_courses_passed <- function(courseB, min_common, min_grade_B) {
   data %>% arrange(desc(`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`))
 }
 
-sort_courses_failed <- function(courseB, min_common, min_grade_B) {
-  data <- summarise_data(courseB, min_common, filter_failed, min_grade_B)
+sort_courses_failed <- function(courseB, min_common, min_grade_B, courseB_grades) {
+  data <- summarise_data(courseB, min_common, filter_failed, min_grade_B, courseB_grades)
   names(data) <- c("Przedmiot A",
                    "Procent studentów, którzy uzyskali co najmniej wybraną ocenę",
                    "Liczba studentów, którzy nie zdali A, a z B uzyskali co najmniej wybraną ocenę",
