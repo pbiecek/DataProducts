@@ -25,7 +25,10 @@ shinyUI(fluidPage(
                       selected = 4),
           
           numericInput("min-common", "Minimalna liczba studentów z oceną co najmniej X",
-                       10, min = 1)
+                       10, min = 1),
+          hr(),
+          p("Kliknięcie na wiersz tabeli prowadzi do szczegółowego porównania dwóch
+            przedmiotów.")
         ),
         mainPanel(
           h3(textOutput("headerNegative")),
