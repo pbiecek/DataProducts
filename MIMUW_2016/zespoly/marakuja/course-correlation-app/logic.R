@@ -181,9 +181,12 @@ pointsTwoCourses <- function(course_a, course_b) {
 
 twoCoursesChart <- function(course_a, course_b) {
   data <- pointsTwoCourses(course_a, course_b)
-
+  data$liczba_studentow = round(100 * data$liczba_studentow, 2)
+  data$min_err = round(100 * data$min_err, 2)
+  data$max_err = round(100 * data$max_err, 2)
+  
   plot <- ggplot(data, aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +
-    geom_line(size = 2) + ylim(0,1) +
+    geom_line(size = 2) + ylim(0,100) +
     geom_errorbar(aes(ymax = max_err, ymin = min_err, width = 0.12)) +
     xlab(paste("ocena z przedmiotu", course_b)) +
     ylab("")
