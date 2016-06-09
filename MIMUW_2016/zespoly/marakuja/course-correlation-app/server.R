@@ -119,6 +119,10 @@ shinyServer(function(input, output, session) {
                  linetype="dashed",
                  data.frame(y=line_value,
                             Threshold = "Procent studentów uczestniczących w przedmiocie B,\nktórzy otrzymali co najmniej wybraną ocenę")) +
+      scale_y_continuous(breaks = sort(c(seq(from = 0,
+                                             to = max(chosen$`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`, line_value[[1]]),
+                                             by=10),
+                                         line_value[[1]]))) +
       scale_colour_manual(values = c(`Procent studentów uczestniczących w przedmiocie B,\nktórzy otrzymali co najmniej wybraną ocenę` = "black")) +
       guides(colour=guide_legend(title=NULL))
   }
