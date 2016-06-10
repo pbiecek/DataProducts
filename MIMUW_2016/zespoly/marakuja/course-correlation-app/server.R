@@ -1,59 +1,111 @@
 library(ggplot2)
 
-source("input.R")
-source("logic.R")
+source("logic-tab1.R")
+source("logic-tab2.R")
+source("plots.R")
 
-shinyServer(function(input, output) {
-  
-  positive_subject <- reactive ({
-    course <- input$przedmiot
-    sorted <- sort_courses_passed_by_correlation(course)
-    # działa tylko przy N = 1
-    c(t(sorted))
+row_click_callback <- "function(table) {
+    table.on('click.dt', 'tr', function() {
+      tabs = $('.tabbable .nav.nav-tabs li a');
+      Shiny.onInputChange('przedmiot_a', table.row(this).data()[0]);
+      Shiny.onInputChange('przedmiot_b', $('#przedmiot').val());
+      $(tabs[1]).click();
+    });
+}"
+
+shinyServer(function(input, output, session) {
+
+  last_grades_for_input_course <- reactive ({
+    get_last_grade_for_course(data, input$przedmiot)
   })
-  
+
+  positive_subject <- reactive ({
+    validate(
+      need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
+    )
+    course <- input$przedmiot
+    sorted <- sort_courses_passed(course, input$`min-common`, input$`min-grade`, last_grades_for_input_course)
+    validate(
+      need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
+    )
+    sorted
+  })
+
   negative_subject <- reactive ({
     course <- input$przedmiot
-    sorted <- sort_courses_failed_by_correlation(course)
-    # działa tylko przy N = 1
-    c(t(sorted))
+    validate(
+      need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
+    )
+    sorted <- sort_courses_failed(course, input$`min-common`, input$`min-grade`, last_grades_for_input_course)
+    validate(
+      need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
+    )
+    sorted
   })
-  
-  plot_for_data <- function(computed_course, data, p_or_f) {
-    input_course <- input$przedmiot
-    all <- count_A_by_mark_B_all(computed_course)
-    plot <- data_for_plot(data, all, p_or_f)
-    plot$header <- computed_course
-    plot
-  }
-  
-  points_positive <- reactive ({
-    input_course <- input$przedmiot
-    computed_course <- positive_subject()
-    plot_for_data(computed_course, count_A_by_mark_B_passed(computed_course, input_course), "passed")
-  })
-  
-  points_negative <- reactive ({
-    course <- input$przedmiot
-    computed_course <- negative_subject()
-    plot_for_data(computed_course, count_A_by_mark_B_failed(computed_course, course), "failed")
-  })
-  
-  output$headerPositive <- renderText({
-    paste("Jeżeli zdałeś ", positive_subject(), "przedmiot ",
-          input$przedmiot, " jest dla Ciebie")
-  })
+
+  tab2_przedmiot_a = reactive({input$przedmiot_a})
+  tab2_przedmiot_b = reactive({input$przedmiot_b})
+  observe({updateSelectInput(session, "przedmiot_a", selected = tab2_przedmiot_a())})
+  observe({updateSelectInput(session, "przedmiot_b", selected = tab2_przedmiot_b())})
 
   output$headerNegative <- renderText({
-    paste("Jeżeli nie zdałeś ", negative_subject(),
-          "lepiej nie wybieraj przedmiotu ", input$przedmiot)
+    paste("Związek oceny z niezdaniem innego przedmiotu")
   })
 
-  output$corDiagramPositive = renderPlot(
-    ggplot(points_positive(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = typ)) + geom_line() + geom_errorbar(aes(ymax = max_err, ymin = min_err)) + ylim(0,1) + ylab("p-stwo uzyskania oceny >= niż")
+  output$descriptionNegative = renderText(
+    paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z',
+          input$przedmiot,
+          'wśród studentów, którzy nie zaliczyli przedmiotu A')
   )
 
-  output$corDiagramNegative = renderPlot(
-    ggplot(points_negative(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = typ)) + geom_line() +geom_errorbar(aes(ymax = max_err, ymin = min_err)) + ylim(0,1) + ylab("p-stwo uzyskania oceny >= niż")
+  output$corDiagramNegative = renderPlot(barPercentPlot(negative_subject(), 1, input$przedmiot, input$`min-grade`))
+
+  output$tableNegative = renderDataTable({negative_subject()}, options = list(pageLength = 10),
+                                         callback = row_click_callback)
+
+  output$headerPositive <- renderText({
+    paste("Związek oceny ze zdaniem innego przedmiotu")
+  })
+
+  output$descriptionPositive = renderText(
+    paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z',
+          input$przedmiot,
+          'wśród studentów, którzy zaliczyli przedmiot A')
   )
+
+  output$corDiagramPositive = renderPlot(barPercentPlot(positive_subject(), -1, input$przedmiot, input$`min-grade`))
+
+  output$tablePositive = renderDataTable({positive_subject()}, options = list(pageLength = 10),
+                                         callback = row_click_callback)
+
+
+  output$headerTwoCourses <- renderText({
+    paste("Związek oceny z", input$przedmiot_b, "ze zdaniem lub niezdaniem",
+          input$przedmiot_a)
+  })
+
+  output$legendCountSummary = renderText(
+    paste("Liczba studentów, którzy uczestniczyli w", input$przedmiot_b),
+  )
+
+  output$countSummary = renderTable(
+    createSummary(input$przedmiot_a, input$przedmiot_b),
+    display = c("d", "d", "d", "d"), include.rownames = FALSE
+  )
+
+  output$legendTwoCoursesDiagram <- renderText(
+    paste("Procent studentów, którzy uzyskali przynajmniej daną ocenę z",
+          input$przedmiot_b)
+  )
+
+  output$corDiagramTwoCourses <- renderPlot(
+    twoCoursesChart(input$przedmiot_a, input$przedmiot_b)
+  )
+
+  output$legendTwoCourses = renderText(
+    paste("Procent studentów, którzy uzyskali przynajmniej daną ocenę z",
+          input$przedmiot_b)
+  )
+
+  output$tableTwoCourses = renderTable(twoCoursesTable(input$przedmiot_a, input$przedmiot_b))
 })
