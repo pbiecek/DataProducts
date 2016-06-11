@@ -31,19 +31,19 @@ shinyUI(fluidPage(
             przedmiotów.")
         ),
         mainPanel(
+          h3(textOutput("headerPositive")),
+          p(textOutput("descriptionPositive")),
+          plotOutput("corDiagramPositive"),
+          br(), br(),
+          dataTableOutput("tablePositive"),
+          tags$style(type="text/css", '#tablePositive tfoot {display:none;}'),
           h3(textOutput("headerNegative")),
           p(textOutput("descriptionNegative")),
           plotOutput("corDiagramNegative"),
           br(), br(),
           dataTableOutput("tableNegative"),
           br(), br(),
-          tags$style(type="text/css", '#tableNegative tfoot {display:none;}'),
-          h3(textOutput("headerPositive")),
-          p(textOutput("descriptionPositive")),
-          plotOutput("corDiagramPositive"),
-          br(), br(),
-          dataTableOutput("tablePositive"),
-          tags$style(type="text/css", '#tablePositive tfoot {display:none;}')
+          tags$style(type="text/css", '#tableNegative tfoot {display:none;}')
         )
       )
     ),
