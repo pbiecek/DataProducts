@@ -72,6 +72,13 @@ shinyUI(fluidPage(
           tableOutput("tableTwoCourses")
         )
       )
+    ),
+    tabPanel("O programie",
+      p("Program został przygotowany w ramach kursu JNP2 pod opieką
+        pana dr. hab. Przemysława Biecka.
+        Autorzy: Szymon Dziewiątkowski, Michał Łuszczyk, Anna Prochowska."),
+      p("Ze wszystkich ocen, które student uzyskał z wybranego przedmiotu,
+        aplikacja uwzlędnia tylko najpóźniejszą.")
     )
   )
 ))
