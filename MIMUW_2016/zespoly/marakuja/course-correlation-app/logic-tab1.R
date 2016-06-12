@@ -13,7 +13,7 @@ summarise_data <- function(courseB, min_common, filterA, min_grade_B, courseB_gr
                           all_students=numeric(0), stringsAsFactors=FALSE)
   
   for (subject in subjects) {
-    dataA <- filterA(get_last_grade_for_course(data, subject))
+    dataA <- filterA(get_first_grade_for_course(data, subject))
     joined <- courseB_grades() %>% inner_join(dataA, by="OSOBA")
     all <- count(joined)
     filtered <- count(joined %>% filter(OCENA_LICZBOWA.x >= min_grade_B))

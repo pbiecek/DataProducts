@@ -15,8 +15,8 @@ row_click_callback <- "function(table) {
 
 shinyServer(function(input, output, session) {
 
-  last_grades_for_input_course <- reactive ({
-    get_last_grade_for_course(data, input$przedmiot)
+  first_grades_for_input_course <- reactive ({
+    get_first_grade_for_course(data, input$przedmiot)
   })
 
   positive_subject <- reactive ({
@@ -24,7 +24,7 @@ shinyServer(function(input, output, session) {
       need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
     )
     course <- input$przedmiot
-    sorted <- sort_courses_passed(course, input$`min-common`, input$`min-grade`, last_grades_for_input_course)
+    sorted <- sort_courses_passed(course, input$`min-common`, input$`min-grade`, first_grades_for_input_course)
     validate(
       need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
     )
@@ -36,7 +36,7 @@ shinyServer(function(input, output, session) {
     validate(
       need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
     )
-    sorted <- sort_courses_failed(course, input$`min-common`, input$`min-grade`, last_grades_for_input_course)
+    sorted <- sort_courses_failed(course, input$`min-common`, input$`min-grade`, first_grades_for_input_course)
     validate(
       need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
     )

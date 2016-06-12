@@ -20,14 +20,14 @@ courses_summary <- function(dataA, dataB) {
 }
 
 count_A_by_mark_B <- function(courseA, courseB, filterA) {
-  dataA <- filterA(get_last_grade_for_course(data, courseA))
-  dataB <- get_last_grade_for_course(data, courseB)
+  dataA <- filterA(get_first_grade_for_course(data, courseA))
+  dataB <- get_first_grade_for_course(data, courseB)
   courses_summary(dataA, dataB)
 }
 
 count_A_by_mark_B_all <- function(course) {
   all_data <- data
-  course_data <- get_last_grade_for_course(all_data, course)
+  course_data <- get_first_grade_for_course(all_data, course)
   course_data %>%
     group_by(OCENA_LICZBOWA) %>%
     summarise(liczba_studentow=n()) %>%

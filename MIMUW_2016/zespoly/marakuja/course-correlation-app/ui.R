@@ -73,12 +73,12 @@ shinyUI(fluidPage(
         )
       )
     ),
-    tabPanel("O programie",
-      p("Program został przygotowany w ramach kursu JNP2 pod opieką
-        pana dr. hab. Przemysława Biecka.
-        Autorzy: Szymon Dziewiątkowski, Michał Łuszczyk, Anna Prochowska."),
-      p("Ze wszystkich ocen, które student uzyskał z wybranego przedmiotu,
-        aplikacja uwzlędnia tylko najpóźniejszą.")
+    tabPanel("O programie", br(),
+      p("Program został przygotowany w ramach kursu JNP2 pod opieką
+        pana dr. hab. Przemysława Biecka."),
+      p("Autorzy: Szmon Dziewiątkowski, Michał Łuszczyk, Anna Prochowska."), br(),
+      p("Uwzględniamy tylko oceny z pierwszego terminu i z pierwszego podejścia studenta do przedmiotu."),
+      p("W przypadku, gdy w bazie jest więcej niż jedna taka ocena, wybieramy najlepszą z nich.")
     )
   )
 ))
