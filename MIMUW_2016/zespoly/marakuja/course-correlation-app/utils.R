@@ -16,7 +16,7 @@ first_grades_for_courses <- get_first_grade_for_courses()
 
 get_first_grade_for_course <- function(data, course) {
   first_grades_for_courses %>% ungroup() %>%
-    filter(KOD %in% course)
+    filter(PRZ_NAZWA %in% course)
 }
 
 percent_grade <- function(course, min_grade) {

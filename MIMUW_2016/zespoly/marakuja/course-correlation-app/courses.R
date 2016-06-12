@@ -1,99 +1,107 @@
-# from USOSweb, https://usosweb.mimuw.edu.pl/kontroler.php?_action=home/grupy&rok=2014
-# var courselist = $("td.strong span.note").map(function(n, x) {return x.innerHTML});
-# console.log(courselist.map(function(x, n) {return '"' + n + '"'}).get().join(',\n\t'))
+# Instrukcja przygotowania listy przedmiotów znajduje się pod adresem:
+# https://github.com/mluszczyk/listcourses
 
-courses_vector <- c(
-  "1000-214bWWW",
-  "1000-214bIOP",
-  "1000-224bJNP2",
-  "1000-214bJAO",
-  "1000-214bPSZ",
-  "1000-214bSIK",
-  "1000-213bASD",
-  "1000-213bBAD",
-  "1000-00HM1-OG",
-  "1000-223bJNP1",
-  "1000-213bRPS",
-  "1000-213bSOP",
-  "1000-212bAM2",
-  "1000-212bAKS",
-  "1000-00HM2-OG",
-  "1000-222bIPP",
-  "1000-212bMD",
-  "1000-212bPO",
-  "1000-211bAM1",
-  "1000-211bGAL",
-  "1000-211bPM",
-  "1000-211bWPF",
-  "1000-215bBSK",
-  "1000-225bJNP3",
-  "1000-216bJPP",
-  "1000-215bMNU",
-  "1000-2PRAKZ",
-  "1000-215bSWP",
-  "1000-2L5ZPP",
-  "1000-2L5ZP1",
-  "1000-2L5ZP2"
+courses_vector <- c("Analiza matematyczna inf. I",
+  "Analiza matematyczna inf. II",
+  "Geometria z algebrą liniową",
+  "Indywidualny projekt programistyczny",
+  "Matematyka dyskretna",
+  "Podstawy matematyki",
+  "Podstawy ochrony własności intelektualnej",
+  "Programowanie obiektowe",
+  "Szkolenie w zakresie bezpieczeństwa i higieny pracy",
+  "Wstęp do programowania (podejście funkcyjne)",
+  "Wstęp do programowania (podejście imperatywne)",
+  "Algorytmy i struktury danych",
+  "Aplikacje WWW",
+  "Bazy danych",
+  "Inżynieria oprogramowania",
+  "Języki i narzędzia programowania I",
+  "Języki i narzędzia programowania II",
+  "Języki, automaty i obliczenia",
+  "Problemy społeczne i zawodowe informatyki",
+  "Programowanie współbieżne",
+  "Rachunek prawdopodobieństwa i statystyka",
+  "Sieci komputerowe",
+  "Systemy operacyjne",
+  "Bezpieczeństwo systemów komputerowych",
+  "Języki i narzędzia programowania III",
+  "Języki i paradygmaty programowania",
+  "Metody numeryczne",
+  "Semantyka i weryfikacja programów",
+  "Zespołowy projekt programistyczny",
+  "Alfabety nieskończone",
+  "Algorytmiczna teoria gier koalicyjnych",
+  "Algorytmiczna teoria liczb",
+  "Algorytmiczne aspekty teorii gier",
+  "Algorytmiczne i statystyczne aspekty sekwencjonowania DNA",
+  "Algorytmika",
+  "Algorytmika grafów planarnych",
+  "Algorytmy parametryzowane",
+  "Algorytmy tekstowe",
+  "Algorytmy w genomice obliczeniowej",
+  "Automaty a półgrupy",
+  "Automaty a rekurencja",
+  "Bezpieczeństwo oprogramowania",
+  "Data mining",
+  "Eksploracja i przetwarzanie dużych zbiorów danych",
+  "Geometria obliczeniowa",
+  "Geometria obrazu",
+  "Głębokie sieci neuronowe",
+  "Handel elektroniczny - wprowadzenie",
+  "Historia komputerów",
+  "Interakcja człowiek-komputer",
+  "Języki, automaty i obliczenia II",
+  "Kody korekcyjne",
+  "Kompresja danych - wprowadzenie",
+  "Konstruowanie niezawodnego oprogramowania",
+  "Kryptografia dla informatyków I",
+  "Kryptografia dla informatyków II",
+  "Logika i teoria typów",
+  "Narzędzia i metody wnioskowania",
+  "Obliczeniowa medycyna molekularna",
+  "Obliczeniowa teoria wyboru społecznego",
+  "Optymalizacja dyskretna w praktyce",
+  "Podstawowe zagadnienia prawne przydatne w życiu informatyka",
+  "Programowalne układy logiczne",
+  "Programowanie mikrokontrolerów",
+  "Programowanie w asemblerze",
+  "Programowanie w logice",
+  "Programowanie w logice i w Prologu",
+  "Przetwarzanie dużych danych",
+  "Przetwarzanie języka naturalnego",
+  "Rachunek lambda",
+  "Reprezentacja wiedzy",
+  "Semantyczny Internet",
+  "Sieci Petriego",
+  "Statystyczna analiza danych (wspólne z 1000-714SAD)",
+  "Statystyczna analiza danych II (wspólne z 1000-718SAD)",
+  "Systemy rozproszone",
+  "Systemy uczące się",
+  "Systemy wieloagentowe",
+  "Systemy wieloagentowe II",
+  "Sztuczna inteligencja i systemy doradcze",
+  "Teoria aukcji",
+  "Teoria informacji",
+  "Teoria kategorii w podstawach informatyki",
+  "Teoria kategorii w podstawach informatyki dla nieco zaawansowanych",
+  "Teoria modeli skończonych",
+  "Teoria obliczeń",
+  "Teorio-growe podejście do analizy sieci spolecznych",
+  "Teroria implementacji",
+  "Weryfikacja wspomagana komputerowo",
+  "Wnioskowanie w serwisach i systemach informatycznych",
+  "Wprowadzenie do kognitywistyki",
+  "Wstęp do analizy sieci społecznych",
+  "Wstęp do biologii obliczeniowej",
+  "Wybrane zagadnienia matematyki dyskretnej",
+  "Wykłady ze współczesnej informatyki",
+  "XML i nowoczesne technologie zarządzania treścią",
+  "Zaawansowana analiza oprogramowania",
+  "Zaawansowane bazy danych",
+  "Zaawansowane metody integracji systemów i przetwarzania zdarzeń",
+  "Zaawansowane metody sztucznej inteligencji",
+  "Zaawansowane programowanie funkcyjne",
+  "Zaawansowane systemy operacyjne",
+  "Zarządzanie projektami informatycznymi"
 )
-
-# https://usosweb.mimuw.edu.pl/kontroler.php?_action=actionx%3Akatalog2%2Fprzedmioty%2FszukajPrzedmiotu%28method%3Arej%3Brej_kod%3A1000-2016%3Bcallback%3Ag_5ffc7cdf%3Bcp_showDescriptions%3A0%3Bcp_showGroupsColumn%3A0%3Bcp_cdydsDisplayLevel%3A2%3Bf_tylkoWRejestracji%3A%3BkierujNaPlanyGrupy%3A%3Bf_grupa%3A1000-OBIER-STALE%29&f_modified=1&f_grupa=1000-OBIER
-# https://usosweb.mimuw.edu.pl/kontroler.php?_action=actionx%3Akatalog2%2Fprzedmioty%2FszukajPrzedmiotu%28method%3Arej%3Brej_kod%3A1000-2016l%3Bcallback%3Ag_5ffc7cdf%3Bcp_showDescriptions%3A0%3Bcp_showGroupsColumn%3A0%3Bcp_cdydsDisplayLevel%3A2%3Bf_tylkoWRejestracji%3A%3BkierujNaPlanyGrupy%3A%3Bf_grupa%3A1000-OBIER-STALE%29&f_modified=1&f_grupa=1000-OBIER
-# $("#layout-c22a > span > table.wrnav > tbody > tr > td:nth-child(1)").text()
-
-courses_vector <- append(courses_vector, strsplit("1000-2M16AN
-1000-2M00TL
-1000-2M12DNA
-1000-2N09ALT
-1000-2M12AGO
-1000-2M13AR
-1000-2M00GO
-1000-2M15ZTA
-1000-2N09KDW
-1000-2M12KI1
-1000-2M16NMW
-1000-2M09OTW
-1000-2M05ZP
-1000-2M08PMK
-1000-2M11PWA
-1000-2N00PLO
-1000-2M13PDD
-1000-2M11RW
-1000-2M01SP
-1000-2M10SR
-1000-2M00SW
-1000-2N03TI
-1000-2M10TKI
-1000-2M11WK
-1000-2M15WAS
-1000-2M07MD
-1000-2N09ZBD
-1000-2M08ZPI
-1000-2M12TGK
-1000-2N00ALG
-1000-2M11AGP
-1000-2M03DM
-1000-2M13DZD
-1000-2M09GOB
-1000-2M16GSN
-1000-2M09OTA
-1000-2M09ICK
-1000-2M12KOK
-1000-2M12KI2
-1000-2M10PLO
-1000-2M15PJN
-1000-2M09SI
-1000-2M13SAD1
-1000-2M13SAD2
-1000-2N09SUS
-1000-2N00SID
-1000-2M13TAU
-1000-2M14TKP
-1000-2M00TO
-1000-2M14TGS
-1000-2M16TIM
-1000-2N09WWK
-1000-2N09WSS
-1000-2N03BO
-1000-2M11WWI
-1000-2M01XM
-1000-2M12ZMI", "\\s+")[[1]])

@@ -17,6 +17,7 @@ barPercentPlot <- function(data, direction, course, min_grade) {
                      y = `Procent studentów, którzy uzyskali co najmniej wybraną ocenę`,
                      fill=factor(type))) +
     geom_bar(stat = "identity", width=.5) +
+    theme(axis.text.x=element_text(angle=90, hjust=1, vjust=0.5)) +
     geom_text(aes(label=`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`), position=position_dodge(width=0.9), vjust=-0.25) +
     xlab('Przedmiot A') +
     ylab('') +

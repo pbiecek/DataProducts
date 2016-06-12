@@ -53,9 +53,10 @@ shinyServer(function(input, output, session) {
   })
 
   output$descriptionNegative = renderText(
-    paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z',
+    paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z przedmoiotu "',
           input$przedmiot,
-          'wśród studentów, którzy nie zaliczyli przedmiotu A')
+          '" wśród studentów, którzy nie zaliczyli przedmiotu A',
+          sep="")
   )
 
   output$corDiagramNegative = renderPlot(barPercentPlot(negative_subject(), 1, input$przedmiot, input$`min-grade`))
@@ -68,9 +69,10 @@ shinyServer(function(input, output, session) {
   })
 
   output$descriptionPositive = renderText(
-    paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z',
+    paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z przedmiotu "',
           input$przedmiot,
-          'wśród studentów, którzy zaliczyli przedmiot A')
+          '" wśród studentów, którzy zaliczyli przedmiot A',
+          sep="")
   )
 
   output$corDiagramPositive = renderPlot(barPercentPlot(positive_subject(), -1, input$przedmiot, input$`min-grade`))
@@ -80,12 +82,12 @@ shinyServer(function(input, output, session) {
 
 
   output$headerTwoCourses <- renderText({
-    paste("Związek oceny z", input$przedmiot_b, "ze zdaniem lub niezdaniem",
-          input$przedmiot_a)
+    paste('Związek oceny z przedmiotu "', input$przedmiot_b, '" ze zdaniem lub niezdaniem przedmiotu "',
+          input$przedmiot_a, '"', sep="")
   })
 
   output$legendCountSummary = renderText(
-    paste("Liczba studentów, którzy uczestniczyli w", input$przedmiot_b),
+    paste('Liczba studentów, którzy uczestniczyli w przedmiocie "', input$przedmiot_b, '"', sep=""),
   )
 
   output$countSummary = renderTable(
@@ -94,8 +96,8 @@ shinyServer(function(input, output, session) {
   )
 
   output$legendTwoCoursesDiagram <- renderText(
-    paste("Procent studentów, którzy uzyskali przynajmniej daną ocenę z",
-          input$przedmiot_b)
+    paste('Procent studentów, którzy uzyskali przynajmniej daną ocenę z przedmiotu "',
+          input$przedmiot_b, '"', sep="")
   )
 
   output$corDiagramTwoCourses <- renderPlot(
@@ -103,8 +105,8 @@ shinyServer(function(input, output, session) {
   )
 
   output$legendTwoCourses = renderText(
-    paste("Procent studentów, którzy uzyskali przynajmniej daną ocenę z",
-          input$przedmiot_b)
+    paste('Procent studentów, którzy uzyskali przynajmniej daną ocenę z przedmiotu "',
+          input$przedmiot_b, '"', sep="")
   )
 
   output$tableTwoCourses = renderTable(twoCoursesTable(input$przedmiot_a, input$przedmiot_b))

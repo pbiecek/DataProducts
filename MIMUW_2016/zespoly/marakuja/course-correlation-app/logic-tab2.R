@@ -142,9 +142,9 @@ twoCoursesTable <- function(course_a, course_b) {
   data1$p3 = data3$liczba_studentow
   
   colnames(data1) = c(
-    paste("spośród wszystkich uczestników", course_b),
-    paste("spośród studentów, którzy nie zdali", course_a),
-    paste("spośród studentów, którzy zdali", course_a)
+    paste('spośród wszystkich uczestników przedmiotu "', course_b, '"', sep=""),
+    paste('spośród studentów, którzy nie zdali przedmiotu "', course_a, '"', sep=""),
+    paste('spośród studentów, którzy zdali przedmiot "', course_a, '"', sep="")
   )
   
   data1
@@ -159,8 +159,8 @@ createSummary <- function(course_a, course_b) {
   table <- matrix(c(data1$conajmniej, data2$conajmniej, data3$conajmniej), ncol = 3)
   colnames(table) = c(
     "wszystkich",
-    paste("którzy nie zdali", course_a),
-    paste("którzy zdali", course_a)
+    paste('którzy nie zdali przedmiotu "', course_a, '"', sep=""),
+    paste('którzy zdali przedmiot "', course_a, '"', sep="")
   )
   table
 }

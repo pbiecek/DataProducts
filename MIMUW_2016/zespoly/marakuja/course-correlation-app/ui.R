@@ -17,7 +17,7 @@ shinyUI(fluidPage(
           selectInput(inputId = "przedmiot",
                       label = "Przedmiot B",
                       choices = nazwyPrzedmiotow,
-                      selected = "1000-214bJAO"
+                      selected = "Języki, automaty i obliczenia"
           ),
           selectInput(inputId = "min-grade",
                       label = "Ocena X",
@@ -56,18 +56,18 @@ shinyUI(fluidPage(
           selectInput(inputId = "przedmiot_a",
                       label = "Przedmiot A",
                       choices = nazwyPrzedmiotow,
-                      selected = "1000-224bJNP2"),
+                      selected = "Matematyka dyskretna"),
           selectInput(inputId = "przedmiot_b",
                       label = "Przedmiot B",
                       choices = nazwyPrzedmiotow,
-                      selected = "1000-214bJAO")
+                      selected = "Języki, automaty i obliczenia")
         ),
         mainPanel(
-          h3(textOutput("headerTwoCourses")),
+          h3(textOutput("headerTwoCourses")), br(),
           p(textOutput("legendCountSummary")),
-          tableOutput("countSummary"),
+          tableOutput("countSummary"), br(),
           p(textOutput("legendTwoCoursesDiagram")),
-          plotOutput("corDiagramTwoCourses"),
+          plotOutput("corDiagramTwoCourses"), br(),
           p(textOutput("legendTwoCourses")),
           tableOutput("tableTwoCourses")
         )
