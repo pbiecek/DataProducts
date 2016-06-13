@@ -1,13 +1,6 @@
 source("utils.R")
 library(stringr)
 
-formatPlot <- function(dataFunc) {
-  ggplot(dataFunc(), aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +
-    geom_line(size = 2) + ylim(0,1) +
-    geom_errorbar(aes(ymax = max_err, ymin = min_err, width = 0.12)) +
-    xlab("ocena z wybranego przedmiotu")
-}
-
 barPercentPlot <- function(data, direction, course, min_grade) {
   bar_num <- min(3, count(data)[[1]]/2)
   data %>% head(bar_num) %>% mutate(type=direction) -> highest
