@@ -15,7 +15,7 @@ summarise_data <- function(first_grades_for_courses, courseB, min_common, filter
   grades_split <- split(first_grades_for_courses, as.factor(first_grades_for_courses$PRZ_NAZWA))
   
   for (grades_subject in grades_split) {
-    subject <- as.character(grades_subject[[1]][1])
+    subject <- as.character(grades_subject[["PRZ_NAZWA"]][1])
     if (!subject %in% subjects) {
         next
     }

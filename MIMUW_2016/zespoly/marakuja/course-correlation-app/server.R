@@ -18,9 +18,7 @@ row_click_callback <- "function(table) {
 
 shinyServer(function(input, output, session) {
 
-  marks_dataset <- get_marks_dataset(MARKS_CSV_PATH)
-
-  first_grades_for_courses <- get_first_grade_for_courses(marks_dataset)
+  first_grades_for_courses <- get_marks_dataset(MARKS_CSV_PATH)
 
   first_grades_for_input_course <- reactive ({
     get_first_grade_for_course(first_grades_for_courses, input$przedmiot)
