@@ -1,12 +1,12 @@
 source("utils.R")
 library(stringr)
 
-barPercentPlot <- function(data, direction, course, min_grade) {
+barPercentPlot <- function(first_grades_for_courses, data, direction, course, min_grade) {
   bar_num <- min(3, count(data)[[1]]/2)
   data %>% head(bar_num) %>% mutate(type=direction) -> highest
   data %>% tail(bar_num) %>% mutate(type=-direction) -> lowest
   chosen <- rbind(highest, lowest)
-  line_value <- percent_grade(course, min_grade)
+  line_value <- percent_grade(first_grades_for_courses, course, min_grade)
   ggplot(chosen, aes(x = reorder(`Przedmiot A`, direction * `Procent studentów, którzy uzyskali co najmniej wybraną ocenę`),
                      y = `Procent studentów, którzy uzyskali co najmniej wybraną ocenę`,
                      fill=factor(type))) +

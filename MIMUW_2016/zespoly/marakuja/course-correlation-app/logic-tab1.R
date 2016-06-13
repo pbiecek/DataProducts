@@ -5,7 +5,7 @@ get_subjects_codes_mock <- function() {
   courses_vector
 }
 
-summarise_data <- function(courseB, min_common, filterA, min_grade_B, courseB_grades) {
+summarise_data <- function(first_grades_for_courses, courseB, min_common, filterA, min_grade_B, courseB_grades) {
   subjects <- get_subjects_codes_mock()
   subjects <- subjects[subjects != courseB]
   
@@ -13,8 +13,8 @@ summarise_data <- function(courseB, min_common, filterA, min_grade_B, courseB_gr
                           all_students=numeric(0), stringsAsFactors=FALSE)
   
   for (subject in subjects) {
-    dataA <- filterA(get_first_grade_for_course(data, subject))
-    joined <- courseB_grades() %>% inner_join(dataA, by="OSOBA")
+    dataA <- filterA(get_first_grade_for_course(first_grades_for_courses, subject))
+    joined <- courseB_grades %>% inner_join(dataA, by="OSOBA")
     all <- count(joined)
     filtered <- count(joined %>% filter(OCENA_LICZBOWA.x >= min_grade_B))
     if (filtered >= min_common) {
@@ -26,8 +26,8 @@ summarise_data <- function(courseB, min_common, filterA, min_grade_B, courseB_gr
   rate_data
 }
 
-sort_courses_passed <- function(courseB, min_common, min_grade_B, courseB_grades) {
-  data <- summarise_data(courseB, min_common, filter_passed, min_grade_B, courseB_grades)
+sort_courses_passed <- function(first_grades_for_courses, courseB, min_common, min_grade_B, courseB_grades) {
+  data <- summarise_data(first_grades_for_courses, courseB, min_common, filter_passed, min_grade_B, courseB_grades)
   names(data) <- c("Przedmiot A",
                    "Procent studentów, którzy uzyskali co najmniej wybraną ocenę",
                    "Liczba studentów, którzy zdali A, a z B uzyskali co najmniej wybraną ocenę",
@@ -35,8 +35,8 @@ sort_courses_passed <- function(courseB, min_common, min_grade_B, courseB_grades
   data %>% arrange(desc(`Procent studentów, którzy uzyskali co najmniej wybraną ocenę`))
 }
 
-sort_courses_failed <- function(courseB, min_common, min_grade_B, courseB_grades) {
-  data <- summarise_data(courseB, min_common, filter_failed, min_grade_B, courseB_grades)
+sort_courses_failed <- function(first_grades_for_courses, courseB, min_common, min_grade_B, courseB_grades) {
+  data <- summarise_data(first_grades_for_courses, courseB, min_common, filter_failed, min_grade_B, courseB_grades)
   names(data) <- c("Przedmiot A",
                    "Procent studentów, którzy uzyskali co najmniej wybraną ocenę",
                    "Liczba studentów, którzy nie zdali A, a z B uzyskali co najmniej wybraną ocenę",

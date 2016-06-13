@@ -1,4 +1,4 @@
-# Instrukcja przygotowania listy przedmiotów znajduje się pod adresem:
+# Course names can be fetched using the following script:
 # https://github.com/mluszczyk/listcourses
 
 courses_vector <- c("Analiza matematyczna inf. I",
