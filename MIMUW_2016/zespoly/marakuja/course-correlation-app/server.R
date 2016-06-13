@@ -81,6 +81,13 @@ shinyServer(function(input, output, session) {
                                          callback = row_click_callback)
 
 
+  observeEvent(input$`change-btn`, {
+    przedmiot_a <- input$przedmiot_a
+    przedmiot_b <- input$przedmiot_b
+    updateSelectInput(session, "przedmiot_a", selected=przedmiot_b)
+    updateSelectInput(session, "przedmiot_b", selected=przedmiot_a)
+  })
+
   output$headerTwoCourses <- renderText({
     paste('Związek oceny z przedmiotu "', input$przedmiot_b, '" ze zdaniem lub niezdaniem przedmiotu "',
           input$przedmiot_a, '"', sep="")
