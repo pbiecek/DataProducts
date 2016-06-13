@@ -61,7 +61,7 @@ shinyUI(fluidPage(
                       label = "Przedmiot B",
                       choices = nazwyPrzedmiotow,
                       selected = "Języki, automaty i obliczenia"), br(),
-          actionButton("change-btn", "Zamień przedmioty")
+          actionButton("change-btn", "Zmień kolejność")
         ),
         mainPanel(
           h3(textOutput("headerTwoCourses")), br(),
