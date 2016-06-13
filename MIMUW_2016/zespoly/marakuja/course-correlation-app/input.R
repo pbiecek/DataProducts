@@ -1,11 +1,6 @@
 library(dplyr)
 
-source("config.R")
-
-get_marks_dataset <- function() {
-  table <- read.csv(MARKS_CSV_PATH)
+get_marks_dataset <- function(path) {
+  table <- read.csv(path)
   data <- tbl_df(table)
 }
-
-data <- get_marks_dataset()
-

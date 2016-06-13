@@ -17,7 +17,7 @@ shinyUI(fluidPage(
           selectInput(inputId = "przedmiot",
                       label = "Przedmiot B",
                       choices = nazwyPrzedmiotow,
-                      selected = "1000-214bJAO"
+                      selected = "Języki, automaty i obliczenia"
           ),
           selectInput(inputId = "min-grade",
                       label = "Ocena X",
@@ -31,19 +31,19 @@ shinyUI(fluidPage(
             przedmiotów.")
         ),
         mainPanel(
+          h3(textOutput("headerPositive")),
+          p(textOutput("descriptionPositive")),
+          plotOutput("corDiagramPositive"),
+          br(), br(),
+          dataTableOutput("tablePositive"),
+          tags$style(type="text/css", '#tablePositive tfoot {display:none;}'),
           h3(textOutput("headerNegative")),
           p(textOutput("descriptionNegative")),
           plotOutput("corDiagramNegative"),
           br(), br(),
           dataTableOutput("tableNegative"),
           br(), br(),
-          tags$style(type="text/css", '#tableNegative tfoot {display:none;}'),
-          h3(textOutput("headerPositive")),
-          p(textOutput("descriptionPositive")),
-          plotOutput("corDiagramPositive"),
-          br(), br(),
-          dataTableOutput("tablePositive"),
-          tags$style(type="text/css", '#tablePositive tfoot {display:none;}')
+          tags$style(type="text/css", '#tableNegative tfoot {display:none;}')
         )
       )
     ),
@@ -56,22 +56,30 @@ shinyUI(fluidPage(
           selectInput(inputId = "przedmiot_a",
                       label = "Przedmiot A",
                       choices = nazwyPrzedmiotow,
-                      selected = "1000-224bJNP2"),
+                      selected = "Matematyka dyskretna"),
           selectInput(inputId = "przedmiot_b",
                       label = "Przedmiot B",
                       choices = nazwyPrzedmiotow,
-                      selected = "1000-214bJAO")
+                      selected = "Języki, automaty i obliczenia"), br(),
+          actionButton("change-btn", "Zmień kolejność")
         ),
         mainPanel(
-          h3(textOutput("headerTwoCourses")),
+          h3(textOutput("headerTwoCourses")), br(),
           p(textOutput("legendCountSummary")),
-          tableOutput("countSummary"),
+          tableOutput("countSummary"), br(),
           p(textOutput("legendTwoCoursesDiagram")),
-          plotOutput("corDiagramTwoCourses"),
+          plotOutput("corDiagramTwoCourses"), br(),
           p(textOutput("legendTwoCourses")),
           tableOutput("tableTwoCourses")
         )
       )
+    ),
+    tabPanel("O programie", br(),
+      p("Program został przygotowany w ramach kursu JNP2 pod opieką
+        pana dr. hab. Przemysława Biecka."),
+      p("Autorzy: Szmon Dziewiątkowski, Michał Łuszczyk, Anna Prochowska."), br(),
+      p("Uwzględniamy tylko oceny z pierwszego terminu i z pierwszego podejścia studenta do przedmiotu."),
+      p("W przypadku, gdy w bazie jest więcej niż jedna taka ocena, wybieramy najlepszą z nich.")
     )
   )
 ))

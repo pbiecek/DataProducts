@@ -22,4 +22,4 @@ Obowiązki
 Temat
 ------
 
-Zależności między ocenami z przedmiotów i zdawalnością studiów.
+Zależności między ocenami z przedmiotów.
