@@ -108,8 +108,8 @@ pointsTwoCourses <- function(first_grades_for_courses, course_a, course_b) {
   plot <- union(all_plot, union(plot_failed, plot_passed))
 }
 
-twoCoursesChart <- function(first_grades_for_courses, course_a, course_b) {
-  data <- pointsTwoCourses(first_grades_for_courses, course_a, course_b)
+twoCoursesChart <- function(points_two_courses, course_a, course_b) {
+  data <- points_two_courses
   data$liczba_studentow = round(100 * data$liczba_studentow, 2)
   data$min_err = round(100 * data$min_err, 2)
   data$max_err = round(100 * data$max_err, 2)
@@ -124,8 +124,8 @@ twoCoursesChart <- function(first_grades_for_courses, course_a, course_b) {
   plot
 }
 
-twoCoursesTable <- function(first_grades_for_courses, course_a, course_b) {
-  data <- pointsTwoCourses(first_grades_for_courses, course_a, course_b)
+twoCoursesTable <- function(points_two_courses, course_a, course_b) {
+  data <- points_two_courses
   data$liczba_studentow = round(data$liczba_studentow * 100, 2)
   data$min_err = round(data$min_err * 100, 2)
   data$max_err = round(data$max_err * 100, 2)
@@ -149,9 +149,8 @@ twoCoursesTable <- function(first_grades_for_courses, course_a, course_b) {
   data1
 }
 
-createSummary <- function(first_grades_for_courses, course_a, course_b) {
-  pointsTwoCourses(first_grades_for_courses, course_a, course_b) %>%
-    filter(ocena_przedmiot_B == 2) -> data
+createSummary <- function(points_two_courses, course_a, course_b) {
+  points_two_courses %>% filter(ocena_przedmiot_B == 2) -> data
   data %>% filter(warunek == "brak") -> data1
   data %>% filter(warunek == "nie zdał przedmiotu A") -> data2
   data %>% filter(warunek == "zdał przedmiot A") -> data3

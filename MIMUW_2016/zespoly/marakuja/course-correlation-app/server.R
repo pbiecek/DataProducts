@@ -50,6 +50,10 @@ shinyServer(function(input, output, session) {
     sorted
   })
 
+  points_two_courses <- reactive ({
+    pointsTwoCourses(first_grades_for_courses, input$przedmiot_a, input$przedmiot_b)
+  })
+
   tab2_przedmiot_a = reactive({input$przedmiot_a})
   tab2_przedmiot_b = reactive({input$przedmiot_b})
   observe({updateSelectInput(session, "przedmiot_a", selected = tab2_przedmiot_a())})
@@ -105,7 +109,7 @@ shinyServer(function(input, output, session) {
   )
 
   output$countSummary = renderTable(
-    createSummary(first_grades_for_courses, input$przedmiot_a, input$przedmiot_b),
+    createSummary(points_two_courses(), input$przedmiot_a, input$przedmiot_b),
     display = c("d", "d", "d", "d"), include.rownames = FALSE
   )
 
@@ -115,7 +119,7 @@ shinyServer(function(input, output, session) {
   )
 
   output$corDiagramTwoCourses <- renderPlot(
-    twoCoursesChart(first_grades_for_courses, input$przedmiot_a, input$przedmiot_b)
+    twoCoursesChart(points_two_courses(), input$przedmiot_a, input$przedmiot_b)
   )
 
   output$legendTwoCourses = renderText(
@@ -123,5 +127,5 @@ shinyServer(function(input, output, session) {
           input$przedmiot_b, '"', sep="")
   )
 
-  output$tableTwoCourses = renderTable(twoCoursesTable(first_grades_for_courses, input$przedmiot_a, input$przedmiot_b))
+  output$tableTwoCourses = renderTable(twoCoursesTable(points_two_courses(), input$przedmiot_a, input$przedmiot_b))
 })
