@@ -7,7 +7,8 @@ get_first_grade_for_courses <- function(marks_dataset) {
     filter(NUMER_TERMINU %in% pierwszy_termin) %>%
     mutate(max_ocena = max(OCENA_LICZBOWA)) %>%
     filter(OCENA_LICZBOWA == max_ocena) %>%
-    distinct(OCENA_LICZBOWA)
+    distinct(OCENA_LICZBOWA) -> dataset
+    dataset[c("PRZ_NAZWA", "OCENA_LICZBOWA", "OSOBA")]
 }
 
 get_first_grade_for_course <- function(first_grades_for_courses, course) {
