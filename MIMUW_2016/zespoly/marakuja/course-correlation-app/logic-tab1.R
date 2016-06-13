@@ -11,9 +11,15 @@ summarise_data <- function(first_grades_for_courses, courseB, min_common, filter
   
   rate_data <- data.frame(subject=character(0), percent=numeric(0), students_min_grade=numeric(0),
                           all_students=numeric(0), stringsAsFactors=FALSE)
+
+  grades_split <- split(first_grades_for_courses, as.factor(first_grades_for_courses$PRZ_NAZWA))
   
-  for (subject in subjects) {
-    dataA <- filterA(get_first_grade_for_course(first_grades_for_courses, subject))
+  for (grades_subject in grades_split) {
+    subject <- as.character(grades_subject[[1]][1])
+    if (!subject %in% subjects) {
+        next
+    }
+    dataA <- filterA(grades_subject)
     joined <- courseB_grades %>% inner_join(dataA, by="OSOBA")
     all <- count(joined)
     filtered <- count(joined %>% filter(OCENA_LICZBOWA.x >= min_grade_B))
