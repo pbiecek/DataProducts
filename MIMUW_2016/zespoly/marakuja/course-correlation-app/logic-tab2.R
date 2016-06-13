@@ -64,6 +64,7 @@ df_for_plot <- function(df, error) {
   df_new$liczba_studentow = df_new$liczba_studentow / maks
   df_new$liczba = x
   df_new$conajmniej = y
+  df_new$id = c(1:6)
   df_new
 }
 
@@ -115,9 +116,10 @@ twoCoursesChart <- function(course_a, course_b) {
   data$liczba_studentow = round(100 * data$liczba_studentow, 2)
   data$min_err = round(100 * data$min_err, 2)
   data$max_err = round(100 * data$max_err, 2)
-  
-  plot <- ggplot(data, aes(x = ocena_przedmiot_B, y = liczba_studentow, color = warunek)) +
-    geom_line(size = 2) + ylim(0,100) +
+
+  plot <- ggplot(data, aes(x = id, y = liczba_studentow, color = warunek)) +
+    geom_line(size = 2) + ylim(0,100) + 
+    scale_x_continuous(breaks = c(1,2,3,4,5,6),labels = c("2", "3", "3.5", "4", "4.5", "5")) + 
     geom_errorbar(aes(ymax = max_err, ymin = min_err, width = 0.12)) +
     xlab(paste("ocena z przedmiotu", course_b)) +
     ylab("")
