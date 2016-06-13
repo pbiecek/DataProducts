@@ -62,10 +62,10 @@ shinyServer(function(input, output, session) {
   })
 
   output$descriptionNegative = renderText(
-    paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z przedmoiotu "',
+    paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z przedmiotu "',
           input$przedmiot,
-          '" wśród studentów, którzy nie zaliczyli przedmiotu A',
-          sep="")
+          '" wśród studentów, którzy nie zaliczyli przedmiotu A i jednocześnie uczestniczyli w przedmiocie "',
+          input$przedmiot, '"', sep="")
   )
 
   output$corDiagramNegative = renderPlot(barPercentPlot(first_grades_for_courses, negative_subject(), 1, input$przedmiot, input$`min-grade`))
@@ -80,8 +80,8 @@ shinyServer(function(input, output, session) {
   output$descriptionPositive = renderText(
     paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z przedmiotu "',
           input$przedmiot,
-          '" wśród studentów, którzy zaliczyli przedmiot A',
-          sep="")
+          '" wśród studentów, którzy zaliczyli przedmiot A i jednocześnie uczestniczyli w przedmiocie "',
+          input$przedmiot, '"', sep="")
   )
 
   output$corDiagramPositive = renderPlot(barPercentPlot(first_grades_for_courses, positive_subject(), -1, input$przedmiot, input$`min-grade`))
