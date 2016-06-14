@@ -1,5 +1,4 @@
-# Course names can be fetched using the following script:
-# https://github.com/mluszczyk/listcourses
+# See README.md for instruction on how to update this list.
 
 courses_vector <- c("Analiza matematyczna inf. I",
   "Analiza matematyczna inf. II",
