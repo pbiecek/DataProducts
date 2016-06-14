@@ -3,8 +3,8 @@ library(dplyr)
 library(shiny)
 library(scales)
 
-oceny <- tbl_df(read.csv("../../data/oceny.txt", sep=";", dec=","))
-ankiety <- tbl_df(read.csv("../../data/ankiety.txt", sep=";", dec=","))
+#oceny <- tbl_df(read.csv("../../data/oceny.txt", sep=";", dec=","))
+#ankiety <- tbl_df(read.csv("../../data/ankiety.txt", sep=";", dec=","))
 
 
 subjectNames <- c(
