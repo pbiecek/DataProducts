@@ -5,7 +5,7 @@ summarise_data <- function(first_grades_for_courses, courseB, min_common, filter
   courses <- courses_vector
   courses <- courses[courses != courseB]
   
-  rate_data <- data.frame(course=character(0), percent=numeric(0), students_min_grade=numeric(0),
+  result_data <- data.frame(course=character(0), percent=numeric(0), students_min_grade=numeric(0),
                           all_students=numeric(0), stringsAsFactors=FALSE)
 
   grades_split <- split(first_grades_for_courses, as.factor(first_grades_for_courses$PRZ_NAZWA))
@@ -21,11 +21,11 @@ summarise_data <- function(first_grades_for_courses, courseB, min_common, filter
     filtered <- count(joined %>% filter(OCENA_LICZBOWA.x >= min_grade_B))
     if (filtered >= min_common) {
       percent <- percent_from_fraction(filtered / all)
-      rate_data <- rbind(rate_data, data.frame(course=course, percent=percent,
+      result_data <- rbind(result_data, data.frame(course=course, percent=percent,
                                                students_min_grade=filtered, all_students=all))
     }
   }
-  rate_data
+  result_data
 }
 
 sort_courses_passed <- function(first_grades_for_courses, courseB, min_common, min_grade_B, courseB_grades) {
