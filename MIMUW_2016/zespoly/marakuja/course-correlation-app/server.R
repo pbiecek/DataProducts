@@ -10,8 +10,8 @@ source("plots.R")
 row_click_callback <- "function(table) {
     table.on('click.dt', 'tr', function() {
       tabs = $('.tabbable .nav.nav-tabs li a');
-      Shiny.onInputChange('przedmiot_a', table.row(this).data()[0]);
-      Shiny.onInputChange('przedmiot_b', $('#przedmiot').val());
+      Shiny.onInputChange('course_a', table.row(this).data()[0]);
+      Shiny.onInputChange('course_b', $('#przedmiot').val());
       $(tabs[1]).click();
     });
 }"
@@ -49,13 +49,13 @@ shinyServer(function(input, output, session) {
   })
 
   points_two_courses <- reactive ({
-    pointsTwoCourses(first_grades_for_courses, input$przedmiot_a, input$przedmiot_b)
+    pointsTwoCourses(first_grades_for_courses, input$course_a, input$course_b)
   })
 
-  tab2_przedmiot_a = reactive({input$przedmiot_a})
-  tab2_przedmiot_b = reactive({input$przedmiot_b})
-  observe({updateSelectInput(session, "przedmiot_a", selected = tab2_przedmiot_a())})
-  observe({updateSelectInput(session, "przedmiot_b", selected = tab2_przedmiot_b())})
+  tab2_course_a = reactive({input$course_a})
+  tab2_course_b = reactive({input$course_b})
+  observe({updateSelectInput(session, "course_a", selected = tab2_course_a())})
+  observe({updateSelectInput(session, "course_b", selected = tab2_course_b())})
 
   output$headerFailed <- renderText({
     paste("Związek oceny z niezdaniem innego przedmiotu")
@@ -91,39 +91,39 @@ shinyServer(function(input, output, session) {
 
 
   observeEvent(input$`change-btn`, {
-    przedmiot_a <- input$przedmiot_a
-    przedmiot_b <- input$przedmiot_b
-    updateSelectInput(session, "przedmiot_a", selected=przedmiot_b)
-    updateSelectInput(session, "przedmiot_b", selected=przedmiot_a)
+    course_a <- input$course_a
+    course_b <- input$course_b
+    updateSelectInput(session, "course_a", selected=course_b)
+    updateSelectInput(session, "course_b", selected=course_a)
   })
 
   output$headerTwoCourses <- renderText({
-    paste('Związek oceny z przedmiotu "', input$przedmiot_b, '" ze zdaniem lub niezdaniem przedmiotu "',
-          input$przedmiot_a, '"', sep="")
+    paste('Związek oceny z przedmiotu "', input$course_b, '" ze zdaniem lub niezdaniem przedmiotu "',
+          input$course_a, '"', sep="")
   })
 
   output$legendCountSummary = renderText(
-    paste('Liczba studentów, którzy uczestniczyli w przedmiocie "', input$przedmiot_b, '"', sep=""),
+    paste('Liczba studentów, którzy uczestniczyli w przedmiocie "', input$course_b, '"', sep=""),
   )
 
   output$countSummary = renderTable(
-    createSummary(points_two_courses(), input$przedmiot_a, input$przedmiot_b),
+    createSummary(points_two_courses(), input$course_a, input$course_b),
     display = c("d", "d", "d", "d"), include.rownames = FALSE
   )
 
   output$legendTwoCoursesDiagram <- renderText(
     paste('Procent studentów, którzy uzyskali przynajmniej daną ocenę z przedmiotu "',
-          input$przedmiot_b, '"', sep="")
+          input$course_b, '"', sep="")
   )
 
   output$corDiagramTwoCourses <- renderPlot(
-    twoCoursesChart(points_two_courses(), input$przedmiot_a, input$przedmiot_b)
+    twoCoursesChart(points_two_courses(), input$course_a, input$course_b)
   )
 
   output$legendTwoCourses = renderText(
     paste('Procent studentów, którzy uzyskali przynajmniej daną ocenę z przedmiotu "',
-          input$przedmiot_b, '"', sep="")
+          input$course_b, '"', sep="")
   )
 
-  output$tableTwoCourses = renderTable(twoCoursesTable(points_two_courses(), input$przedmiot_a, input$przedmiot_b))
+  output$tableTwoCourses = renderTable(twoCoursesTable(points_two_courses(), input$course_a, input$course_b))
 })

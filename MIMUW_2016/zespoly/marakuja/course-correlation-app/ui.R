@@ -53,11 +53,11 @@ shinyUI(fluidPage(
           em("Jak zdanie bądź niezdanie przedmiotu A koreluje z uzyskaniem poszczególnych
              ocen z przedmiotu B?"),
           hr(),
-          selectInput(inputId = "przedmiot_a",
+          selectInput(inputId = "course_a",
                       label = "Przedmiot A",
                       choices = nazwyPrzedmiotow,
                       selected = "Matematyka dyskretna"),
-          selectInput(inputId = "przedmiot_b",
+          selectInput(inputId = "course_b",
                       label = "Przedmiot B",
                       choices = nazwyPrzedmiotow,
                       selected = "Języki, automaty i obliczenia"), br(),
