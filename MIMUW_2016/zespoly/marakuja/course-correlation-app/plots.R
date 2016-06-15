@@ -6,7 +6,7 @@ barPercentPlot <- function(first_grades_for_courses, data, direction, course, mi
   data %>% head(bar_num) %>% mutate(type=direction) -> highest
   data %>% tail(bar_num) %>% mutate(type=-direction) -> lowest
   chosen <- rbind(highest, lowest)
-  line_value <- percent_grade(first_grades_for_courses, course, min_grade)
+  line_value <- percent_of_students_got_min_grade(first_grades_for_courses, course, min_grade)
   ggplot(chosen, aes(x = reorder(`Przedmiot A`, direction * `Procent studentów, którzy uzyskali co najmniej wybraną ocenę`),
                      y = `Procent studentów, którzy uzyskali co najmniej wybraną ocenę`,
                      fill=factor(type))) +

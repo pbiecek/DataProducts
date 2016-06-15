@@ -1,3 +1,5 @@
+source("utils.R")
+
 filter_passed <- function(data) {
   data %>%
     filter(OCENA_LICZBOWA > 2)
@@ -109,9 +111,9 @@ pointsTwoCourses <- function(first_grades_for_courses, course_a, course_b) {
 
 twoCoursesChart <- function(points_two_courses, course_a, course_b) {
   data <- points_two_courses
-  data$liczba_studentow = round(100 * data$liczba_studentow, 2)
-  data$min_err = round(100 * data$min_err, 2)
-  data$max_err = round(100 * data$max_err, 2)
+  data$liczba_studentow = percent_from_fraction(data$liczba_studentow)
+  data$min_err = percent_from_fraction(data$min_err)
+  data$max_err = percent_from_fraction(data$max_err)
 
   plot <- ggplot(data, aes(x = id, y = liczba_studentow, color = warunek)) +
     geom_line(size = 2) + ylim(0,100) + 
@@ -125,9 +127,9 @@ twoCoursesChart <- function(points_two_courses, course_a, course_b) {
 
 twoCoursesTable <- function(points_two_courses, course_a, course_b) {
   data <- points_two_courses
-  data$liczba_studentow = round(data$liczba_studentow * 100, 2)
-  data$min_err = round(data$min_err * 100, 2)
-  data$max_err = round(data$max_err * 100, 2)
+  data$liczba_studentow = percent_from_fraction(data$liczba_studentow)
+  data$min_err = percent_from_fraction(data$min_err)
+  data$max_err = percent_from_fraction(data$max_err)
   data <- select(data, ocena_przedmiot_B, warunek, conajmniej, liczba_studentow)
   
   filter(data, warunek == "brak") %>% arrange(-ocena_przedmiot_B) -> data1
