@@ -31,19 +31,19 @@ shinyUI(fluidPage(
             przedmiotów.")
         ),
         mainPanel(
-          h3(textOutput("headerPositive")),
-          p(textOutput("descriptionPositive")),
-          plotOutput("corDiagramPositive"),
+          h3(textOutput("headerPassed")),
+          p(textOutput("descriptionPassed")),
+          plotOutput("corDiagramPassed"),
           br(), br(),
-          dataTableOutput("tablePositive"),
-          tags$style(type="text/css", '#tablePositive tfoot {display:none;}'),
-          h3(textOutput("headerNegative")),
-          p(textOutput("descriptionNegative")),
-          plotOutput("corDiagramNegative"),
+          dataTableOutput("tablePassed"),
+          tags$style(type="text/css", '#tablePassed tfoot {display:none;}'),
+          h3(textOutput("headerFailed")),
+          p(textOutput("descriptionFailed")),
+          plotOutput("corDiagramFailed"),
           br(), br(),
-          dataTableOutput("tableNegative"),
+          dataTableOutput("tableFailed"),
           br(), br(),
-          tags$style(type="text/css", '#tableNegative tfoot {display:none;}')
+          tags$style(type="text/css", '#tableFailed tfoot {display:none;}')
         )
       )
     ),

@@ -24,7 +24,7 @@ shinyServer(function(input, output, session) {
     get_first_grade_for_course(first_grades_for_courses, input$przedmiot)
   })
 
-  positive_subject <- reactive ({
+  passed_subject <- reactive ({
     validate(
       need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
     )
@@ -36,7 +36,7 @@ shinyServer(function(input, output, session) {
     sorted
   })
 
-  negative_subject <- reactive ({
+  failed_subject <- reactive ({
     course <- input$przedmiot
     validate(
       need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
@@ -57,36 +57,36 @@ shinyServer(function(input, output, session) {
   observe({updateSelectInput(session, "przedmiot_a", selected = tab2_przedmiot_a())})
   observe({updateSelectInput(session, "przedmiot_b", selected = tab2_przedmiot_b())})
 
-  output$headerNegative <- renderText({
+  output$headerFailed <- renderText({
     paste("Związek oceny z niezdaniem innego przedmiotu")
   })
 
-  output$descriptionNegative = renderText(
+  output$descriptionFailed = renderText(
     paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z przedmiotu "',
           input$przedmiot,
           '" wśród studentów, którzy nie zaliczyli przedmiotu A i jednocześnie uczestniczyli w przedmiocie "',
           input$przedmiot, '"', sep="")
   )
 
-  output$corDiagramNegative = renderPlot(barPercentPlot(first_grades_for_courses, negative_subject(), 1, input$przedmiot, input$`min-grade`))
+  output$corDiagramFailed = renderPlot(barPercentPlot(first_grades_for_courses, failed_subject(), 1, input$przedmiot, input$`min-grade`))
 
-  output$tableNegative = renderDataTable({negative_subject()}, options = list(pageLength = 10),
+  output$tableFailed = renderDataTable({failed_subject()}, options = list(pageLength = 10),
                                          callback = row_click_callback)
 
-  output$headerPositive <- renderText({
+  output$headerPassed <- renderText({
     paste("Związek oceny ze zdaniem innego przedmiotu")
   })
 
-  output$descriptionPositive = renderText(
+  output$descriptionPassed = renderText(
     paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z przedmiotu "',
           input$przedmiot,
           '" wśród studentów, którzy zaliczyli przedmiot A i jednocześnie uczestniczyli w przedmiocie "',
           input$przedmiot, '"', sep="")
   )
 
-  output$corDiagramPositive = renderPlot(barPercentPlot(first_grades_for_courses, positive_subject(), -1, input$przedmiot, input$`min-grade`))
+  output$corDiagramPassed = renderPlot(barPercentPlot(first_grades_for_courses, passed_subject(), -1, input$przedmiot, input$`min-grade`))
 
-  output$tablePositive = renderDataTable({positive_subject()}, options = list(pageLength = 10),
+  output$tablePassed = renderDataTable({passed_subject()}, options = list(pageLength = 10),
                                          callback = row_click_callback)
 
 
