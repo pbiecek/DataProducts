@@ -24,7 +24,7 @@ shinyServer(function(input, output, session) {
     get_first_grade_for_course(first_grades_for_courses, input$przedmiot)
   })
 
-  passed_subject <- reactive ({
+  sorted_courses_condition_passed <- reactive ({
     validate(
       need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
     )
@@ -36,7 +36,7 @@ shinyServer(function(input, output, session) {
     sorted
   })
 
-  failed_subject <- reactive ({
+  sorted_courses_condition_failed <- reactive ({
     course <- input$przedmiot
     validate(
       need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
@@ -68,9 +68,9 @@ shinyServer(function(input, output, session) {
           input$przedmiot, '"', sep="")
   )
 
-  output$corDiagramFailed = renderPlot(barPercentPlot(first_grades_for_courses, failed_subject(), 1, input$przedmiot, input$`min-grade`))
+  output$corDiagramFailed = renderPlot(barPercentPlot(first_grades_for_courses, sorted_courses_condition_failed(), 1, input$przedmiot, input$`min-grade`))
 
-  output$tableFailed = renderDataTable({failed_subject()}, options = list(pageLength = 10),
+  output$tableFailed = renderDataTable({sorted_courses_condition_failed()}, options = list(pageLength = 10),
                                          callback = row_click_callback)
 
   output$headerPassed <- renderText({
@@ -84,9 +84,9 @@ shinyServer(function(input, output, session) {
           input$przedmiot, '"', sep="")
   )
 
-  output$corDiagramPassed = renderPlot(barPercentPlot(first_grades_for_courses, passed_subject(), -1, input$przedmiot, input$`min-grade`))
+  output$corDiagramPassed = renderPlot(barPercentPlot(first_grades_for_courses, sorted_courses_condition_passed(), -1, input$przedmiot, input$`min-grade`))
 
-  output$tablePassed = renderDataTable({passed_subject()}, options = list(pageLength = 10),
+  output$tablePassed = renderDataTable({sorted_courses_condition_passed()}, options = list(pageLength = 10),
                                          callback = row_click_callback)
 
 
