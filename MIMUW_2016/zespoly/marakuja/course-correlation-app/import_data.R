@@ -7,6 +7,7 @@
 #'    Ustalić wartości poniższych parametrów.
 #'    Rscript import_data.R
 
+source("config.R")
 
 driverClass <- "oracle.jdbc.OracleDriver"
 classPath <- "ojdbc6.jar"
@@ -15,7 +16,7 @@ port <- 1521
 serviceName <- "USOS"
 user <- "user"
 password <- "password"
-outputFile <- "courses_marks.csv"
+outputFile <- GRADES_CSV_PATH
 
 #####
 

@@ -8,7 +8,6 @@ filter_failed <- function(data) {
     filter(OCENA_LICZBOWA == 2)
 }
 
-#' @return (``dataB`` mark, number of students from ``dataA`` who got this grade) dataframe
 courses_summary <- function(dataA, dataB) {
   dataB %>%
     inner_join(dataA, by="OSOBA") %>%
@@ -17,13 +16,13 @@ courses_summary <- function(dataA, dataB) {
     select(ocena_przedmiot_B = OCENA_LICZBOWA.x, liczba_studentow)
 }
 
-count_A_by_mark_B <- function(first_grades_for_courses, courseA, courseB, filterA) {
+count_A_by_grade_B <- function(first_grades_for_courses, courseA, courseB, filterA) {
   dataA <- filterA(get_first_grade_for_course(first_grades_for_courses, courseA))
   dataB <- get_first_grade_for_course(first_grades_for_courses, courseB)
   courses_summary(dataA, dataB)
 }
 
-count_A_by_mark_B_all <- function(first_grades_for_courses, course) {
+count_A_by_grade_B_all <- function(first_grades_for_courses, course) {
   course_data <- get_first_grade_for_course(first_grades_for_courses, course)
   course_data %>%
     group_by(OCENA_LICZBOWA) %>%
@@ -31,12 +30,12 @@ count_A_by_mark_B_all <- function(first_grades_for_courses, course) {
     select(ocena = OCENA_LICZBOWA, liczba_studentow)
 }
 
-count_A_by_mark_B_passed <- function(first_grades_for_courses, courseA, courseB) {
-  count_A_by_mark_B(first_grades_for_courses, courseA, courseB, filter_passed)
+count_A_by_grade_B_passed <- function(first_grades_for_courses, courseA, courseB) {
+  count_A_by_grade_B(first_grades_for_courses, courseA, courseB, filter_passed)
 }
 
-count_A_by_mark_B_failed <- function(first_grades_for_courses, courseA, courseB) {
-  count_A_by_mark_B(first_grades_for_courses, courseA, courseB, filter_failed)
+count_A_by_grade_B_failed <- function(first_grades_for_courses, courseA, courseB) {
+  count_A_by_grade_B(first_grades_for_courses, courseA, courseB, filter_failed)
 }
 
 emptydf <- data.frame(ocena_przedmiot_B = c(2.0, 3.0, 3.5, 4.0, 4.5, 5.0), liczba_studentow = c(0, 0, 0, 0, 0, 0))
@@ -95,14 +94,14 @@ add_error <- function(df) {
 }
 
 pointsTwoCourses <- function(first_grades_for_courses, course_a, course_b) {
-  all <- count_A_by_mark_B_all(first_grades_for_courses, course_b)
+  all <- count_A_by_grade_B_all(first_grades_for_courses, course_b)
   all_plot <- df_for_plot(all, TRUE)
   all_plot$warunek = "brak"
   
-  plot_failed <- df_for_plot(count_A_by_mark_B_failed(first_grades_for_courses, course_a, course_b), TRUE)
+  plot_failed <- df_for_plot(count_A_by_grade_B_failed(first_grades_for_courses, course_a, course_b), TRUE)
   plot_failed$warunek = "nie zdał przedmiotu A"
   
-  plot_passed <- df_for_plot(count_A_by_mark_B_passed(first_grades_for_courses, course_a, course_b), TRUE)
+  plot_passed <- df_for_plot(count_A_by_grade_B_passed(first_grades_for_courses, course_a, course_b), TRUE)
   plot_passed$warunek = "zdał przedmiot A"
   
   plot <- union(all_plot, union(plot_failed, plot_passed))

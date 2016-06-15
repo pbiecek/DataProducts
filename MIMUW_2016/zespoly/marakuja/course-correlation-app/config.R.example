@@ -1,2 +1,2 @@
-MARKS_CSV_PATH = "courses_marks.csv"
+GRADES_CSV_PATH = "courses_grades.csv"
 PROCESSED_GRADES_CSV_PATH = "processed_grades.csv"

@@ -7,7 +7,7 @@ source("logic-tab1.R")
 source("logic-tab2.R")
 
 course <- courses_vector[1]
-first_grades_for_courses <- get_marks_dataset(PROCESSED_GRADES_CSV_PATH)
+first_grades_for_courses <- get_grades_dataset(PROCESSED_GRADES_CSV_PATH)
 
 first_grades_for_input_course <- get_first_grade_for_course(first_grades_for_courses, course)
 
