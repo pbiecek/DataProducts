@@ -4,6 +4,8 @@ source("courses.R")
 
 
 courses_choices <- courses_vector
+default_course_B <- "Języki, automaty i obliczenia"
+default_course_A <- "Matematyka dyskretna"
 
 shinyUI(fluidPage(
   titlePanel("Porównanie przedmiotów z informatyki, MIMUW"),
@@ -17,14 +19,14 @@ shinyUI(fluidPage(
           selectInput(inputId = "selected_course",
                       label = "Przedmiot B",
                       choices = courses_choices,
-                      selected = "Języki, automaty i obliczenia"
+                      selected = default_course_B
           ),
           selectInput(inputId = "min-grade",
                       label = "Ocena X",
                       choices = c(2, 3, 3.5, 4, 4.5, 5),
                       selected = 4),
           
-          numericInput("min-common", "Minimalna liczba studentów z oceną co najmniej X",
+          numericInput("min-common-students", "Minimalna liczba studentów z oceną co najmniej X",
                        10, min = 1),
           hr(),
           p("Kliknięcie na wiersz tabeli prowadzi do szczegółowego porównania dwóch
@@ -56,11 +58,11 @@ shinyUI(fluidPage(
           selectInput(inputId = "course_a",
                       label = "Przedmiot A",
                       choices = courses_choices,
-                      selected = "Matematyka dyskretna"),
+                      selected = default_course_A),
           selectInput(inputId = "course_b",
                       label = "Przedmiot B",
                       choices = courses_choices,
-                      selected = "Języki, automaty i obliczenia"), br(),
+                      selected = default_course_B), br(),
           actionButton("change-btn", "Zmień kolejność")
         ),
         mainPanel(

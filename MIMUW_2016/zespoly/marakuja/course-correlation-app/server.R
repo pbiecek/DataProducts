@@ -26,10 +26,11 @@ shinyServer(function(input, output, session) {
 
   sorted_courses_condition_passed <- reactive ({
     validate(
-      need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
+      need(input$`min-common-students`, "Wybierz minimalną liczbę wspólnych uczestników")
     )
     course <- input$selected_course
-    sorted <- sort_courses_passed(first_grades_for_courses, course, input$`min-common`, input$`min-grade`, first_grades_for_input_course())
+    sorted <- sort_courses_passed(first_grades_for_courses, course, input$`min-common-students`, input$`min-grade`,
+				  first_grades_for_input_course())
     validate(
       need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
     )
@@ -39,9 +40,10 @@ shinyServer(function(input, output, session) {
   sorted_courses_condition_failed <- reactive ({
     course <- input$selected_course
     validate(
-      need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
+      need(input$`min-common-students`, "Wybierz minimalną liczbę wspólnych uczestników")
     )
-    sorted <- sort_courses_failed(first_grades_for_courses, course, input$`min-common`, input$`min-grade`, first_grades_for_input_course())
+    sorted <- sort_courses_failed(first_grades_for_courses, course, input$`min-common-students`, input$`min-grade`,
+				  first_grades_for_input_course())
     validate(
       need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
     )
@@ -68,7 +70,10 @@ shinyServer(function(input, output, session) {
           input$selected_course, '"', sep="")
   )
 
-  output$corDiagramFailed = renderPlot(barPercentPlot(first_grades_for_courses, sorted_courses_condition_failed(), 1, input$selected_course, input$`min-grade`))
+  output$corDiagramFailed = renderPlot(
+    barPercentPlot(first_grades_for_courses, sorted_courses_condition_failed(), 1, input$selected_course,
+                   input$`min-grade`)
+  )
 
   output$tableFailed = renderDataTable({sorted_courses_condition_failed()}, options = list(pageLength = 10),
                                          callback = row_click_callback)
@@ -84,7 +89,10 @@ shinyServer(function(input, output, session) {
           input$selected_course, '"', sep="")
   )
 
-  output$corDiagramPassed = renderPlot(barPercentPlot(first_grades_for_courses, sorted_courses_condition_passed(), -1, input$selected_course, input$`min-grade`))
+  output$corDiagramPassed = renderPlot(
+    barPercentPlot(first_grades_for_courses, sorted_courses_condition_passed(), -1, input$selected_course,
+                   input$`min-grade`)
+  )
 
   output$tablePassed = renderDataTable({sorted_courses_condition_passed()}, options = list(pageLength = 10),
                                          callback = row_click_callback)
