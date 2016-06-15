@@ -5,7 +5,7 @@ source("input.R")
 source("utils.R")
 source("logic-tab1.R")
 source("logic-tab2.R")
-source("plots.R")
+source("percent-plot.R")
 
 row_click_callback <- "function(table) {
     table.on('click.dt', 'tr', function() {
