@@ -3,7 +3,7 @@ library(shiny)
 source("courses.R")
 
 
-nazwyPrzedmiotow <- courses_vector
+courses_choices <- courses_vector
 
 shinyUI(fluidPage(
   titlePanel("Porównanie przedmiotów z informatyki, MIMUW"),
@@ -14,9 +14,9 @@ shinyUI(fluidPage(
           em("Zdanie lub niezdanie których przedmiotów najbardziej koreluje
              z uzyskaniem przynajmniej oceny X z przedmiotu B?"),
           hr(),
-          selectInput(inputId = "przedmiot",
+          selectInput(inputId = "selected_course",
                       label = "Przedmiot B",
-                      choices = nazwyPrzedmiotow,
+                      choices = courses_choices,
                       selected = "Języki, automaty i obliczenia"
           ),
           selectInput(inputId = "min-grade",
@@ -55,11 +55,11 @@ shinyUI(fluidPage(
           hr(),
           selectInput(inputId = "course_a",
                       label = "Przedmiot A",
-                      choices = nazwyPrzedmiotow,
+                      choices = courses_choices,
                       selected = "Matematyka dyskretna"),
           selectInput(inputId = "course_b",
                       label = "Przedmiot B",
-                      choices = nazwyPrzedmiotow,
+                      choices = courses_choices,
                       selected = "Języki, automaty i obliczenia"), br(),
           actionButton("change-btn", "Zmień kolejność")
         ),

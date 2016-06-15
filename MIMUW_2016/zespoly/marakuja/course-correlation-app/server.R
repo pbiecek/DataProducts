@@ -11,7 +11,7 @@ row_click_callback <- "function(table) {
     table.on('click.dt', 'tr', function() {
       tabs = $('.tabbable .nav.nav-tabs li a');
       Shiny.onInputChange('course_a', table.row(this).data()[0]);
-      Shiny.onInputChange('course_b', $('#przedmiot').val());
+      Shiny.onInputChange('course_b', $('#selected_course').val());
       $(tabs[1]).click();
     });
 }"
@@ -21,14 +21,14 @@ shinyServer(function(input, output, session) {
   first_grades_for_courses <- get_grades_dataset(PROCESSED_GRADES_CSV_PATH)
 
   first_grades_for_input_course <- reactive ({
-    get_first_grade_for_course(first_grades_for_courses, input$przedmiot)
+    get_first_grade_for_course(first_grades_for_courses, input$selected_course)
   })
 
   sorted_courses_condition_passed <- reactive ({
     validate(
       need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
     )
-    course <- input$przedmiot
+    course <- input$selected_course
     sorted <- sort_courses_passed(first_grades_for_courses, course, input$`min-common`, input$`min-grade`, first_grades_for_input_course())
     validate(
       need(nrow(sorted) > 0, "Brak pasujących przedmiotów")
@@ -37,7 +37,7 @@ shinyServer(function(input, output, session) {
   })
 
   sorted_courses_condition_failed <- reactive ({
-    course <- input$przedmiot
+    course <- input$selected_course
     validate(
       need(input$`min-common`, "Wybierz minimalną liczbę wspólnych uczestników")
     )
@@ -63,12 +63,12 @@ shinyServer(function(input, output, session) {
 
   output$descriptionFailed = renderText(
     paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z przedmiotu "',
-          input$przedmiot,
+          input$selected_course,
           '" wśród studentów, którzy nie zaliczyli przedmiotu A i jednocześnie uczestniczyli w przedmiocie "',
-          input$przedmiot, '"', sep="")
+          input$selected_course, '"', sep="")
   )
 
-  output$corDiagramFailed = renderPlot(barPercentPlot(first_grades_for_courses, sorted_courses_condition_failed(), 1, input$przedmiot, input$`min-grade`))
+  output$corDiagramFailed = renderPlot(barPercentPlot(first_grades_for_courses, sorted_courses_condition_failed(), 1, input$selected_course, input$`min-grade`))
 
   output$tableFailed = renderDataTable({sorted_courses_condition_failed()}, options = list(pageLength = 10),
                                          callback = row_click_callback)
@@ -79,12 +79,12 @@ shinyServer(function(input, output, session) {
 
   output$descriptionPassed = renderText(
     paste('Procent studentów, którzy uzyskali co najmniej wybraną ocenę z przedmiotu "',
-          input$przedmiot,
+          input$selected_course,
           '" wśród studentów, którzy zaliczyli przedmiot A i jednocześnie uczestniczyli w przedmiocie "',
-          input$przedmiot, '"', sep="")
+          input$selected_course, '"', sep="")
   )
 
-  output$corDiagramPassed = renderPlot(barPercentPlot(first_grades_for_courses, sorted_courses_condition_passed(), -1, input$przedmiot, input$`min-grade`))
+  output$corDiagramPassed = renderPlot(barPercentPlot(first_grades_for_courses, sorted_courses_condition_passed(), -1, input$selected_course, input$`min-grade`))
 
   output$tablePassed = renderDataTable({sorted_courses_condition_passed()}, options = list(pageLength = 10),
                                          callback = row_click_callback)
