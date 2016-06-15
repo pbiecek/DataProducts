@@ -1,31 +1,27 @@
 source("courses.R")
 source("utils.R")
 
-get_subjects_codes_mock <- function() {
-  courses_vector
-}
-
 summarise_data <- function(first_grades_for_courses, courseB, min_common, filterA, min_grade_B, courseB_grades) {
-  subjects <- get_subjects_codes_mock()
-  subjects <- subjects[subjects != courseB]
+  courses <- courses_vector
+  courses <- courses[courses != courseB]
   
-  rate_data <- data.frame(subject=character(0), percent=numeric(0), students_min_grade=numeric(0),
+  rate_data <- data.frame(course=character(0), percent=numeric(0), students_min_grade=numeric(0),
                           all_students=numeric(0), stringsAsFactors=FALSE)
 
   grades_split <- split(first_grades_for_courses, as.factor(first_grades_for_courses$PRZ_NAZWA))
   
-  for (grades_subject in grades_split) {
-    subject <- as.character(grades_subject[["PRZ_NAZWA"]][1])
-    if (!subject %in% subjects) {
+  for (grades_course in grades_split) {
+    course <- as.character(grades_course[["PRZ_NAZWA"]][1])
+    if (!course %in% courses) {
         next
     }
-    dataA <- filterA(grades_subject)
+    dataA <- filterA(grades_course)
     joined <- courseB_grades %>% inner_join(dataA, by="OSOBA")
     all <- count(joined)
     filtered <- count(joined %>% filter(OCENA_LICZBOWA.x >= min_grade_B))
     if (filtered >= min_common) {
       percent <- round(filtered/all * 100, 2)
-      rate_data <- rbind(rate_data, data.frame(subject=subject, percent=percent,
+      rate_data <- rbind(rate_data, data.frame(course=course, percent=percent,
                                                students_min_grade=filtered, all_students=all))
     }
   }
