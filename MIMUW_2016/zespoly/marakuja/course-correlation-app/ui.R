@@ -80,6 +80,8 @@ shinyUI(fluidPage(
       p("Program został przygotowany w ramach kursu JNP2 pod opieką
         pana dr. hab. Przemysława Biecka."),
       p("Autorzy: Szmon Dziewiątkowski, Michał Łuszczyk, Anna Prochowska."), br(),
+      p("Prezentowane są przedmioty obowiązkowe i obieralne dla kierunku informatyka."),
+      p("Wszystkie kursy o tej samej nazwie są złączone i traktowane jak jeden kurs."),
       p("Uwzględniamy tylko oceny z pierwszego terminu i z pierwszego podejścia studenta do przedmiotu."),
       p("W przypadku, gdy w bazie jest więcej niż jedna taka ocena, wybieramy najlepszą z nich.")
     )
