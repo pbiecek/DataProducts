@@ -71,15 +71,16 @@ add_error <- function(df) {
   if(all_students != 0) {
     min_error[1] = 1
     max_error[1] = 1
-  }
-  i <- 1
-  for(students_with_mark in df$liczba_studentow) {
-    if (i != 1) {
-      error_range <- prop.test(students_with_mark, all_students)
-      min_error[i] = error_range$conf.int[1]
-      max_error[i] = error_range$conf.int[2]
+  
+    i <- 1
+    for(students_with_mark in df$liczba_studentow) {
+      if (i != 1) {
+        error_range <- prop.test(students_with_mark, all_students)
+        min_error[i] = error_range$conf.int[1]
+        max_error[i] = error_range$conf.int[2]
+      }
+      i <- i + 1
     }
-    i <- i + 1
   }
   df$min_err = min_error
   df$max_err = max_error
