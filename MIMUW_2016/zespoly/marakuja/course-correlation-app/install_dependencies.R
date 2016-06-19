@@ -1,2 +1,2 @@
-packages <- c("ggplot2", "dplyr", "shiny", "stringr")
+packages <- c("ggplot2", "dplyr", "shiny", "stringr", "RJDBC")
 install.packages(packages)
