@@ -12,7 +12,11 @@ get_courses_list <- function() {
       stdout = TRUE
       )
   df <- data.frame(courses_vector)
-  write.csv(df, "courses.csv", row.names = FALSE)
+  df
+}
+
+save_courses_list <- function(data, file) {
+  write.csv(data, file, row.names = FALSE)
 }
 
 #' Skrypt służący do pobierania danych o ocenach z USOSa.
@@ -75,13 +79,22 @@ get_first_grade_for_courses <- function(grades_dataset) {
 }
 
 get_filtered_dataset <- function(data) {
-  output_file <- PROCESSED_GRADES_CSV_PATH
-  #processed_dataset <- get_grades_dataset(input_file)
   processed_dataset <- data
   first_grade <- get_first_grade_for_courses(processed_dataset)
-  write.csv(first_grade, output_file)
+  first_grade
+}
+
+save_filtered_dataset <- function(data, file) {
+  write.csv(data, file)
 }
 
 #Code to be executed
-get_courses_list()
-get_data_from_DataBase() %>% get_filtered_dataset()
+grades_file <- PROCESSED_GRADES_CSV_PATH
+courses_file <- COURSES_LIST_PATH
+
+get_courses_list() %>%
+  save_courses_list(courses_file)
+
+#get_data_from_DataBase() %>% 
+#  get_filtered_dataset() %>%
+#  save_filtered_dataset(grades_file)
