@@ -1,13 +1,4 @@
 #!/usr/bin/env Rscript
-#' Skrypt służący do pobierania danych o ocenach i kursach z USOSa.
-#'
-#' Wymagania:
-#'    install.packages("JDBC")
-#'    install.packages("dplyr")
-#'
-#' Użycie:
-#'    Ustalić wartości poniższych parametrów z config.R.
-#'    Rscript update.R
 
 source("update_utils.R")
 source("config.R")

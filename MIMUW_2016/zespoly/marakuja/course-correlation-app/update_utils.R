@@ -1,5 +1,4 @@
 source ("utils.R")
-source ("input.R")
 library(dplyr)
 library(RJDBC)
 
