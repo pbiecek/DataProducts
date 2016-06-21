@@ -5,6 +5,7 @@ namespace gradecleaner {
         setFiles();
         std::string line;
         int i = 1;
+        setOutputLine("KOD;PRZ_NAZWA;CYKL_DYD;TERMIN;OCENA;OSOBA\n");
         while(std::getline(inFile_, line, '\n')) {
             if(!line.empty() && line[0] != '-' && line[0] != 'K' && line[0] != 'S' && line[line.length() - 1] != '.') {
                 std::cout << i << std::endl;

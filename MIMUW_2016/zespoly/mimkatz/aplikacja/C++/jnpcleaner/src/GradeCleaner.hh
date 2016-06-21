@@ -3,6 +3,7 @@
 
 #include "JnpCleaner.hh"
 
+//Specific implementation of the jnp cleaner for cleaning grade related data
 namespace gradecleaner {
     class GradeCleaner: public jnpcleaner::JnpCleaner {
     public:

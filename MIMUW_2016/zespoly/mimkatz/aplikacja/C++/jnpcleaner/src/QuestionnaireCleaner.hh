@@ -3,6 +3,7 @@
 
 #include "JnpCleaner.hh"
 
+//Specific implementation of the jnp cleaner for cleaning questionnaire related data
 namespace questionnairecleaner {
     class QuestionnaireCleaner: public jnpcleaner::JnpCleaner {
     public:
