@@ -1,4 +1,4 @@
 config.R
-courses_grades.csv
-processed_grades.csv
 courses.csv
+first_grade_marks.csv
+listcourses/*
