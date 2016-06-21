@@ -1,3 +1,2 @@
-install.packages("ggplot2");
-install.packages("dplyr");
-install.packages("shiny");
+packages <- c("ggplot2", "dplyr", "shiny", "stringr", "RJDBC")
+install.packages(packages)

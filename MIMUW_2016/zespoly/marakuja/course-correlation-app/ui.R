@@ -3,7 +3,9 @@ library(shiny)
 source("courses.R")
 
 
-nazwyPrzedmiotow <- courses_vector
+courses_choices <- courses_vector
+default_course_B <- "Języki, automaty i obliczenia"
+default_course_A <- "Matematyka dyskretna"
 
 shinyUI(fluidPage(
   titlePanel("Porównanie przedmiotów z informatyki, MIMUW"),
@@ -14,36 +16,36 @@ shinyUI(fluidPage(
           em("Zdanie lub niezdanie których przedmiotów najbardziej koreluje
              z uzyskaniem przynajmniej oceny X z przedmiotu B?"),
           hr(),
-          selectInput(inputId = "przedmiot",
+          selectInput(inputId = "selected_course",
                       label = "Przedmiot B",
-                      choices = nazwyPrzedmiotow,
-                      selected = "Języki, automaty i obliczenia"
+                      choices = courses_choices,
+                      selected = default_course_B
           ),
           selectInput(inputId = "min-grade",
                       label = "Ocena X",
                       choices = c(2, 3, 3.5, 4, 4.5, 5),
                       selected = 4),
           
-          numericInput("min-common", "Minimalna liczba studentów z oceną co najmniej X",
+          numericInput("min-common-students", "Minimalna liczba studentów z oceną co najmniej X",
                        10, min = 1),
           hr(),
           p("Kliknięcie na wiersz tabeli prowadzi do szczegółowego porównania dwóch
             przedmiotów.")
         ),
         mainPanel(
-          h3(textOutput("headerPositive")),
-          p(textOutput("descriptionPositive")),
-          plotOutput("corDiagramPositive"),
+          h3(textOutput("headerPassed")),
+          p(textOutput("descriptionPassed")),
+          plotOutput("corDiagramPassed"),
           br(), br(),
-          dataTableOutput("tablePositive"),
-          tags$style(type="text/css", '#tablePositive tfoot {display:none;}'),
-          h3(textOutput("headerNegative")),
-          p(textOutput("descriptionNegative")),
-          plotOutput("corDiagramNegative"),
+          dataTableOutput("tablePassed"),
+          tags$style(type="text/css", '#tablePassed tfoot {display:none;}'),
+          h3(textOutput("headerFailed")),
+          p(textOutput("descriptionFailed")),
+          plotOutput("corDiagramFailed"),
           br(), br(),
-          dataTableOutput("tableNegative"),
+          dataTableOutput("tableFailed"),
           br(), br(),
-          tags$style(type="text/css", '#tableNegative tfoot {display:none;}')
+          tags$style(type="text/css", '#tableFailed tfoot {display:none;}')
         )
       )
     ),
@@ -53,14 +55,14 @@ shinyUI(fluidPage(
           em("Jak zdanie bądź niezdanie przedmiotu A koreluje z uzyskaniem poszczególnych
              ocen z przedmiotu B?"),
           hr(),
-          selectInput(inputId = "przedmiot_a",
+          selectInput(inputId = "course_a",
                       label = "Przedmiot A",
-                      choices = nazwyPrzedmiotow,
-                      selected = "Matematyka dyskretna"),
-          selectInput(inputId = "przedmiot_b",
+                      choices = courses_choices,
+                      selected = default_course_A),
+          selectInput(inputId = "course_b",
                       label = "Przedmiot B",
-                      choices = nazwyPrzedmiotow,
-                      selected = "Języki, automaty i obliczenia"), br(),
+                      choices = courses_choices,
+                      selected = default_course_B), br(),
           actionButton("change-btn", "Zmień kolejność")
         ),
         mainPanel(
@@ -78,6 +80,8 @@ shinyUI(fluidPage(
       p("Program został przygotowany w ramach kursu JNP2 pod opieką
         pana dr. hab. Przemysława Biecka."),
       p("Autorzy: Szmon Dziewiątkowski, Michał Łuszczyk, Anna Prochowska."), br(),
+      p("Prezentowane są przedmioty obowiązkowe i obieralne dla kierunku informatyka."),
+      p("Wszystkie kursy o tej samej nazwie są złączone i traktowane jak jeden kurs."),
       p("Uwzględniamy tylko oceny z pierwszego terminu i z pierwszego podejścia studenta do przedmiotu."),
       p("W przypadku, gdy w bazie jest więcej niż jedna taka ocena, wybieramy najlepszą z nich.")
     )
