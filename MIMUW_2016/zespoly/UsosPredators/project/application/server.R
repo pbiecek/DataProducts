@@ -15,10 +15,10 @@ subjectNames <- c(
   "Indywidualny projekt programistyczny", "1000-222bIPP",
   "Systemy operacyjne", "1000-213bSOP",
   "Bazy danych", "1000-213bBAD",
-  "Geometria z algebrą liniową", "1000-211bGAL",
-  "Inżynieria oprogramowania", "1000-214bIOP",
-  "Języki, automaty i obliczenia", "1000-214bJAO",
-  "Rachunek prawdopodobieństwa i statystyka", "1000-213bRPS",
+  "Geometria z algebrą liniową", "1000-211bGAL",
+  "Inżynieria oprogramowania", "1000-214bIOP",
+  "Języki, automaty i obliczenia", "1000-214bJAO",
+  "Rachunek prawdopodobieństwa i statystyka", "1000-213bRPS",
   "Sieci komputerowe", "1000-214bSIK",
   "Aplikacje WWW", "1000-214bWWW"
 )
@@ -29,7 +29,7 @@ colnames(subjectNames) <- list("NAZWA", "KOD")
 subjectNames <- as.data.frame(subjectNames)
 
 
-estimators <- c("Średnia", "Zaliczenie")
+estimators <- c("Średnia", "Zaliczenie")
 
 
 # UI
@@ -87,7 +87,7 @@ shinyServer(function(input, output) {
   })
 
   output$surveyPercentage <- renderUI({
-    checkboxInput("surveyPercentage", "Pokaż w postaci procentów")
+    checkboxInput("surveyPercentage", "Pokaż w postaci procentów")
   })
 
   showPercentage <- reactive({
@@ -137,7 +137,7 @@ shinyServer(function(input, output) {
     library(RColorBrewer)
     myColors <- brewer.pal(7,"Set1")
     names(myColors) <- levels(factor(sort(as.matrix(as.data.frame(wszystkie_oceny)))))
-    colScale <- scale_fill_manual(name = "Wartość odpowiedzi",values = myColors)
+    colScale <- scale_fill_manual(name = "Wartość odpowiedzi",values = myColors)
 
     if (!showPercentage()) {
       ylab_title = "Liczba odpowiedzi"
@@ -186,9 +186,9 @@ shinyServer(function(input, output) {
     marks <- dplyr:::group_by(marks, CDYD_KOD) %>% summarise(COUNT = n())
 
     ggplot(data = marks, aes(x=CDYD_KOD, y = COUNT, width = 0.4)) + geom_bar(stat="identity") +
-      ggtitle("Ilość ocen z wybranego przedmiotu") +
+      ggtitle("Ilość ocen z wybranego przedmiotu") +
       xlab("Lata") +
-      ylab("Ilość ocen") +
+      ylab("Ilość ocen") +
       theme(plot.title=plotTitleUI, plot.margin=plotMarginUI,
             axis.text=axisTextUI,
             axis.title.x=axisTitleXUI,
@@ -199,11 +199,11 @@ shinyServer(function(input, output) {
 
   # TRENDINGS TAB
   output$trendingsFirstTerm <- renderUI({
-    checkboxInput("trendingsFirstTerm", "Pokaż oceny z pierwszego terminu")
+    checkboxInput("trendingsFirstTerm", "Pokaż oceny z pierwszego terminu")
   })
   
   output$trendingsSecondTerm <- renderUI({
-    checkboxInput("trendingsSecondTerm", "Pokaż oceny z drugiego terminu")
+    checkboxInput("trendingsSecondTerm", "Pokaż oceny z drugiego terminu")
   })
   
   showTrendingsFirstTerm <- reactive({
@@ -223,17 +223,13 @@ shinyServer(function(input, output) {
   })
 
   output$yearsTrendSlider <- renderUI({
-    sliderInput("yearsTrendSlider", "", min=2000, max=2015, value=c(2004,2015), sep="", step=1)
-  })
-
-  selectedYearsTrend <- reactive({
     subjectCode <- dplyr:::filter(subjectNames, NAZWA %in% input$trendSubjectsGroup)
-
     data <- dplyr:::filter(oceny, KOD %in% subjectCode$KOD)
     data$CDYD_KOD <- gsub("Z", "", as.character(data$CDYD_KOD))
     data$CDYD_KOD <- gsub("L", "", as.character(data$CDYD_KOD))
     data$CDYD_KOD <- as.numeric(data$CDYD_KOD)
-    data
+    
+    sliderInput("yearsTrendSlider", "", min=min(data$CDYD_KOD), max=max(data$CDYD_KOD), value=c(2004,2015), sep="", step=1)
   })
 
   selectedEstimator <- reactive({
@@ -243,7 +239,7 @@ shinyServer(function(input, output) {
 
   output$yearsPercentage <- renderUI({
     if (selectedEstimator() == "Zaliczenie")
-      checkboxInput("yearsPercentage", "Pokaż w postaci procentów")
+      checkboxInput("yearsPercentage", "Pokaż w postaci procentów")
   })
 
   showYearsPercentage <- reactive({
@@ -253,7 +249,12 @@ shinyServer(function(input, output) {
   chosenYearsTrendSlider <- reactive({
     sliderTrend <- input$yearsTrendSlider
 
-    data <- selectedYearsTrend()
+    subjectCode <- dplyr:::filter(subjectNames, NAZWA %in% input$trendSubjectsGroup)
+    
+    data <- dplyr:::filter(oceny, KOD %in% subjectCode$KOD)
+    data$CDYD_KOD <- gsub("Z", "", as.character(data$CDYD_KOD))
+    data$CDYD_KOD <- gsub("L", "", as.character(data$CDYD_KOD))
+    data$CDYD_KOD <- as.numeric(data$CDYD_KOD)
     data <- dplyr:::filter(data, CDYD_KOD >= sliderTrend[1] & CDYD_KOD <= sliderTrend[2])
     
     terms = c()
@@ -279,17 +280,17 @@ shinyServer(function(input, output) {
     if (estimator == "Zaliczenie") {
       pos <- position_dodge(width=0.9)
       if (!showYearsPercentage()) {
-        ylab_title = "Ilość studentów"
+        ylab_title = "Ilość studentów"
         yearsTrendData <- yearsTrendData %>% summarise(count=n(), niezal=sum(ifelse(as.numeric(as.character(OCENA)) > 2, 0, 1), na.rm = TRUE))
       } else {
-        ylab_title = "Procent studentów"
+        ylab_title = "Procent studentów"
         yearsTrendData <- yearsTrendData %>% summarise(count=100, niezal=sum(ifelse(as.numeric(as.character(OCENA)) > 2, 0, 1) / n() * 100, na.rm = TRUE))
       }
 
       pl <- ggplot(data=yearsTrendData, aes(x=CDYD_KOD, weight=niezal, y=count, ymin=niezal, ymax=niezal, fill=as.factor(PRZ_NAZWA))) +
         geom_bar(aes(group = PRZ_NAZWA), size=2, position=pos, stat="identity") +
         geom_errorbar(aes(y=niezal), linetype="dashed", position=pos) +
-        ggtitle("Zaliczenia przedmiotów w kolejnych latach") +
+        ggtitle("Zaliczenia przedmiotów w kolejnych latach") +
         xlab("Lata") + ylab(ylab_title) +
         labs(fill = "Przedmiot") +
         theme(plot.title=plotTitleUI, plot.margin=plotMarginUI,
@@ -299,7 +300,7 @@ shinyServer(function(input, output) {
               legend.position="top",
               legend.title=legendTitleUI, legend.text=legendTextUI, legend.title.align=0.5,
               legend.key.width=unit(3,"line"), legend.key.height=unit(2,"line")) +
-        scale_x_continuous(breaks=seq(2000, 2015, 1))
+        scale_x_continuous(breaks=seq(min(yearsTrendData$CDYD_KOD), max(yearsTrendData$CDYD_KOD), 1))
       pl
     } else {
       min.mean.sd.max <- function(x) {
@@ -310,7 +311,7 @@ shinyServer(function(input, output) {
 
       ggplot(data=yearsTrendData, aes(x=CDYD_KOD, y=as.numeric(as.character(OCENA)), colour=as.factor(PRZ_NAZWA))) +
         stat_summary(fun.data=min.mean.sd.max, geom="boxplot", position=position_dodge(width=0.9)) +
-        ggtitle("Srednia ocen przedmiotów w kolejnych latach") +
+        ggtitle("Srednia ocen przedmiotów w kolejnych latach") +
         xlab("Lata") + ylab(paste(estimator, "ocen")) +
         labs(colour = "Przedmiot") +
         theme(plot.title=plotTitleUI, plot.margin=plotMarginUI,
@@ -320,17 +321,17 @@ shinyServer(function(input, output) {
               legend.position="top",
               legend.title=legendTitleUI, legend.text=legendTextUI, legend.title.align=0.5,
               legend.key.width=unit(3,"line"), legend.key.height=unit(2,"line")) +
-        scale_x_continuous(breaks=seq(2000, 2015, 1))
+        scale_x_continuous(breaks=seq(min(yearsTrendData$CDYD_KOD), max(yearsTrendData$CDYD_KOD), 1))
     }
   })
 
   # THIRD TAB
   output$firstTerm <- renderUI({
-    checkboxInput("firstTerm", "Pokaż oceny z pierwszego terminu")
+    checkboxInput("firstTerm", "Pokaż oceny z pierwszego terminu")
   })
 
   output$secondTerm <- renderUI({
-    checkboxInput("secondTerm", "Pokaż oceny z drugiego terminu")
+    checkboxInput("secondTerm", "Pokaż oceny z drugiego terminu")
   })
 
   showFirstTerm <- reactive({
@@ -345,22 +346,19 @@ shinyServer(function(input, output) {
     selectInput("yearsSubject", "", sort(as.matrix(subjectNames$NAZWA)))
   })
 
-  selectedYearsSubject <- reactive({
+  output$yearsSlider <- renderUI({
     subjectCode <- dplyr:::filter(subjectNames, NAZWA == input$yearsSubject)
-
+    
     data <- dplyr:::filter(oceny, KOD == as.vector(subjectCode$KOD))
     data$CDYD_KOD <- gsub("Z", "", as.character(data$CDYD_KOD))
     data$CDYD_KOD <- gsub("L", "", as.character(data$CDYD_KOD))
     data$CDYD_KOD <- as.numeric(data$CDYD_KOD)
-    data
-  })
-
-  output$yearsSlider <- renderUI({
-    sliderInput("yearsSlider", "", min=2000, max=2015, value=c(2012,2015), sep="", step=1)
+    
+    sliderInput("yearsSlider", "", min=min(data$CDYD_KOD), max=max(data$CDYD_KOD), value=c(2012,2015), sep="", step=1)
   })
 
   output$subjectYearsPercentage <- renderUI({
-    checkboxInput("subjectYearsPercentage", "Pokaż w postaci procentów")
+    checkboxInput("subjectYearsPercentage", "Pokaż w postaci procentów")
   })
 
   showSubjectPercentage <- reactive({
@@ -370,7 +368,12 @@ shinyServer(function(input, output) {
   chosenYearsSlider <- reactive({
     slider <- input$yearsSlider
 
-    data <- selectedYearsSubject()
+    subjectCode <- dplyr:::filter(subjectNames, NAZWA == input$yearsSubject)
+    
+    data <- dplyr:::filter(oceny, KOD == as.vector(subjectCode$KOD))
+    data$CDYD_KOD <- gsub("Z", "", as.character(data$CDYD_KOD))
+    data$CDYD_KOD <- gsub("L", "", as.character(data$CDYD_KOD))
+    data$CDYD_KOD <- as.numeric(data$CDYD_KOD)
     data <- dplyr:::filter(data, CDYD_KOD >= slider[1] & CDYD_KOD <= slider[2])
 
     terms = c()
@@ -434,7 +437,7 @@ shinyServer(function(input, output) {
     plot <- ggplot(data = df.molten, aes(x=Lata, fill=Oceny)) +
       scale_fill_brewer(palette = "Set1") +
       geom_hline(aes(yintercept = 0)) +
-      ggtitle("Wyniki egzaminów względem lat") +
+      ggtitle("Wyniki egzaminów względem lat") +
       theme(plot.title=plotTitleUI, plot.margin=plotMarginUI,
             axis.text=axisTextUI,
             axis.title.x=axisTitleXUI,
@@ -444,7 +447,7 @@ shinyServer(function(input, output) {
       guides(fill = guide_legend(reverse=TRUE))
 
     if (!showSubjectPercentage()) {
-      # stwórz skale Likerta
+      # stwórz skale Likerta
       plot <- plot +
         geom_bar(data = subset(df.molten, Oceny %in% c('2')),
                  aes(y = -Rozkład), position="stack", stat="identity") +
@@ -452,7 +455,7 @@ shinyServer(function(input, output) {
                  aes(y = Rozkład), position="stack", stat="identity") +
         labs(x = "Lata", y = "Rozkład ocen")
 
-      # dopisz ilość ocen
+      # dopisz ilość ocen
 
       slider <- input$yearsSlider
       font_size = 10
