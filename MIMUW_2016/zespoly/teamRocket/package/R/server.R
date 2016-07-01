@@ -7,8 +7,10 @@ pobierz.nazwy.gmin <- function(ramka) {
 }
 
 pobierz.szkoly <- function(ramka) {
+  # ramka %>% dplyr::select(id_szkoly, nazwa_szkoly, gmina_szkoly) %>%
+  #   dplyr::distinct(id_szkoly) %>% dplyr::arrange(nazwa_szkoly)
   ramka %>% dplyr::select(id_szkoly, nazwa_szkoly, gmina_szkoly) %>%
-    dplyr::distinct(id_szkoly) %>% dplyr::arrange(nazwa_szkoly)
+    dplyr::arrange(nazwa_szkoly)
 }
 
 szkoly.z.gminy <- function(lista.szkol, gmina) {
